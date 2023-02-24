@@ -1,5 +1,7 @@
-bin/
-obj/
-/packages/
-riderModule.iml
-/_ReSharper.Caches/
+worker/bin/
+worker/obj/
+worker/packages/
+worker/riderModule.iml
+worker/_ReSharper.Caches/
+
+.idea/
