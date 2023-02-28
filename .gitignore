@@ -1,7 +1,8 @@
-worker/bin/
-worker/obj/
-worker/packages/
-worker/riderModule.iml
-worker/_ReSharper.Caches/
+cvWorker/CvWorker/bin/
+cvWorker/CvWorker/obj/
+cvWorker/CvWorker/packages/
+riderModule.iml
+_ReSharper.Caches/
+
 
 .idea/
