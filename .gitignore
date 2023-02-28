@@ -1,6 +1,6 @@
-cvWorker/CvWorker/bin/
-cvWorker/CvWorker/obj/
-cvWorker/CvWorker/packages/
+Worker/CvWorker/bin/
+Worker/CvWorker/obj/
+Worker/CvWorker/packages/
 riderModule.iml
 _ReSharper.Caches/
 
