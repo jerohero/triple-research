@@ -9,6 +9,8 @@
     </PropertyGroup>
 
     <ItemGroup>
+        <PackageReference Include="Emgu.CV" Version="4.6.0.5131" />
+        <PackageReference Include="Emgu.CV.runtime.windows" Version="4.6.0.5131" />
         <PackageReference Include="Microsoft.Extensions.Hosting" Version="6.0.1" />
     </ItemGroup>
 </Project>

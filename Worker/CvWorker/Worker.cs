@@ -39,14 +39,17 @@ public class Worker : BackgroundService {
         }
         
         // > Handle Azure video blob if applicable
-        
-        Streams streams = new(sources);
 
-        for (int i = 0; i < sources.Length; i++) {
-            while (i < streams.Frames.Length) {
-                CvInvoke.Imshow("frame" + i, streams.Frames[i]);
+        foreach (string source in sources) {
+            Stream stream = new(source);
+            
+            while (!stream.Frame.IsEmpty) {
+                CvInvoke.Imshow(source, stream.Frame);
                 CvInvoke.WaitKey(1);
-            }   
+            }
+            
+            CvInvoke.DestroyAllWindows();
+            stream.Dispose();
         }
     }
 
