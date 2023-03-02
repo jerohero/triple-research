@@ -1,4 +1,4 @@
-﻿using CleanArchitecture.Infrastructure.Messaging;
+﻿using RealtimeCv.Infrastructure.Messaging;
 using System;
 using System.Threading.Tasks;
 using Xunit;

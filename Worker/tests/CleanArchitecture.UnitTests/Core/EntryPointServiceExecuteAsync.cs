@@ -1,6 +1,6 @@
-﻿using CleanArchitecture.Core.Interfaces;
-using CleanArchitecture.Core.Services;
-using CleanArchitecture.Core.Settings;
+﻿using RealtimeCv.Core.Interfaces;
+using RealtimeCv.Core.Services;
+using RealtimeCv.Core.Settings;
 using Microsoft.Extensions.DependencyInjection;
 using Moq;
 using System;
