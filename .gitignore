@@ -7,3 +7,7 @@ _ReSharper.Caches/
 
 .idea/
 Worker/CvWorker/Assets/
+
+inference/yolov7/models
+inference/yolov7/runs
+inference/yolov7/utils/__pycache__
