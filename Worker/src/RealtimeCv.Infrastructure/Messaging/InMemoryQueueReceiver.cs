@@ -12,7 +12,7 @@ public class InMemoryQueueReceiver : IQueueReceiver
 {
   public static Queue<string> MessageQueue = new Queue<string>();
 
-  public async Task<string> GetMessageFromQueue(string queueName)
+  public async Task<string?> GetMessageFromQueue(string queueName)
   {
     await Task.CompletedTask; // just so async is allowed
     Guard.Against.NullOrWhiteSpace(queueName, nameof(queueName));

@@ -15,6 +15,8 @@ public class EntryPointService : IEntryPointService
   private readonly EntryPointSettings _settings;
   private readonly IQueueReceiver _queueReceiver;
   private readonly IQueueSender _queueSender;
+  private readonly IStreamReceiver _streamReceiver;
+  private readonly IStreamSender _streamSender;
   private readonly IServiceLocator _serviceScopeFactoryLocator;
   private readonly IUrlStatusChecker _urlStatusChecker;
 
@@ -22,6 +24,8 @@ public class EntryPointService : IEntryPointService
       EntryPointSettings settings,
       IQueueReceiver queueReceiver,
       IQueueSender queueSender,
+      IStreamReceiver streamReceiver,
+      IStreamSender streamSender,
       IServiceLocator serviceScopeFactoryLocator,
       IUrlStatusChecker urlStatusChecker)
   {
@@ -29,6 +33,8 @@ public class EntryPointService : IEntryPointService
     _settings = settings;
     _queueReceiver = queueReceiver;
     _queueSender = queueSender;
+    _streamReceiver = streamReceiver;
+    _streamSender = streamSender;
     _serviceScopeFactoryLocator = serviceScopeFactoryLocator;
     _urlStatusChecker = urlStatusChecker;
   }
@@ -36,6 +42,13 @@ public class EntryPointService : IEntryPointService
   public async Task ExecuteAsync()
   {
     _logger.LogInformation("{service} running at: {time}", nameof(EntryPointService), DateTimeOffset.Now);
+
+    await Task.CompletedTask; // temp
+    
+    string[] sources = { "rtmp://live.restream.io/live/re_6435068_ac960121c66cd1e6a9f5" };
+
+    // TODO Note that this is called in loops, so avoid having hundreds of threads doing the same thing
+    // TODO we can do this by polling queue messages in the loop, and only creating the stream threads when one is received
     try
     {
       // EF Requires a scope so we are creating one per execution here
@@ -44,17 +57,34 @@ public class EntryPointService : IEntryPointService
           scope.ServiceProvider
               .GetService<IRepository>();
 
-      // read from the queue
-      string message = await _queueReceiver.GetMessageFromQueue(_settings.ReceivingQueueName);
-      if (String.IsNullOrEmpty(message)) return;
+      foreach (string source in sources)
+      {
+        _streamReceiver.ConnectStreamBySource(source);
 
-      // check 1 URL in the message
-      var statusHistory = await _urlStatusChecker.CheckUrlAsync(message, "");
+        _streamReceiver.OnConnectionEstablished += () =>
+        {
+          _streamSender.SendStreamToEndpoint(_streamReceiver, "http://localhost:5000/inference");
+        };
 
-      // record HTTP status / response time / maybe existence of keyword in database
-      repository.Add(statusHistory);
-
-      _logger.LogInformation(statusHistory.ToString());
+        _streamReceiver.OnConnectionBroken += () =>
+        {
+          // _streamReceiver.Dispose();
+          // _streamSender.Dispose();
+        };
+      }
+      
+      // Delete below
+      // // read from the queue
+      // string message = await _queueReceiver.GetMessageFromQueue(_settings.ReceivingQueueName);
+      // if (String.IsNullOrEmpty(message)) return;
+      //
+      // // check 1 URL in the message
+      // var statusHistory = await _urlStatusChecker.CheckUrlAsync(message, "");
+      //
+      // // record HTTP status / response time / maybe existence of keyword in database
+      // repository.Add(statusHistory);
+      //
+      // _logger.LogInformation(statusHistory.ToString());
     }
 #pragma warning disable CA1031 // Do not catch general exception types
     catch (Exception ex)

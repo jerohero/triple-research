@@ -6,6 +6,7 @@ using Microsoft.Extensions.DependencyInjection;
 using RealtimeCv.Infrastructure.Data;
 using RealtimeCv.Infrastructure.Http;
 using RealtimeCv.Infrastructure.Messaging;
+using RealtimeCv.Infrastructure.Streaming;
 
 namespace RealtimeCv.Infrastructure;
 
@@ -23,6 +24,12 @@ public static class ServiceCollectionSetupExtensions
   {
     services.AddSingleton<IQueueReceiver, InMemoryQueueReceiver>();
     services.AddSingleton<IQueueSender, InMemoryQueueSender>();
+  }
+  
+  public static void AddStreamHandlers(this IServiceCollection services)
+  {
+    services.AddSingleton<IStreamReceiver, StreamReceiver>();
+    services.AddSingleton<IStreamSender, StreamSender>();
   }
 
   public static void AddUrlCheckingServices(this IServiceCollection services)

@@ -10,7 +10,7 @@ public class AppDbContext : DbContext
   {
   }
 
-  public DbSet<UrlStatusHistory> UrlStatusHistories { get; set; }
+  public DbSet<UrlStatusHistory>? UrlStatusHistories { get; set; }
 
   protected override void OnModelCreating(ModelBuilder modelBuilder)
   {

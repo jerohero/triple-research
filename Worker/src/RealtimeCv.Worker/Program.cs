@@ -34,6 +34,7 @@ public class Program
 
             // Infrastructure.ContainerSetup
             services.AddMessageQueues();
+            services.AddStreamHandlers();
             services.AddDbContext(hostContext.Configuration);
             services.AddRepositories();
             services.AddUrlCheckingServices();
