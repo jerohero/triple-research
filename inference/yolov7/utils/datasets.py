@@ -127,17 +127,19 @@ class _RepeatSampler(object):
 
 class LoadImages:  # for inference
     def __init__(self, path, img_size=640, stride=32):
-        p = str(Path(path).absolute())  # os-agnostic absolute path
-        if '*' in p:
-            files = sorted(glob.glob(p, recursive=True))  # glob
-        elif os.path.isdir(p):
-            files = sorted(glob.glob(os.path.join(p, '*.*')))  # dir
-        elif os.path.isfile(p):
-            files = [p]  # files
-        else:
-            raise Exception(f'ERROR: {p} does not exist')
+        # p = str(Path(path).absolute())  # os-agnostic absolute path
+        # if '*' in p:
+        #     files = sorted(glob.glob(p, recursive=True))  # glob
+        # elif os.path.isdir(p):
+        #     files = sorted(glob.glob(os.path.join(p, '*.*')))  # dir
+        # elif os.path.isfile(p):
+        #     files = [p]  # files
+        # else:
+        #     raise Exception(f'ERROR: {p} does not exist')
+        files = []
 
         images = [x for x in files if x.split('.')[-1].lower() in img_formats]
+        images = [path]
         videos = [x for x in files if x.split('.')[-1].lower() in vid_formats]
         ni, nv = len(images), len(videos)
 
@@ -151,7 +153,7 @@ class LoadImages:  # for inference
             self.new_video(videos[0])  # new video
         else:
             self.cap = None
-        assert self.nf > 0, f'No images or videos found in {p}. ' \
+        assert self.nf > 0, f'No images or videos found in {path}. ' \
                             f'Supported formats are:\nimages: {img_formats}\nvideos: {vid_formats}'
 
     def __iter__(self):
@@ -183,7 +185,9 @@ class LoadImages:  # for inference
         else:
             # Read image
             self.count += 1
-            img0 = cv2.imread(path)  # BGR
+            nparr = np.fromstring(path, np.uint8)
+            img0 = cv2.imdecode(nparr, cv2.CV_LOAD_IMAGE_COLOR)
+            # img0 = cv2.imread(path)  # BGR
             assert img0 is not None, 'Image Not Found ' + path
             #print(f'image {self.count}/{self.nf} {path}: ', end='')
 
