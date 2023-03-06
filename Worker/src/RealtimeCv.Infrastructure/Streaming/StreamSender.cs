@@ -1,7 +1,9 @@
 ﻿using System;
 using System.Threading;
+using System.Threading.Tasks;
 using Ardalis.GuardClauses;
 using Emgu.CV;
+using Emgu.CV.Structure;
 using RealtimeCv.Core.Interfaces;
 
 namespace RealtimeCv.Infrastructure.Streaming;
@@ -15,12 +17,15 @@ public class StreamSender : IStreamSender, IDisposable
   private IStreamReceiver? _streamReceiver;
   private Thread? _sendThread;
   private string? _targetUrl;
+  private IHttpService _httpService;
   
   public StreamSender(
-    ILoggerAdapter<StreamSender> logger
+    ILoggerAdapter<StreamSender> logger,
+    IHttpService httpService
   )
   {
     _logger = logger;
+    _httpService = httpService;
   }
   
   public void SendStreamToEndpoint(IStreamReceiver streamReceiver, string url)
@@ -36,7 +41,7 @@ public class StreamSender : IStreamSender, IDisposable
     _sendThread.Start();
   }
 
-  private void SendFramesToTarget()
+  private async void SendFramesToTarget()
   {
     Guard.Against.NullOrWhiteSpace(_targetUrl, nameof(_targetUrl));
     Guard.Against.Null(_streamReceiver, nameof(_streamReceiver));
@@ -47,8 +52,10 @@ public class StreamSender : IStreamSender, IDisposable
     {
       frameCount++;
       
-      CvInvoke.Imshow("frames", _streamReceiver.Frame);
-      CvInvoke.WaitKey(1);
+      // CvInvoke.Imshow("frames", _streamReceiver.Frame);
+      // CvInvoke.WaitKey(1);
+
+      await _httpService.PostFileAsync("http://localhost:5000/inference", _streamReceiver.Frame.ToImage<Bgr, byte>().ToJpegData());
 
       // Still seems too slow? might want to test with video
       float fps = (1f/30f);
