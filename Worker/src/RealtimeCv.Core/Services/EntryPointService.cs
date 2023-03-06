@@ -15,8 +15,7 @@ public class EntryPointService : IEntryPointService
   private readonly EntryPointSettings _settings;
   private readonly IQueueReceiver _queueReceiver;
   private readonly IQueueSender _queueSender;
-  private readonly IStreamReceiver _streamReceiver;
-  private readonly IStreamSender _streamSender;
+  private readonly IStreamService _streamService;
   private readonly IServiceLocator _serviceScopeFactoryLocator;
   private readonly IUrlStatusChecker _urlStatusChecker;
 
@@ -24,8 +23,7 @@ public class EntryPointService : IEntryPointService
       EntryPointSettings settings,
       IQueueReceiver queueReceiver,
       IQueueSender queueSender,
-      IStreamReceiver streamReceiver,
-      IStreamSender streamSender,
+      IStreamService streamService,
       IServiceLocator serviceScopeFactoryLocator,
       IUrlStatusChecker urlStatusChecker)
   {
@@ -33,8 +31,7 @@ public class EntryPointService : IEntryPointService
     _settings = settings;
     _queueReceiver = queueReceiver;
     _queueSender = queueSender;
-    _streamReceiver = streamReceiver;
-    _streamSender = streamSender;
+    _streamService = streamService;
     _serviceScopeFactoryLocator = serviceScopeFactoryLocator;
     _urlStatusChecker = urlStatusChecker;
   }
@@ -59,18 +56,7 @@ public class EntryPointService : IEntryPointService
 
       foreach (string source in sources)
       {
-        _streamReceiver.ConnectStreamBySource(source);
-
-        _streamReceiver.OnConnectionEstablished += () =>
-        {
-          _streamSender.SendStreamToEndpoint(_streamReceiver, "http://localhost:5000/inference");
-        };
-
-        _streamReceiver.OnConnectionBroken += () =>
-        {
-          // _streamReceiver.Dispose();
-          // _streamSender.Dispose();
-        };
+        _streamService.HandleStream(source, "http://localhost:5000/inference");
       }
       
       // Delete below

@@ -30,6 +30,7 @@ public static class ServiceCollectionSetupExtensions
   {
     services.AddSingleton<IStreamReceiver, StreamReceiver>();
     services.AddSingleton<IStreamSender, StreamSender>();
+    services.AddTransient<IStreamService, StreamService>();
   }
 
   public static void AddUrlCheckingServices(this IServiceCollection services)
