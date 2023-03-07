@@ -54,16 +54,15 @@ public class StreamSender : IStreamSender, IDisposable
       
       // CvInvoke.Imshow("frames", _streamReceiver.Frame);
       // CvInvoke.WaitKey(1);
-
-      await _httpService.PostFileAsync("http://localhost:5000/inference", _streamReceiver.Frame.ToImage<Bgr, byte>().ToJpegData());
-
-      // Still seems too slow? might want to test with video
-      float fps = (1f/30f);
-      int fpsMs = (int) (fps * 1000f);
-      _logger.LogInformation("Send frame " + frameCount + " @ "  +fpsMs );
+      byte[] image = _streamReceiver.Frame.ToImage<Bgr, byte>().ToJpegData();
       
-      Thread.Sleep(fpsMs); // wait time
-      // Send frame
+      await _httpService.PostFileAsync(_targetUrl, image);
+      
+      _logger.LogInformation("Send frame " + frameCount);
+      // Still seems too slow? might want to test with video
+      // float fps = (1f/30f);
+      // int fpsMs = (int) (fps * 1000f);
+      // Thread.Sleep(fpsMs); // wait time
     }
 
   }
