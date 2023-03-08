@@ -1,8 +1,11 @@
+import datetime
+
 import numpy as np
 import argparse
 import time
 import cv2
 import os
+import json
 
 confthres = 0.5
 nmsthres = 0.1
@@ -146,7 +149,6 @@ def predict(image, net, LABELS, COLORS):
     net.setInput(blob)
     start = time.time()
     layerOutputs = net.forward(ln)
-    print(layerOutputs)
     end = time.time()
 
     # show timing information on YOLO
@@ -196,6 +198,10 @@ def predict(image, net, LABELS, COLORS):
     idxs = cv2.dnn.NMSBoxes(boxes, confidences, confthres,
                             nmsthres)
 
+    result = {
+        'predictions': []
+    }
+
     # ensure at least one detection exists
     if len(idxs) > 0:
         # loop over the indexes we are keeping
@@ -205,13 +211,26 @@ def predict(image, net, LABELS, COLORS):
             (w, h) = (boxes[i][2], boxes[i][3])
 
             # draw a bounding box rectangle and label on the image
-            color = [int(c) for c in COLORS[classIDs[i]]]
-            cv2.rectangle(image, (x, y), (x + w, y + h), color, 2)
-            text = "{}: {:.4f}".format(LABELS[classIDs[i]], confidences[i])
-            print(boxes)
-            print(classIDs)
-            cv2.putText(image, text, (x, y - 5), cv2.FONT_HERSHEY_SIMPLEX, 0.5, color, 2)
-    return image
+            # color = [int(c) for c in COLORS[classIDs[i]]]
+            # cv2.rectangle(image, (x, y), (x + w, y + h), color, 2)
+            # text = "{}: {:.4f}".format(LABELS[classIDs[i]], confidences[i])
+
+            result['predictions'].append({
+                'label': LABELS[classIDs[i]],
+                'probability': confidences[i],
+                'boundingBox': {
+                    'left': x,
+                    'top': y,
+                    'width': w,
+                    'height': y
+                }
+            })
+
+            # print(boxes)
+            # print(classIDs)
+            # cv2.putText(image, text, (x, y - 5), cv2.FONT_HERSHEY_SIMPLEX, 0.5, color, 2)
+
+    return json.dumps(result)
 
 
 def start():
@@ -237,7 +256,8 @@ def start():
 
 def detect(img):
     res = predict(img, nets, labels, colors)
-    # image=cv2.cvtColor(image,cv2.COLOR_BGR2RGB)
+
+    # image=cv2.cvtColor(res,cv2.COLOR_BGR2RGB)
     # show the output image
     return res
 
