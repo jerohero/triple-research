@@ -25,7 +25,7 @@ public class HttpService : IHttpService
     return (int)result.StatusCode;
   }
 
-  public async Task PostFileAsync(string url, byte[] file, string name="file")
+  public async Task<HttpResponseMessage> PostFileAsync(string url, byte[] file, string name="file")
   {
     using HttpClient client = new HttpClient();
 
@@ -35,7 +35,8 @@ public class HttpService : IHttpService
     content.Add(new StreamContent(new MemoryStream(file)), "file", "upload.png");
 
     HttpResponseMessage response = await client.PostAsync(url, content);
-    string responseString = await response.Content.ReadAsStringAsync();
+
+    return response;
   }
   
   public async Task PostAsync(string url)

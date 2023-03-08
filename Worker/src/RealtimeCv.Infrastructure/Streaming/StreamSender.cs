@@ -1,4 +1,6 @@
 ﻿using System;
+using System.Net.Http;
+using System.Net.Http.Json;
 using System.Threading;
 using System.Threading.Tasks;
 using Ardalis.GuardClauses;
@@ -17,6 +19,7 @@ public class StreamSender : IStreamSender, IDisposable
   private IStreamReceiver? _streamReceiver;
   private Thread? _sendThread;
   private string? _targetUrl;
+  private string? _prepareUrl;
   private IHttpService _httpService;
   
   public StreamSender(
@@ -28,11 +31,12 @@ public class StreamSender : IStreamSender, IDisposable
     _httpService = httpService;
   }
   
-  public void SendStreamToEndpoint(IStreamReceiver streamReceiver, string url)
+  public void SendStreamToEndpoint(IStreamReceiver streamReceiver, string targetUrl, string prepareUrl)
   {
     _streamReceiver = streamReceiver;
-    _targetUrl = url;
-        
+    _targetUrl = targetUrl;
+    _prepareUrl = prepareUrl;
+    
     _sendThread = new Thread(SendFramesToTarget)
     {
       IsBackground = true
@@ -48,25 +52,45 @@ public class StreamSender : IStreamSender, IDisposable
 
     int frameCount = 0;
 
+    await PrepareEndpoint();
+    
     while (!_streamReceiver.Frame.IsEmpty)
     {
       frameCount++;
-      
-      // CvInvoke.Imshow("frames", _streamReceiver.Frame);
-      // CvInvoke.WaitKey(1);
+
       byte[] image = _streamReceiver.Frame.ToImage<Bgr, byte>().ToJpegData();
+
+      DateTime now = DateTime.UtcNow;
       
-      await _httpService.PostFileAsync(_targetUrl, image);
+      try
+      {
+        HttpResponseMessage res = await _httpService.PostFileAsync(_targetUrl, image);
+        object? results = await res.Content.ReadFromJsonAsync<object>();
+
+        double time =  (DateTime.UtcNow - now).TotalSeconds;
       
-      _logger.LogInformation("Send frame " + frameCount);
+        _logger.LogInformation($"Sent frame { frameCount }. Took { time } seconds.");
+      }
+      catch (HttpRequestException)
+      {
+        // TODO it may be better to prepare the endpoint at the start, as this will result in a larger loss of frames
+        await PrepareEndpoint();
+        
+        _logger.LogInformation("Endpoint was not prepared. Preparing..");
+      }
+
       // Still seems too slow? might want to test with video
       // float fps = (1f/30f);
       // int fpsMs = (int) (fps * 1000f);
       // Thread.Sleep(fpsMs); // wait time
     }
-
   }
 
+  private async Task PrepareEndpoint()
+  {
+    await _httpService.PostAsync(_prepareUrl);
+  }
+  
   public void Dispose()
   {
     _sendThread?.Join();

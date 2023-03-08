@@ -12,28 +12,24 @@ public class StreamService : IStreamService
 {
   private readonly IStreamReceiver _streamReceiver;
   private readonly IStreamSender _streamSender;
-  private readonly IHttpService _httpService;
   
   public StreamService(
     IStreamReceiver streamReceiver,
-    IStreamSender streamSender,
-    IHttpService httpService)
+    IStreamSender streamSender)
   {
     _streamReceiver = streamReceiver;
     _streamSender = streamSender;
-    _httpService = httpService;
   }
 
-  public void HandleStream(string source, string target)
+  public void HandleStream(string source, string targetUrl, string prepareUrl)
   {
     Guard.Against.NullOrWhiteSpace(source, nameof(source));
 
     _streamReceiver.ConnectStreamBySource(source);
 
-    _streamReceiver.OnConnectionEstablished += async () =>
+    _streamReceiver.OnConnectionEstablished += () =>
     {
-      await PrepareInference();
-      _streamSender.SendStreamToEndpoint(_streamReceiver, target);
+      _streamSender.SendStreamToEndpoint(_streamReceiver, targetUrl, prepareUrl);
     };
 
     _streamReceiver.OnConnectionBroken += () =>
@@ -41,11 +37,5 @@ public class StreamService : IStreamService
       // _streamReceiver.Dispose();
       // _streamSender.Dispose();
     };
-  }
-
-  // TODO move?
-  private async Task PrepareInference()
-  {
-    await _httpService.PostAsync("http://localhost:5000/start");
   }
 }

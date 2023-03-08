@@ -5,5 +5,5 @@ namespace RealtimeCv.Core.Interfaces;
 
 public interface IStreamService
 {
-  void HandleStream(string source, string target);
+  void HandleStream(string source, string targetUrl, string prepareUrl);
 }

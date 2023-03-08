@@ -56,7 +56,7 @@ public class EntryPointService : IEntryPointService
 
       foreach (string source in sources)
       {
-        _streamService.HandleStream(source, "http://127.0.0.1:5000/inference");
+        _streamService.HandleStream(source, "http://127.0.0.1:5000/inference", "http://127.0.0.1:5000/start");
       }
       
       // Delete below
