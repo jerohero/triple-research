@@ -25,7 +25,8 @@ public class EntryPointService : IEntryPointService
       IQueueSender queueSender,
       IStreamService streamService,
       IServiceLocator serviceScopeFactoryLocator,
-      IUrlStatusChecker urlStatusChecker)
+      IUrlStatusChecker urlStatusChecker,
+      IPubSub pubSub)
   {
     _logger = logger;
     _settings = settings;
@@ -34,6 +35,7 @@ public class EntryPointService : IEntryPointService
     _streamService = streamService;
     _serviceScopeFactoryLocator = serviceScopeFactoryLocator;
     _urlStatusChecker = urlStatusChecker;
+    pubSub.Get();
   }
 
   public async Task ExecuteAsync()
@@ -54,6 +56,8 @@ public class EntryPointService : IEntryPointService
           scope.ServiceProvider
               .GetService<IRepository>();
 
+      
+      
       foreach (string source in sources)
       {
         _streamService.HandleStream(source, "http://127.0.0.1:5000/inference", "http://127.0.0.1:5000/start");

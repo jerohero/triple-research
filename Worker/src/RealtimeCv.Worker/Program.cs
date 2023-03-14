@@ -5,6 +5,7 @@ using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
 using Microsoft.Extensions.Configuration;
 using RealtimeCv.Core.Settings;
+using RealtimeCv.Infrastructure.Messaging;
 
 namespace RealtimeCv.Worker;
 
@@ -35,6 +36,9 @@ public class Program
             // Infrastructure.ContainerSetup
             services.AddMessageQueues();
             services.AddStreamHandlers();
+
+            services.AddSingleton<IPubSub, PubSub>();
+            
             services.AddDbContext(hostContext.Configuration);
             services.AddRepositories();
             services.AddUrlCheckingServices();

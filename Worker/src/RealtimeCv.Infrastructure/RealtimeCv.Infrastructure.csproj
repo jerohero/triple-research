@@ -2,6 +2,7 @@
 
   <PropertyGroup>
     <TargetFramework>net7.0</TargetFramework>
+    <UserSecretsId>dotnet-RealtimeCv.Worker</UserSecretsId>
     <Nullable>enable</Nullable>
   </PropertyGroup>
 
@@ -11,6 +12,7 @@
     <PackageReference Include="Microsoft.Extensions.Logging.Abstractions" />
     <PackageReference Include="Emgu.CV" />
     <PackageReference Include="Emgu.CV.runtime.windows" />
+    <PackageReference Include="Azure.Messaging.WebPubSub" />
   </ItemGroup>
 
   <ItemGroup>
