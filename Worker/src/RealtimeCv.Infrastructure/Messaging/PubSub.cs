@@ -1,4 +1,6 @@
-﻿using Azure.Core;
+﻿using System;
+using System.Threading.Tasks;
+using Azure.Core;
 using Azure.Messaging.WebPubSub;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.Logging;
@@ -10,21 +12,34 @@ public class PubSub : IPubSub
 {
   private readonly ILoggerAdapter<PubSub> _logger;
   private readonly IConfiguration _configuration;
-  
-  public PubSub(IConfiguration configuration, ILoggerAdapter<PubSub> logger)
+  private const string HubName = "predictions";
+  private const string ConnStringName = "AzureWebPubSub";
+  private WebPubSubServiceClient? _serviceClient;
+
+  public PubSub(
+    IConfiguration configuration,
+    ILoggerAdapter<PubSub> logger
+  )
   {
     _configuration = configuration;
     _logger = logger;
   }
-  
-  public void Get()
-  {
-    string connectionString =
-      "Endpoint=https://triplejbpubsub.webpubsub.azure.com;AccessKey=D4Pa2W274942Lwx+Q79RdJWP/rUzodEfPWCh30MZz7M=;Version=1.0;";
-    string hubName = "predictions";
-    
-    WebPubSubServiceClient serviceClient = new(connectionString, hubName);
 
-    serviceClient.SendToAll(RequestContent.Create(new { Foo = "Hello", }), ContentType.ApplicationJson);
+  public async Task Init()
+  {
+    _serviceClient = new WebPubSubServiceClient(_configuration.GetConnectionString(ConnStringName), HubName);
+    
+    // TODO either store somewhere the client can access it or turn it into azure function negotiate func
+    _logger.LogInformation("URI: " + await _serviceClient.GetClientAccessUriAsync(TimeSpan.FromHours(72)));
+  }
+
+  public async Task Send(object message)
+  {
+    if (_serviceClient is null)
+    {
+      await Init();
+    }
+
+    await _serviceClient!.SendToAllAsync(RequestContent.Create(message), ContentType.ApplicationJson);
   }
 }

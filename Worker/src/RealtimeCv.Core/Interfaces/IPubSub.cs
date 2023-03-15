@@ -4,5 +4,6 @@ namespace RealtimeCv.Core.Interfaces;
 
 public interface IPubSub
 {
-  void Get();
+  Task Init();
+  Task Send(object message);
 }

@@ -1,4 +1,5 @@
-﻿using RealtimeCv.Core.Interfaces;
+﻿using Microsoft.Extensions.Azure;
+using RealtimeCv.Core.Interfaces;
 using RealtimeCv.Core.Services;
 using RealtimeCv.Infrastructure;
 using Microsoft.Extensions.DependencyInjection;
@@ -50,6 +51,10 @@ public class Program
             var entryPointSettings = new EntryPointSettings();
             hostContext.Configuration.Bind(nameof(EntryPointSettings), entryPointSettings);
             services.AddSingleton(entryPointSettings);
+
+            var azureSettings = new AzureSettings();
+            hostContext.Configuration.Bind(nameof(AzureSettings), azureSettings);
+            services.AddSingleton(azureSettings);
 
             services.AddHostedService<Worker>();
           });

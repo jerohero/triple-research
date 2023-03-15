@@ -21,14 +21,17 @@ public class StreamSender : IStreamSender, IDisposable
   private string? _targetUrl;
   private string? _prepareUrl;
   private IHttpService _httpService;
+  private IPubSub _pubSub;
   
   public StreamSender(
     ILoggerAdapter<StreamSender> logger,
-    IHttpService httpService
+    IHttpService httpService,
+    IPubSub pubSub
   )
   {
     _logger = logger;
     _httpService = httpService;
+    _pubSub = pubSub;
   }
   
   public void SendStreamToEndpoint(IStreamReceiver streamReceiver, string targetUrl, string prepareUrl)
@@ -66,6 +69,8 @@ public class StreamSender : IStreamSender, IDisposable
       {
         HttpResponseMessage res = await _httpService.PostFileAsync(_targetUrl, image);
         object? results = await res.Content.ReadFromJsonAsync<object>();
+
+        await _pubSub.Send(results);
 
         double time =  (DateTime.UtcNow - now).TotalSeconds;
       
