@@ -1,11 +1,11 @@
 ﻿using System;
+using System.Drawing;
 using System.Net.Http;
 using System.Net.Http.Json;
 using System.Threading;
 using System.Threading.Tasks;
 using Ardalis.GuardClauses;
-using Emgu.CV;
-using Emgu.CV.Structure;
+using OpenCvSharp.Extensions;
 using RealtimeCv.Core.Interfaces;
 
 namespace RealtimeCv.Infrastructure.Streaming;
@@ -57,17 +57,15 @@ public class StreamSender : IStreamSender, IDisposable
 
     await PrepareEndpoint();
     
-    while (!_streamReceiver.Frame.IsEmpty)
+    while (!_streamReceiver.Frame.Empty())
     {
       frameCount++;
 
-      byte[] image = _streamReceiver.Frame.ToImage<Bgr, byte>().ToJpegData();
-
       DateTime now = DateTime.UtcNow;
-      
+
       try
       {
-        HttpResponseMessage res = await _httpService.PostFileAsync(_targetUrl, image);
+        HttpResponseMessage res = await _httpService.PostFileAsync(_targetUrl, _streamReceiver.Frame.ToBytes());
         object? results = await res.Content.ReadFromJsonAsync<object>();
 
         await _pubSub.Send(results);

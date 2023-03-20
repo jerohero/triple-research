@@ -1,7 +1,5 @@
 ﻿using System;
-using System.Threading.Tasks;
-using Emgu.CV;
-using JetBrains.Annotations;
+using OpenCvSharp;
 
 namespace RealtimeCv.Core.Interfaces;
 

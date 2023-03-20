@@ -1,9 +1,6 @@
 ﻿using System;
 using System.Threading;
-using Ardalis.GuardClauses;
 using RealtimeCv.Core.Interfaces;
-using Emgu.CV;
-using Emgu.CV.CvEnum;
 
 namespace RealtimeCv.Infrastructure.Streaming;
 
@@ -49,16 +46,22 @@ public class StreamReceiver : IStreamReceiver, IDisposable
 
   private void PollStream()
   {
+    if (_source is null)
+    {
+      _logger.LogInformation("Source is not defined");
+      return;
+    }
+    
     VideoCapture capture = new(_source);
 
-    while (!capture.IsOpened)
+    while (!capture.IsOpened())
     {
       _logger.LogInformation($"Failed to open { _source }. Retrying in 10 sec..");
       Thread.Sleep(1000 * 5);
       capture = new VideoCapture(_source);
     }
 
-    capture.Set(CapProp.Buffersize, 2);
+    capture.Set(VideoCaptureProperties.BufferSize, 2);
     _capture = capture;
         
     OnConnectionEstablished();
@@ -66,13 +69,13 @@ public class StreamReceiver : IStreamReceiver, IDisposable
 
   private void ReadStream()
   {
-    if (_capture is null || !_capture.IsOpened)
+    if (_capture is null || !_capture.IsOpened())
     {
       _logger.LogInformation("Stream is inactive");
       return;
     }
         
-    _fps = (int)_capture.Get(CapProp.Fps);
+    _fps = (int)_capture.Get(VideoCaptureProperties.Fps);
     _capture.Read(Frame); // guarantee first frame
 
     _updateThread = new Thread(Update)
@@ -86,7 +89,7 @@ public class StreamReceiver : IStreamReceiver, IDisposable
   private void Update()
   {
     // Read next stream frame in a daemon thread
-    while (_capture is not null && _capture.IsOpened)
+    while (_capture is not null && _capture.IsOpened())
     {
       _capture.Grab();
             
@@ -94,7 +97,7 @@ public class StreamReceiver : IStreamReceiver, IDisposable
       _capture.Retrieve(frame);
       Frame = frame;
 
-      if (frame.IsEmpty)
+      if (frame.Empty())
       {
         break;
       }

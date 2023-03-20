@@ -10,9 +10,12 @@
     <PackageReference Include="Ardalis.GuardClauses" />
     <PackageReference Include="Microsoft.EntityFrameworkCore.SqlServer" />
     <PackageReference Include="Microsoft.Extensions.Logging.Abstractions" />
-    <PackageReference Include="Emgu.CV" />
-    <PackageReference Include="Emgu.CV.runtime.windows" />
+    <PackageReference Include="OpenCvSharp4" />
+    <PackageReference Include="OpenCvSharp4.Extensions" />
+    <PackageReference Include="OpenCvSharp4_.runtime.ubuntu.20.04-x64" />
+    <PackageReference Include="OpenCvSharp4.runtime.win" />
     <PackageReference Include="Azure.Messaging.WebPubSub" />
+    <PackageReference Include="SixLabors.ImageSharp" />
   </ItemGroup>
 
   <ItemGroup>

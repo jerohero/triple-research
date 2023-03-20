@@ -1,12 +1,11 @@
 ﻿using System;
-using System.Collections.Generic;
 using System.Globalization;
 using System.IO;
 using RealtimeCv.Core.Interfaces;
 using System.Net.Http;
-using System.Net.Http.Headers;
-using System.Text.RegularExpressions;
 using System.Threading.Tasks;
+using SixLabors.ImageSharp;
+using SixLabors.ImageSharp.PixelFormats;
 
 namespace RealtimeCv.Infrastructure.Http;
 
@@ -29,10 +28,18 @@ public class HttpService : IHttpService
   {
     using HttpClient client = new HttpClient();
 
+    using MemoryStream ms = new MemoryStream();
+
+    Image img = Image.Load<Rgba32>(file);
+    await img.SaveAsJpegAsync(ms);
+
+    byte[] bits = ms.ToArray();
+    
     using var content = new MultipartFormDataContent(
       "Upload----" + DateTime.Now.ToString(CultureInfo.InvariantCulture)
     );
-    content.Add(new StreamContent(new MemoryStream(file)), "file", "upload.png");
+    
+    content.Add(new ByteArrayContent(bits), "file", "upload.png");
 
     HttpResponseMessage response = await client.PostAsync(url, content);
 

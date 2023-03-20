@@ -7,7 +7,7 @@
   <ItemGroup>
     <PackageReference Include="Ardalis.GuardClauses" />
     <PackageReference Include="Microsoft.Extensions.DependencyInjection.Abstractions" />
-    <PackageReference Include="Emgu.CV" />
+    <PackageReference Include="OpenCvSharp4" />
   </ItemGroup>
 
 </Project>
