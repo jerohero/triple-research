@@ -16,6 +16,7 @@
     <PackageReference Include="OpenCvSharp4.runtime.win" />
     <PackageReference Include="Azure.Messaging.WebPubSub" />
     <PackageReference Include="SixLabors.ImageSharp" />
+    <PackageReference Include="Newtonsoft.Json" />
   </ItemGroup>
 
   <ItemGroup>

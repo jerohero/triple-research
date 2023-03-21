@@ -1,6 +1,8 @@
 ﻿using Microsoft.Extensions.DependencyInjection;
 using System;
+using System.Collections.Generic;
 using System.Threading.Tasks;
+using RealtimeCv.Core.Entities;
 using RealtimeCv.Core.Interfaces;
 using RealtimeCv.Core.Settings;
 
@@ -53,9 +55,16 @@ public class EntryPointService : IEntryPointService
     {
       // EF Requires a scope so we are creating one per execution here
       using var scope = _serviceScopeFactoryLocator.CreateScope();
-      var repository =
-          scope.ServiceProvider
-              .GetService<IRepository>();
+      var repository = scope.ServiceProvider.GetService<IRepository>();
+
+      VisionSet vs = new()
+      {
+        Name = "Test",
+        Models = new List<string>(),
+        Sources = new List<string> { "rtmp://live.restream.io/live/re_6435068_ac960121c66cd1e6a9f5" },
+      };
+      
+      repository.Add(vs);
       
       await _pubSub.Init();
 

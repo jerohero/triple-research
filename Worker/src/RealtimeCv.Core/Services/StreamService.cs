@@ -6,7 +6,7 @@ using RealtimeCv.Core.Interfaces;
 namespace RealtimeCv.Core.Services;
 
 /// <summary>
-/// A simple service that fetches a URL and returns a UrlStatusHistory instance with the result
+/// 
 /// </summary>
 public class StreamService : IStreamService
 {

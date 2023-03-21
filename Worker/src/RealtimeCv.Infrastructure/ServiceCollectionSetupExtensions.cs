@@ -3,6 +3,7 @@ using RealtimeCv.Core.Services;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
+using Newtonsoft.Json;
 using RealtimeCv.Infrastructure.Data;
 using RealtimeCv.Infrastructure.Http;
 using RealtimeCv.Infrastructure.Messaging;
@@ -13,9 +14,11 @@ namespace RealtimeCv.Infrastructure;
 public static class ServiceCollectionSetupExtensions
 {
   public static void AddDbContext(this IServiceCollection services, IConfiguration configuration) =>
-      services.AddDbContext<AppDbContext>(options =>
-          options.UseSqlServer(
-              configuration.GetConnectionString("DefaultConnection")));
+    services.AddDbContext<AppDbContext>(options =>
+      options.UseSqlServer(
+        configuration.GetConnectionString("DefaultConnection")
+      )
+    );
 
   public static void AddRepositories(this IServiceCollection services) =>
       services.AddScoped<IRepository, EfRepository>();
@@ -37,5 +40,13 @@ public static class ServiceCollectionSetupExtensions
   {
     services.AddTransient<IUrlStatusChecker, UrlStatusChecker>();
     services.AddTransient<IHttpService, HttpService>();
+  }
+  
+  public static void ConfigureJson(this IServiceCollection services)
+  {
+    services.Configure<JsonSerializerSettings>(options =>
+    {
+      options.ReferenceLoopHandling = ReferenceLoopHandling.Ignore;
+    });
   }
 }

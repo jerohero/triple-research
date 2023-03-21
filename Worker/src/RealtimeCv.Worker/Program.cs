@@ -5,6 +5,7 @@ using RealtimeCv.Infrastructure;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
 using Microsoft.Extensions.Configuration;
+using Newtonsoft.Json;
 using RealtimeCv.Core.Settings;
 using RealtimeCv.Infrastructure.Messaging;
 
@@ -43,6 +44,8 @@ public class Program
             services.AddDbContext(hostContext.Configuration);
             services.AddRepositories();
             services.AddUrlCheckingServices();
+            
+            services.ConfigureJson();
 
             var workerSettings = new WorkerSettings();
             hostContext.Configuration.Bind(nameof(WorkerSettings), workerSettings);
