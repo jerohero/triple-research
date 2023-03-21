@@ -24,7 +24,7 @@ public class EntryPointServiceExecuteAsync
     // maybe a tuple later on
     var repository = SetupCreateScope(serviceLocator);
 
-    var service = new EntryPointService(logger.Object, settings, queueReceiver.Object, null, null, serviceLocator.Object, null);
+    var service = new EntryPointService(logger.Object, settings, queueReceiver.Object, null, null, serviceLocator.Object, null, null);
     return (service, logger, queueReceiver, serviceLocator, repository);
   }
 
