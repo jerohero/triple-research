@@ -56,5 +56,7 @@
     <PackageVersion Include="OpenCvSharp4.runtime.win" Version="4.7.0.20230115"/>
     <PackageVersion Include="SixLabors.ImageSharp" Version="3.0.0"/>
     <PackageVersion Include="Newtonsoft.Json" Version="13.0.3"/>
+    <PackageVersion Include="Microsoft.Azure.Functions.Extensions" Version="1.1.0" />
+    <PackageVersion Include="Microsoft.NET.Sdk.Functions" Version="4.1.1"/>
 	</ItemGroup>
 </Project>
