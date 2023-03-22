@@ -1,23 +1,21 @@
-﻿using RealtimeCv.Core.Interfaces;
-using RealtimeCv.Core.Services;
-using Microsoft.EntityFrameworkCore;
+﻿using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Newtonsoft.Json;
+using RealtimeCv.Core.Interfaces;
+using RealtimeCv.Core.Services;
 using RealtimeCv.Infrastructure.Data;
 using RealtimeCv.Infrastructure.Http;
 using RealtimeCv.Infrastructure.Messaging;
 using RealtimeCv.Infrastructure.Streaming;
 
-namespace RealtimeCv.Infrastructure;
+namespace RealtimeCv.Infrastructure.Extensions;
 
 public static class ServiceCollectionSetupExtensions
 {
-  public static void AddDbContext(this IServiceCollection services, IConfiguration configuration) =>
+  public static void AddDbContext(this IServiceCollection services, string? connectionString) =>
     services.AddDbContext<AppDbContext>(options =>
-      options.UseSqlServer(
-        configuration.GetConnectionString("DefaultConnection")
-      )
+      options.UseSqlServer(connectionString)
     );
 
   public static void AddRepositories(this IServiceCollection services) =>

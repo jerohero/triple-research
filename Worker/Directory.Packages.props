@@ -35,6 +35,15 @@
 		<PackageVersion Include="Microsoft.NET.Test.Sdk" Version="17.4.0" />
     <PackageVersion Include="Microsoft.VisualStudio.Azure.Containers.Tools.Targets" Version="1.17.0" />
 		<PackageVersion Include="Microsoft.VisualStudio.Web.CodeGeneration.Design" Version="7.0.0" />
+    <PackageVersion Include="Microsoft.Azure.Functions.Worker" Version="1.10.1" />
+    <PackageVersion Include="Microsoft.Azure.Functions.Worker.Sdk" Version="1.7.0" />
+    <PackageVersion Include="Microsoft.Azure.Functions.Worker.Extensions.Http" Version="3.0.13" />
+    <PackageVersion Include="Microsoft.Azure.Functions.Worker.Extensions.Timer" Version="4.1.0" />
+    <PackageVersion Include="Microsoft.Azure.Functions.Worker.Core" Version="1.8.1" />
+    <PackageVersion Include="Azure.Core" Version="1.29.0" />
+    <PackageVersion Include="Azure.Identity" Version="1.8.2" />
+    <PackageVersion Include="Azure.Extensions.AspNetCore.Configuration.Secrets" Version="1.2.2" />
+    <PackageVersion Include="Azure.Messaging.WebPubSub" Version="1.3.0" />
 		<PackageVersion Include="Moq" Version="4.18.2" />
 		<PackageVersion Include="ReportGenerator" Version="5.1.12" />
 		<PackageVersion Include="Serilog.AspNetCore" Version="6.1.0-dev-00285" />
@@ -46,17 +55,11 @@
 		<PackageVersion Include="xunit.runner.visualstudio" Version="2.4.5" />
     <PackageVersion Include="Emgu.CV" Version="4.6.0.5131" />
     <PackageVersion Include="Emgu.CV.runtime.windows" Version="4.6.0.5131" />
-    <PackageVersion Include="Azure.Core" Version="1.29.0" />
-    <PackageVersion Include="Azure.Identity" Version="1.8.2" />
-    <PackageVersion Include="Azure.Extensions.AspNetCore.Configuration.Secrets" Version="1.2.2" />
-    <PackageVersion Include="Azure.Messaging.WebPubSub" Version="1.3.0" />
     <PackageVersion Include="OpenCvSharp4" Version="4.7.0.20230115"/>
     <PackageVersion Include="OpenCvSharp4.Extensions" Version="4.7.0.20230115"/>
     <PackageVersion Include="OpenCvSharp4_.runtime.ubuntu.20.04-x64" Version="4.7.0.20230115"/>
     <PackageVersion Include="OpenCvSharp4.runtime.win" Version="4.7.0.20230115"/>
     <PackageVersion Include="SixLabors.ImageSharp" Version="3.0.0"/>
     <PackageVersion Include="Newtonsoft.Json" Version="13.0.3"/>
-    <PackageVersion Include="Microsoft.Azure.Functions.Extensions" Version="1.1.0" />
-    <PackageVersion Include="Microsoft.NET.Sdk.Functions" Version="4.1.1"/>
 	</ItemGroup>
 </Project>

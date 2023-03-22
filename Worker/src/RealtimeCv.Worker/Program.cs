@@ -7,6 +7,7 @@ using Microsoft.Extensions.Hosting;
 using Microsoft.Extensions.Configuration;
 using Newtonsoft.Json;
 using RealtimeCv.Core.Settings;
+using RealtimeCv.Infrastructure.Extensions;
 using RealtimeCv.Infrastructure.Messaging;
 
 namespace RealtimeCv.Worker;
@@ -24,7 +25,7 @@ public class Program
       queueSender.SendMessageToQueue("https://google.com", "urlcheck");
     }
 
-    host.Run();
+    host.RunAsync();
   }
 
   public static IHostBuilder CreateHostBuilder(string[] args) =>
@@ -41,7 +42,7 @@ public class Program
 
             services.AddSingleton<IPubSub, PubSub>();
             
-            services.AddDbContext(hostContext.Configuration);
+            services.AddDbContext(hostContext.Configuration.GetConnectionString("DefaultConnection"));
             services.AddRepositories();
             services.AddUrlCheckingServices();
             
