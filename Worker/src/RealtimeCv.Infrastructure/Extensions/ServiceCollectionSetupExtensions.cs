@@ -5,6 +5,7 @@ using Newtonsoft.Json;
 using RealtimeCv.Core.Interfaces;
 using RealtimeCv.Core.Services;
 using RealtimeCv.Infrastructure.Data;
+using RealtimeCv.Infrastructure.Data.Repositories;
 using RealtimeCv.Infrastructure.Http;
 using RealtimeCv.Infrastructure.Messaging;
 using RealtimeCv.Infrastructure.Streaming;
@@ -19,7 +20,7 @@ public static class ServiceCollectionSetupExtensions
     );
 
   public static void AddRepositories(this IServiceCollection services) =>
-      services.AddScoped<IRepository, EfRepository>();
+      services.AddScoped<IVisionSetRepository, VisionSetRepository>();
 
   public static void AddMessageQueues(this IServiceCollection services)
   {

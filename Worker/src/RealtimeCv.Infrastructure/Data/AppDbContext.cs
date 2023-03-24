@@ -8,6 +8,7 @@ using System.Text.Json;
 using Microsoft.EntityFrameworkCore.ChangeTracking;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using Newtonsoft.Json;
+using RealtimeCv.Infrastructure.Data.Configurations;
 using JsonSerializer = Newtonsoft.Json.JsonSerializer;
 
 namespace RealtimeCv.Infrastructure.Data;
@@ -22,12 +23,12 @@ public class AppDbContext : DbContext
   }
 
 
-  protected override void OnModelCreating(ModelBuilder modelBuilder)
+  protected override void OnModelCreating(ModelBuilder builder)
   {
-    base.OnModelCreating(modelBuilder);
+    base.OnModelCreating(builder);
 
     // Auto-generate Id on creation
-    modelBuilder.Entity<VisionSet>().Property(vs => vs.Id).ValueGeneratedOnAdd();
+    builder.Entity<VisionSet>().Property(vs => vs.Id).ValueGeneratedOnAdd();
 
     // Convert non-supported formats
     var valueComparer = new ValueComparer<ICollection<string>>(
@@ -35,17 +36,19 @@ public class AppDbContext : DbContext
       c => c.Aggregate(0, (a, v) => HashCode.Combine(a, v.GetHashCode())),
       c => c.ToList());
     
-    modelBuilder.Entity<VisionSet>().Property(vs => vs.Sources).HasConversion(
+    builder.Entity<VisionSet>().Property(vs => vs.Sources).HasConversion(
       v => JsonConvert.SerializeObject(v),
       v => JsonConvert.DeserializeObject<List<string>>(v)!,
       valueComparer
     );
-    modelBuilder.Entity<VisionSet>().Property(vs => vs.Models).HasConversion(
+    builder.Entity<VisionSet>().Property(vs => vs.Models).HasConversion(
       v => JsonConvert.SerializeObject(v),
       v => JsonConvert.DeserializeObject<List<string>>(v)!,
       valueComparer
     );
+
+    builder.ApplyConfiguration(new VisionSetConfiguration());
     
-    modelBuilder.ApplyConfigurationsFromAssembly(Assembly.GetExecutingAssembly());
+    builder.ApplyConfigurationsFromAssembly(Assembly.GetExecutingAssembly());
   }
 }
