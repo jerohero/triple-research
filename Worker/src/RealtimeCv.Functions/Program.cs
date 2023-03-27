@@ -5,6 +5,8 @@ using Microsoft.Extensions.Hosting;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using RealtimeCv.Core.Interfaces;
+using RealtimeCv.Functions.Interfaces;
+using RealtimeCv.Functions.Services;
 using RealtimeCv.Infrastructure;
 using RealtimeCv.Infrastructure.Data;
 using RealtimeCv.Infrastructure.Extensions;
@@ -29,5 +31,9 @@ class Program
         
         services.AddDbContext(hostContext.Configuration.GetValue<string>("SqlConnectionString"));
         services.AddRepositories();
+
+        services.AddScoped<IProjectService, ProjectService>();
+        
+        services.AddAutoMapper(typeof(AutomapperMaps));
       });
 }

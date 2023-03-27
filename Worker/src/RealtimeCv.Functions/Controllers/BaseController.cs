@@ -25,6 +25,24 @@ public abstract class BaseController
     
     return response;
   }
+
+  protected T? DeserializeJson<T>(Stream body) where T : class
+  {
+    return SerializeJson<T>(new StreamReader(body).ReadToEnd());
+  }
+  
+  private T? SerializeJson<T>(string json) where T : class
+  {
+    // simple deserializer method so we can handle faulty json objects in the Validator.  
+    try
+    {
+      return JsonConvert.DeserializeObject<T>(json);
+    }
+    catch
+    {
+      return null;
+    }
+  }
   
   // protected async Task<HttpResponseData> CreateErrorResponse(HttpRequestData requestData, HttpStatusCode statusCode, string message = "")
   // {
@@ -44,23 +62,6 @@ public abstract class BaseController
   //   string message = "";
   //   errors.ForEach(e => message += $"Property: {e.PropertyName}. Problem: {e.ErrorMessage}\n");
   //   return await CreateErrorResponse(requestData, statusCode, message);
-  // }
-  // protected T GetSerializedJsonObject<T>(string json) where T : class
-  // {
-  //   // simple deserializer method so we can handle faulty json objects in the Validator.  
-  //   try
-  //   {
-  //     return JsonConvert.DeserializeObject<T>(json);
-  //   }
-  //   catch
-  //   {
-  //     return null;
-  //   }
-  // }
-  //
-  // protected T GetDeserializedJsonObject<T>(Stream body) where T : class
-  // {
-  //   return GetSerializedJsonObject<T>(new StreamReader(body).ReadToEnd());
   // }
   // protected UserIdentityResult GetUserIdentityResult(FunctionContext context, HttpRequestData req, Role[] AuthorizedRoles = null)
   // {

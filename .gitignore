@@ -1,13 +1,15 @@
-Worker/CvWorker/bin/
-Worker/CvWorker/obj/
-Worker/CvWorker/packages/
+Worker/src/bin/
+Worker/src/obj/
+Worker/src/**/obj/
+Worker/src/packages/
 riderModule.iml
 _ReSharper.Caches/
+**/obj
 
 
 .idea/
 .vs/*
-Worker/CvWorker/Assets/
+Worker/src/Assets/
 
 inference/yolov7/models
 inference/yolov7/runs

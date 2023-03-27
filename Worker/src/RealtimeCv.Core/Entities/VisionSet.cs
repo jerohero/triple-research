@@ -4,9 +4,6 @@ using System.Text.Json.Serialization;
 
 namespace RealtimeCv.Core.Entities;
 
-/// <summary>
-/// 
-/// </summary>
 public class VisionSet : BaseEntity
 {
   public string Name { get; set; }

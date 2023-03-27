@@ -23,4 +23,8 @@
     <ProjectReference Include="..\RealtimeCv.Core\RealtimeCv.Core.csproj" />
   </ItemGroup>
 
+  <ItemGroup>
+    <Folder Include="Data\Migrations" />
+  </ItemGroup>
+
 </Project>

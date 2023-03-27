@@ -44,7 +44,7 @@ public class Program
             
             services.AddDbContext(hostContext.Configuration.GetConnectionString("DefaultConnection"));
             services.AddRepositories();
-            services.AddUrlCheckingServices();
+            services.AddConnectionServices();
             
             services.ConfigureJson();
 

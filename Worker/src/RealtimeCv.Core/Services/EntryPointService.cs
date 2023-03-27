@@ -19,7 +19,6 @@ public class EntryPointService : IEntryPointService
   private readonly IQueueSender _queueSender;
   private readonly IStreamService _streamService;
   private readonly IServiceLocator _serviceScopeFactoryLocator;
-  private readonly IUrlStatusChecker _urlStatusChecker;
   private readonly IPubSub _pubSub;
 
   public EntryPointService(ILoggerAdapter<EntryPointService> logger,
@@ -28,7 +27,6 @@ public class EntryPointService : IEntryPointService
       IQueueSender queueSender,
       IStreamService streamService,
       IServiceLocator serviceScopeFactoryLocator,
-      IUrlStatusChecker urlStatusChecker,
       IPubSub pubSub)
   {
     _logger = logger;
@@ -37,7 +35,6 @@ public class EntryPointService : IEntryPointService
     _queueSender = queueSender;
     _streamService = streamService;
     _serviceScopeFactoryLocator = serviceScopeFactoryLocator;
-    _urlStatusChecker = urlStatusChecker;
     _pubSub = pubSub;
   }
 

@@ -1,5 +1,5 @@
--- run from CleanArchitecture.Worker project folder
-dotnet ef database update -c appdbcontext -p ../CleanArchitecture.Infrastructure/CleanArchitecture.Infrastructure.csproj -s CleanArchitecture.Worker.csproj
+-- run from RealtimeCv.Worker project folder
+dotnet ef migrations add InitialModel --context appdbcontext -p ../RealtimeCv.Infrastructure/RealtimeCv.Infrastructure.csproj -s RealtimeCv.Worker.csproj -o Data/Migrations
 
 dotnet ef database update -c appdbcontext -p ../RealtimeCv.Infrastructure/RealtimeCv.Infrastructure.csproj -s RealtimeCv.Worker.csproj
 

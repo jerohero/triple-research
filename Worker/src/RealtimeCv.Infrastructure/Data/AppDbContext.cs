@@ -4,19 +4,16 @@ using System.Linq;
 using RealtimeCv.Core.Entities;
 using Microsoft.EntityFrameworkCore;
 using System.Reflection;
-using System.Text.Json;
 using Microsoft.EntityFrameworkCore.ChangeTracking;
-using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using Newtonsoft.Json;
-using RealtimeCv.Infrastructure.Data.Configurations;
-using JsonSerializer = Newtonsoft.Json.JsonSerializer;
+using RealtimeCv.Infrastructure.Data.Config;
 
 namespace RealtimeCv.Infrastructure.Data;
 
 public class AppDbContext : DbContext
 {
   public DbSet<VisionSet>? VisionSet { get; set; }
-  // public DbSet<UrlStatusHistory>? UrlStatusHistories { get; set; }
+  public DbSet<Project>? Project { get; set; }
 
   public AppDbContext(DbContextOptions<AppDbContext> options) : base(options)
   {
@@ -29,6 +26,7 @@ public class AppDbContext : DbContext
 
     // Auto-generate Id on creation
     builder.Entity<VisionSet>().Property(vs => vs.Id).ValueGeneratedOnAdd();
+    builder.Entity<Project>().Property(p => p.Id).ValueGeneratedOnAdd();
 
     // Convert non-supported formats
     var valueComparer = new ValueComparer<ICollection<string>>(
@@ -48,6 +46,7 @@ public class AppDbContext : DbContext
     );
 
     builder.ApplyConfiguration(new VisionSetConfiguration());
+    builder.ApplyConfiguration(new ProjectConfiguration());
     
     builder.ApplyConfigurationsFromAssembly(Assembly.GetExecutingAssembly());
   }

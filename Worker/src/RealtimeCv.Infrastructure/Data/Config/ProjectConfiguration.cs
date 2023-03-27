@@ -4,20 +4,16 @@ using Microsoft.EntityFrameworkCore.Metadata.Builders;
 
 namespace RealtimeCv.Infrastructure.Data.Config;
 
-public class VisionSetConfiguration : IEntityTypeConfiguration<VisionSet>
+public class ProjectConfiguration : IEntityTypeConfiguration<Project>
 {
-  public void Configure(EntityTypeBuilder<VisionSet> builder)
+  public void Configure(EntityTypeBuilder<Project> builder)
   {
-    builder.ToTable(nameof(VisionSet));
+    builder.ToTable(nameof(Project));
 
     builder.Property(vs => vs.Id)
       .IsRequired();
     builder.Property(vs => vs.Name)
       .IsRequired()
       .HasMaxLength(Constants.DEFAULT_MAX_STRING_LENGTH);
-    builder.Property(vs => vs.Models)
-      .IsRequired();
-    builder.Property(vs => vs.Sources)
-      .IsRequired();
   }
 }

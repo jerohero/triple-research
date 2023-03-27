@@ -19,8 +19,11 @@ public static class ServiceCollectionSetupExtensions
       options.UseSqlServer(connectionString)
     );
 
-  public static void AddRepositories(this IServiceCollection services) =>
-      services.AddScoped<IVisionSetRepository, VisionSetRepository>();
+  public static void AddRepositories(this IServiceCollection services)
+  {
+    services.AddScoped<IProjectRepository, ProjectRepository>();
+    services.AddScoped<IVisionSetRepository, VisionSetRepository>();
+  }
 
   public static void AddMessageQueues(this IServiceCollection services)
   {
@@ -35,9 +38,8 @@ public static class ServiceCollectionSetupExtensions
     services.AddTransient<IStreamService, StreamService>();
   }
 
-  public static void AddUrlCheckingServices(this IServiceCollection services)
+  public static void AddConnectionServices(this IServiceCollection services)
   {
-    services.AddTransient<IUrlStatusChecker, UrlStatusChecker>();
     services.AddTransient<IHttpService, HttpService>();
   }
   
