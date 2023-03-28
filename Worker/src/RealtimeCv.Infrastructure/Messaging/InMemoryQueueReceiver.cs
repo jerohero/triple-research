@@ -10,7 +10,7 @@ namespace RealtimeCv.Infrastructure.Messaging;
 /// </summary>
 public class InMemoryQueueReceiver : IQueueReceiver
 {
-    public static Queue<string> MessageQueue = new Queue<string>();
+    public static readonly Queue<string> MessageQueue = new();
 
     public async Task<string?> GetMessageFromQueue(string queueName)
     {

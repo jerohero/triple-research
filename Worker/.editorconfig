@@ -161,15 +161,8 @@ dotnet_naming_style.first_upper.capitalization = first_word_upper
 # prefix_interface_interface_with_i - Interfaces must be PascalCase and the first character of an interface must be an 'I'
 dotnet_naming_style.prefix_interface_interface_with_i.capitalization = pascal_case
 dotnet_naming_style.prefix_interface_interface_with_i.required_prefix = I
-# suffix_with_async - Async methods must end with 'Async'
-dotnet_naming_style.suffix_with_async.capitalization = pascal_case
-dotnet_naming_style.suffix_with_async.required_suffix = Async
 
 # Naming Rules
-# Async methods must end with 'Async' (+ must be as first due to bugs)
-dotnet_naming_rule.async_methods_must_end_with_async.severity = error
-dotnet_naming_rule.async_methods_must_end_with_async.symbols = async_methods
-dotnet_naming_rule.async_methods_must_end_with_async.style = suffix_with_async
 # Constant fields must be PascalCase
 dotnet_naming_rule.constant_fields_must_be_pascal_case.severity = error
 dotnet_naming_rule.constant_fields_must_be_pascal_case.symbols = constant_fields

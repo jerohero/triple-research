@@ -38,7 +38,7 @@ public class EntryPointService : IEntryPointService
         _pubSub = pubSub;
     }
 
-    public async Task ExecuteAsync()
+    public async Task Execute()
     {
         _logger.LogInformation("{service} running at: {time}", nameof(EntryPointService), DateTimeOffset.Now);
 
@@ -86,7 +86,7 @@ public class EntryPointService : IEntryPointService
 #pragma warning disable CA1031 // Do not catch general exception types
         catch (Exception ex)
         {
-            _logger.LogError(ex, $"{nameof(EntryPointService)}.{nameof(ExecuteAsync)} threw an exception.");
+            _logger.LogError(ex, $"{nameof(EntryPointService)}.{nameof(Execute)} threw an exception.");
             // TODO: Decide if you want to re-throw which will crash the worker service
             //throw;
         }

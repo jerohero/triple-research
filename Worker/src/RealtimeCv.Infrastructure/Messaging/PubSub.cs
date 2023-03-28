@@ -3,7 +3,6 @@ using System.Threading.Tasks;
 using Azure.Core;
 using Azure.Messaging.WebPubSub;
 using Microsoft.Extensions.Configuration;
-using Microsoft.Extensions.Logging;
 using RealtimeCv.Core.Interfaces;
 
 namespace RealtimeCv.Infrastructure.Messaging;

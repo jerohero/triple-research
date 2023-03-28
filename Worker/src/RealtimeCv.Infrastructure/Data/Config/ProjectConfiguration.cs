@@ -14,6 +14,6 @@ public class ProjectConfiguration : IEntityTypeConfiguration<Project>
           .IsRequired();
         builder.Property(vs => vs.Name)
           .IsRequired()
-          .HasMaxLength(Constants.DEFAULT_MAX_STRING_LENGTH);
+          .HasMaxLength(Constants.DefaultMaxStringLength);
     }
 }

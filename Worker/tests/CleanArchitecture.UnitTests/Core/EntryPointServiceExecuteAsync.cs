@@ -59,7 +59,7 @@ public class EntryPointServiceExecuteAsync
         queueReceiver.Setup(qr => qr.GetMessageFromQueue(It.IsAny<string>()))
             .ThrowsAsync(new Exception("Boom!"));
 
-        await service.ExecuteAsync();
+        await service.Execute();
 
         logger.Verify(l => l.LogError(It.IsAny<Exception>(), It.IsAny<string>()), Times.Once);
     }
@@ -70,7 +70,7 @@ public class EntryPointServiceExecuteAsync
         // example of getting inside of the CreateScope
         var (service, _, queueReceiver, _, _) = Factory();
 
-        await service.ExecuteAsync();
+        await service.Execute();
 
         queueReceiver.Verify(qr => qr.GetMessageFromQueue("testQueue"), Times.Once);
     }
@@ -81,14 +81,14 @@ public class EntryPointServiceExecuteAsync
         // simulate multiple runs, but doesn't actually make the disposed object exception happen.
         // avoid {"Cannot access a disposed object.\r\nObject name: 'IServiceProvider'."}
         var (service, _, _, _, _) = Factory();
-        await service.ExecuteAsync();
-        await service.ExecuteAsync();
-        await service.ExecuteAsync();
-        await service.ExecuteAsync();
+        await service.Execute();
+        await service.Execute();
+        await service.Execute();
+        await service.Execute();
         var (service2, _, _, _, _) = Factory();
-        await service2.ExecuteAsync();
+        await service2.Execute();
         var (service3, _, _, _, _) = Factory();
-        await service3.ExecuteAsync();
+        await service3.Execute();
 
         Assert.True(true);
     }

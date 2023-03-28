@@ -31,7 +31,7 @@ public class Worker : BackgroundService
         _logger.LogInformation("RealtimeCv.Worker service starting at: {time}", DateTimeOffset.Now);
         while (!stoppingToken.IsCancellationRequested)
         {
-            await _entryPointService.ExecuteAsync();
+            await _entryPointService.Execute();
             await Task.Delay(_settings.DelayMilliseconds, stoppingToken);
         }
         _logger.LogInformation("RealtimeCv.Worker service stopping at: {time}", DateTimeOffset.Now);

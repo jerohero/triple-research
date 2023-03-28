@@ -1,5 +1,4 @@
-﻿using System.Collections.Generic;
-using System.Threading.Tasks;
+﻿using System.Threading.Tasks;
 using Ardalis.Result;
 using Microsoft.Azure.Functions.Worker;
 using Microsoft.Azure.Functions.Worker.Http;
@@ -27,7 +26,7 @@ public class ProjectController : BaseController
     public async Task<HttpResponseData> GetProject(
       [HttpTrigger(AuthorizationLevel.Anonymous, "get", Route = "project/{projectId}")] HttpRequestData req, int projectId)
     {
-        Result<ProjectDto> result = await _projectService.GetProject(projectId);
+        var result = await _projectService.GetProject(projectId);
 
         return await ResultToResponse(result, req);
     }
@@ -36,7 +35,7 @@ public class ProjectController : BaseController
     public async Task<HttpResponseData> GetProjects(
       [HttpTrigger(AuthorizationLevel.Anonymous, "get", Route = "project")] HttpRequestData req)
     {
-        Result<List<ProjectDto>> result = await _projectService.GetProjects();
+        var result = await _projectService.GetProjects();
 
         return await ResultToResponse(result, req);
     }
@@ -45,9 +44,9 @@ public class ProjectController : BaseController
     public async Task<HttpResponseData> CreateProject(
       [HttpTrigger(AuthorizationLevel.Anonymous, "post", Route = "project")] HttpRequestData req)
     {
-        ProjectCreateDto? projectCreateDto = DeserializeJson<ProjectCreateDto>(req.Body);
+        var projectCreateDto = DeserializeJson<ProjectCreateDto>(req.Body);
 
-        Result<ProjectDto> result = await _projectService.CreateProject(projectCreateDto);
+        var result = await _projectService.CreateProject(projectCreateDto);
 
         return await ResultToResponse(result, req);
     }
@@ -56,9 +55,9 @@ public class ProjectController : BaseController
     public async Task<HttpResponseData> UpdateProject(
       [HttpTrigger(AuthorizationLevel.Anonymous, "put", Route = "project")] HttpRequestData req)
     {
-        ProjectDto? projectDto = DeserializeJson<ProjectDto>(req.Body);
+        var projectDto = DeserializeJson<ProjectDto>(req.Body);
 
-        Result<ProjectDto> result = await _projectService.UpdateProject(projectDto);
+        var result = await _projectService.UpdateProject(projectDto);
 
         return await ResultToResponse(result, req);
     }

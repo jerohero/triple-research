@@ -19,7 +19,7 @@ public class HttpService : IHttpService
     {
         using var client = new HttpClient();
 
-        HttpResponseMessage result = await client.GetAsync(url);
+        var result = await client.GetAsync(url);
 
         return (int)result.StatusCode;
     }
@@ -42,7 +42,7 @@ public class HttpService : IHttpService
             { new ByteArrayContent(bits), "file", "upload.png" }
         };
 
-        HttpResponseMessage response = await client.PostAsync(url, content);
+        var response = await client.PostAsync(url, content);
 
         return response;
     }
@@ -51,7 +51,7 @@ public class HttpService : IHttpService
     {
         using var client = new HttpClient();
 
-        HttpResponseMessage response = await client.PostAsync(url, null);
+        var response = await client.PostAsync(url, null);
 
         var responseString = await response.Content.ReadAsStringAsync();
     }

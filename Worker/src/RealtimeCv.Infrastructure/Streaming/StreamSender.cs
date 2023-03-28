@@ -61,11 +61,11 @@ public class StreamSender : IStreamSender, IDisposable
         {
             frameCount++;
 
-            DateTime now = DateTime.UtcNow;
+            var now = DateTime.UtcNow;
 
             try
             {
-                HttpResponseMessage res = await _httpService.PostFile(_targetUrl, _streamReceiver.Frame.ToBytes());
+                var res = await _httpService.PostFile(_targetUrl, _streamReceiver.Frame.ToBytes());
                 var results = await res.Content.ReadFromJsonAsync<object>();
 
                 await _pubSub.Send(results);

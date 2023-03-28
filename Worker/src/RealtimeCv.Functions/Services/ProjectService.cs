@@ -32,7 +32,7 @@ public class ProjectService : IProjectService
 
     public async Task<Result<ProjectDto>> GetProject(int projectId)
     {
-        Project? project = await _projectRepository.GetByIdAsync(projectId);
+        var project = await _projectRepository.GetByIdAsync(projectId);
 
         return project is null
           ? Result<ProjectDto>.NotFound($"Project with id {projectId} does not exist")
@@ -41,7 +41,7 @@ public class ProjectService : IProjectService
 
     public async Task<Result<List<ProjectDto>>> GetProjects()
     {
-        List<Project> projects = await _projectRepository.ListAsync();
+        var projects = await _projectRepository.ListAsync();
 
         return new Result<List<ProjectDto>>(_mapper.Map<List<ProjectDto>>(projects));
     }
@@ -49,28 +49,28 @@ public class ProjectService : IProjectService
     public async Task<Result<ProjectDto>> CreateProject(ProjectCreateDto? createDto)
     {
         // Don't want to use the dammit operator here, but the method requires a non-null value even though the validator will catch it
-        ValidationResult validationResult = await new ProjectCreateDtoValidator().ValidateAsync(createDto!);
+        var validationResult = await new ProjectCreateDtoValidator().ValidateAsync(createDto!);
 
         if (createDto is null || validationResult.Errors.Any())
         {
             return Result<ProjectDto>.Invalid(validationResult.AsErrors());
         }
 
-        Project project = await _projectRepository.AddAsync(_mapper.Map<Project>(createDto));
+        var project = await _projectRepository.AddAsync(_mapper.Map<Project>(createDto));
 
         return new Result<ProjectDto>(_mapper.Map<ProjectDto>(project));
     }
 
     public async Task<Result<ProjectDto>> UpdateProject(ProjectDto? updateDto)
     {
-        ValidationResult validationResult = await new ProjectDtoValidator().ValidateAsync(updateDto!);
+        var validationResult = await new ProjectDtoValidator().ValidateAsync(updateDto!);
 
         if (updateDto is null || validationResult.Errors.Any())
         {
             return Result<ProjectDto>.Invalid(validationResult.AsErrors());
         }
 
-        Project? project = await _projectRepository.GetByIdAsync(updateDto.Id);
+        var project = await _projectRepository.GetByIdAsync(updateDto.Id);
 
         if (project is null)
         {
@@ -86,7 +86,7 @@ public class ProjectService : IProjectService
 
     public async Task<Result> DeleteProject(int projectId)
     {
-        Project? project = await _projectRepository.GetByIdAsync(projectId);
+        var project = await _projectRepository.GetByIdAsync(projectId);
 
         if (project is null)
         {

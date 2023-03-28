@@ -1,8 +1,6 @@
-﻿using Microsoft.Extensions.Azure;
-using Microsoft.Extensions.Configuration;
+﻿using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
-using Newtonsoft.Json;
 using RealtimeCv.Core.Interfaces;
 using RealtimeCv.Core.Services;
 using RealtimeCv.Core.Settings;
@@ -28,7 +26,7 @@ public class Program
         host.RunAsync();
     }
 
-    public static IHostBuilder CreateHostBuilder(string[] args) =>
+    private static IHostBuilder CreateHostBuilder(string[] args) =>
         Host.CreateDefaultBuilder(args)
             .ConfigureServices((hostContext, services) =>
             {

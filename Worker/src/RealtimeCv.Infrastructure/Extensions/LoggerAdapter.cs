@@ -2,7 +2,7 @@
 using Microsoft.Extensions.Logging;
 using RealtimeCv.Core.Interfaces;
 
-namespace RealtimeCv.Infrastructure;
+namespace RealtimeCv.Infrastructure.Extensions;
 
 /// <summary>
 /// An ILoggerAdapter implementation that uses Microsoft.Extensions.Logging
