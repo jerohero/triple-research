@@ -14,40 +14,40 @@ namespace RealtimeCv.Infrastructure.Extensions;
 
 public static class ServiceCollectionSetupExtensions
 {
-  public static void AddDbContext(this IServiceCollection services, string? connectionString) =>
-    services.AddDbContext<AppDbContext>(options =>
-      options.UseSqlServer(connectionString)
-    );
+    public static void AddDbContext(this IServiceCollection services, string? connectionString) =>
+      services.AddDbContext<AppDbContext>(options =>
+        options.UseSqlServer(connectionString)
+      );
 
-  public static void AddRepositories(this IServiceCollection services)
-  {
-    services.AddScoped<IProjectRepository, ProjectRepository>();
-    services.AddScoped<IVisionSetRepository, VisionSetRepository>();
-  }
-
-  public static void AddMessageQueues(this IServiceCollection services)
-  {
-    services.AddSingleton<IQueueReceiver, InMemoryQueueReceiver>();
-    services.AddSingleton<IQueueSender, InMemoryQueueSender>();
-  }
-
-  public static void AddStreamHandlers(this IServiceCollection services)
-  {
-    services.AddSingleton<IStreamReceiver, StreamReceiver>();
-    services.AddSingleton<IStreamSender, StreamSender>();
-    services.AddTransient<IStreamService, StreamService>();
-  }
-
-  public static void AddConnectionServices(this IServiceCollection services)
-  {
-    services.AddTransient<IHttpService, HttpService>();
-  }
-
-  public static void ConfigureJson(this IServiceCollection services)
-  {
-    services.Configure<JsonSerializerSettings>(options =>
+    public static void AddRepositories(this IServiceCollection services)
     {
-      options.ReferenceLoopHandling = ReferenceLoopHandling.Ignore;
-    });
-  }
+        services.AddScoped<IProjectRepository, ProjectRepository>();
+        services.AddScoped<IVisionSetRepository, VisionSetRepository>();
+    }
+
+    public static void AddMessageQueues(this IServiceCollection services)
+    {
+        services.AddSingleton<IQueueReceiver, InMemoryQueueReceiver>();
+        services.AddSingleton<IQueueSender, InMemoryQueueSender>();
+    }
+
+    public static void AddStreamHandlers(this IServiceCollection services)
+    {
+        services.AddSingleton<IStreamReceiver, StreamReceiver>();
+        services.AddSingleton<IStreamSender, StreamSender>();
+        services.AddTransient<IStreamService, StreamService>();
+    }
+
+    public static void AddConnectionServices(this IServiceCollection services)
+    {
+        services.AddTransient<IHttpService, HttpService>();
+    }
+
+    public static void ConfigureJson(this IServiceCollection services)
+    {
+        services.Configure<JsonSerializerSettings>(options =>
+        {
+            options.ReferenceLoopHandling = ReferenceLoopHandling.Ignore;
+        });
+    }
 }

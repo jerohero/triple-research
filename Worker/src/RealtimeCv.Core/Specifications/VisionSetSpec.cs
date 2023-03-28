@@ -4,8 +4,8 @@ namespace RealtimeCv.Core.Specifications;
 
 public class VisionSetSpec : Specification<Entities.VisionSet>
 {
-  public VisionSetSpec()
-  {
-    Query.Take(10);
-  }
+    public VisionSetSpec()
+    {
+        Query.Take(10);
+    }
 }

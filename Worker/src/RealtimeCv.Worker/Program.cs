@@ -14,52 +14,52 @@ namespace RealtimeCv.Worker;
 
 public class Program
 {
-  public static void Main(string[] args)
-  {
-    var host = CreateHostBuilder(args).Build();
-
-    // seed some queue messages
-    var queueSender = (IQueueSender)host.Services.GetRequiredService(typeof(IQueueSender));
-    for (int i = 0; i < 10; i++)
+    public static void Main(string[] args)
     {
-      queueSender.SendMessageToQueue("https://google.com", "urlcheck");
+        var host = CreateHostBuilder(args).Build();
+
+        // seed some queue messages
+        var queueSender = (IQueueSender)host.Services.GetRequiredService(typeof(IQueueSender));
+        for (var i = 0; i < 10; i++)
+        {
+            queueSender.SendMessageToQueue("https://google.com", "urlcheck");
+        }
+
+        host.RunAsync();
     }
 
-    host.RunAsync();
-  }
+    public static IHostBuilder CreateHostBuilder(string[] args) =>
+        Host.CreateDefaultBuilder(args)
+            .ConfigureServices((hostContext, services) =>
+            {
+                services.AddSingleton(typeof(ILoggerAdapter<>), typeof(LoggerAdapter<>));
+                services.AddSingleton<IEntryPointService, EntryPointService>();
+                services.AddSingleton<IServiceLocator, ServiceScopeFactoryLocator>();
 
-  public static IHostBuilder CreateHostBuilder(string[] args) =>
-      Host.CreateDefaultBuilder(args)
-          .ConfigureServices((hostContext, services) =>
-          {
-            services.AddSingleton(typeof(ILoggerAdapter<>), typeof(LoggerAdapter<>));
-            services.AddSingleton<IEntryPointService, EntryPointService>();
-            services.AddSingleton<IServiceLocator, ServiceScopeFactoryLocator>();
+                // Infrastructure.ContainerSetup
+                services.AddMessageQueues();
+                services.AddStreamHandlers();
 
-            // Infrastructure.ContainerSetup
-            services.AddMessageQueues();
-            services.AddStreamHandlers();
+                services.AddSingleton<IPubSub, PubSub>();
 
-            services.AddSingleton<IPubSub, PubSub>();
+                services.AddDbContext(hostContext.Configuration.GetConnectionString("DefaultConnection"));
+                services.AddRepositories();
+                services.AddConnectionServices();
 
-            services.AddDbContext(hostContext.Configuration.GetConnectionString("DefaultConnection"));
-            services.AddRepositories();
-            services.AddConnectionServices();
+                services.ConfigureJson();
 
-            services.ConfigureJson();
+                var workerSettings = new WorkerSettings();
+                hostContext.Configuration.Bind(nameof(WorkerSettings), workerSettings);
+                services.AddSingleton(workerSettings);
 
-            var workerSettings = new WorkerSettings();
-            hostContext.Configuration.Bind(nameof(WorkerSettings), workerSettings);
-            services.AddSingleton(workerSettings);
+                var entryPointSettings = new EntryPointSettings();
+                hostContext.Configuration.Bind(nameof(EntryPointSettings), entryPointSettings);
+                services.AddSingleton(entryPointSettings);
 
-            var entryPointSettings = new EntryPointSettings();
-            hostContext.Configuration.Bind(nameof(EntryPointSettings), entryPointSettings);
-            services.AddSingleton(entryPointSettings);
+                var azureSettings = new AzureSettings();
+                hostContext.Configuration.Bind(nameof(AzureSettings), azureSettings);
+                services.AddSingleton(azureSettings);
 
-            var azureSettings = new AzureSettings();
-            hostContext.Configuration.Bind(nameof(AzureSettings), azureSettings);
-            services.AddSingleton(azureSettings);
-
-            services.AddHostedService<Worker>();
-          });
+                services.AddHostedService<Worker>();
+            });
 }

@@ -15,43 +15,44 @@ namespace RealtimeCv.Infrastructure.Http;
 /// </summary>
 public class HttpService : IHttpService
 {
-  public async Task<int> GetUrlResponseStatusCodeAsync(string url)
-  {
-    using HttpClient client = new HttpClient();
+    public async Task<int> GetUrlResponseStatusCode(string url)
+    {
+        using var client = new HttpClient();
 
-    HttpResponseMessage result = await client.GetAsync(url);
+        HttpResponseMessage result = await client.GetAsync(url);
 
-    return (int)result.StatusCode;
-  }
+        return (int)result.StatusCode;
+    }
 
-  public async Task<HttpResponseMessage> PostFileAsync(string url, byte[] file, string name = "file")
-  {
-    using HttpClient client = new HttpClient();
+    public async Task<HttpResponseMessage> PostFile(string url, byte[] file, string name = "file")
+    {
+        using var client = new HttpClient();
 
-    using MemoryStream ms = new MemoryStream();
+        using var ms = new MemoryStream();
 
-    Image img = Image.Load<Rgba32>(file);
-    await img.SaveAsJpegAsync(ms);
+        Image img = Image.Load<Rgba32>(file);
+        await img.SaveAsJpegAsync(ms);
 
-    byte[] bits = ms.ToArray();
+        var bits = ms.ToArray();
 
-    using var content = new MultipartFormDataContent(
-      "Upload----" + DateTime.Now.ToString(CultureInfo.InvariantCulture)
-    );
+        using var content = new MultipartFormDataContent(
+          "Upload----" + DateTime.Now.ToString(CultureInfo.InvariantCulture)
+        )
+        {
+            { new ByteArrayContent(bits), "file", "upload.png" }
+        };
 
-    content.Add(new ByteArrayContent(bits), "file", "upload.png");
+        HttpResponseMessage response = await client.PostAsync(url, content);
 
-    HttpResponseMessage response = await client.PostAsync(url, content);
+        return response;
+    }
 
-    return response;
-  }
+    public async Task Post(string url)
+    {
+        using var client = new HttpClient();
 
-  public async Task PostAsync(string url)
-  {
-    using HttpClient client = new HttpClient();
+        HttpResponseMessage response = await client.PostAsync(url, null);
 
-    HttpResponseMessage response = await client.PostAsync(url, null);
-
-    string responseString = await response.Content.ReadAsStringAsync();
-  }
+        var responseString = await response.Content.ReadAsStringAsync();
+    }
 }

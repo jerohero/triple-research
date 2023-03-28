@@ -4,11 +4,11 @@ namespace RealtimeCv.Functions.Models;
 
 public class ProjectCreateDto
 {
-  [JsonRequired]
-  public string Name { get; set; }
+    [JsonRequired]
+    public string Name { get; set; }
 
-  public ProjectCreateDto(string name)
-  {
-    Name = name;
-  }
+    public ProjectCreateDto(string name)
+    {
+        Name = name;
+    }
 }

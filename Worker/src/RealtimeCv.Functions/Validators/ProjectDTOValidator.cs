@@ -6,24 +6,24 @@ namespace RealtimeCv.Functions.Validators;
 
 public class ProjectDtoValidator : AbstractValidator<ProjectDto>
 {
-  public ProjectDtoValidator()
-  {
-    RuleFor(x => x.Id).GreaterThan(0);
-
-    RuleFor(x => x.Name).MinimumLength(1).MaximumLength(1000);
-  }
-
-  protected override bool PreValidate(ValidationContext<ProjectDto> context, ValidationResult result)
-  {
-    if (context.InstanceToValidate is not null)
+    public ProjectDtoValidator()
     {
-      return true;
+        RuleFor(x => x.Id).GreaterThan(0);
+
+        RuleFor(x => x.Name).MinimumLength(1).MaximumLength(1000);
     }
 
-    result.Errors.Add(
-      new ValidationFailure("Missing DTO", "No valid JSON format supplied")
-    );
+    protected override bool PreValidate(ValidationContext<ProjectDto> context, ValidationResult result)
+    {
+        if (context.InstanceToValidate is not null)
+        {
+            return true;
+        }
 
-    return false;
-  }
+        result.Errors.Add(
+          new ValidationFailure("Missing DTO", "No valid JSON format supplied")
+        );
+
+        return false;
+    }
 }

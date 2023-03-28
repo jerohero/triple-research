@@ -4,5 +4,5 @@ namespace RealtimeCv.Core.Interfaces;
 
 public interface IQueueSender
 {
-  Task SendMessageToQueue(string message, string queueName);
+    Task SendMessageToQueue(string message, string queueName);
 }

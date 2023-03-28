@@ -8,9 +8,9 @@ namespace RealtimeCv.Infrastructure.Messaging;
 /// </summary>
 public class InMemoryQueueSender : IQueueSender
 {
-  public async Task SendMessageToQueue(string message, string queueName)
-  {
-    await Task.CompletedTask; // just so async is allowed
-    InMemoryQueueReceiver.MessageQueue.Enqueue(message);
-  }
+    public async Task SendMessageToQueue(string message, string queueName)
+    {
+        await Task.CompletedTask; // just so async is allowed
+        InMemoryQueueReceiver.MessageQueue.Enqueue(message);
+    }
 }

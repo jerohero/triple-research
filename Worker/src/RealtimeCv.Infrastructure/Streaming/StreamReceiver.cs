@@ -11,112 +11,112 @@ namespace RealtimeCv.Infrastructure.Streaming;
 /// </summary>
 public class StreamReceiver : IStreamReceiver, IDisposable
 {
-  public Mat Frame { get; private set; }
-  public event Action OnConnectionEstablished;
-  public event Action OnConnectionBroken;
+    public Mat Frame { get; private set; }
+    public event Action OnConnectionEstablished;
+    public event Action OnConnectionBroken;
 
-  private const int DefaultFps = 30;
-  private readonly ILoggerAdapter<StreamReceiver> _logger;
-  private string? _source;
-  private int? _fps;
-  private VideoCapture? _capture;
-  private Thread? _updateThread;
-  private Thread? _pollThread;
+    private const int DefaultFps = 30;
+    private readonly ILoggerAdapter<StreamReceiver> _logger;
+    private string? _source;
+    private int? _fps;
+    private VideoCapture? _capture;
+    private Thread? _updateThread;
+    private Thread? _pollThread;
 
-  public StreamReceiver(ILoggerAdapter<StreamReceiver> logger)
-  {
-    _logger = logger;
-    Frame = new Mat();
-
-    OnConnectionEstablished += ReadStream;
-    OnConnectionBroken += PollStream;
-  }
-
-  public void ConnectStreamBySource(string source)
-  {
-    Guard.Against.NullOrWhiteSpace(source, nameof(source));
-
-    _source = source;
-
-    _pollThread = new Thread(PollStream)
+    public StreamReceiver(ILoggerAdapter<StreamReceiver> logger)
     {
-      IsBackground = true
-    };
+        _logger = logger;
+        Frame = new Mat();
 
-    _pollThread.Start();
-  }
-
-  private void PollStream()
-  {
-    if (_source is null)
-    {
-      _logger.LogInformation("Source is not defined");
-      return;
+        OnConnectionEstablished += ReadStream;
+        OnConnectionBroken += PollStream;
     }
 
-    VideoCapture capture = new(_source);
-
-    while (!capture.IsOpened())
+    public void ConnectStreamBySource(string source)
     {
-      _logger.LogInformation($"Failed to open {_source}. Retrying in 10 sec..");
-      Thread.Sleep(1000 * 5);
-      capture = new VideoCapture(_source);
+        Guard.Against.NullOrWhiteSpace(source, nameof(source));
+
+        _source = source;
+
+        _pollThread = new Thread(PollStream)
+        {
+            IsBackground = true
+        };
+
+        _pollThread.Start();
     }
 
-    capture.Set(VideoCaptureProperties.BufferSize, 2);
-    _capture = capture;
-
-    OnConnectionEstablished();
-  }
-
-  private void ReadStream()
-  {
-    if (_capture is null || !_capture.IsOpened())
+    private void PollStream()
     {
-      _logger.LogInformation("Stream is inactive");
-      return;
+        if (_source is null)
+        {
+            _logger.LogInformation("Source is not defined");
+            return;
+        }
+
+        VideoCapture capture = new(_source);
+
+        while (!capture.IsOpened())
+        {
+            _logger.LogInformation($"Failed to open {_source}. Retrying in 10 sec..");
+            Thread.Sleep(1000 * 5);
+            capture = new VideoCapture(_source);
+        }
+
+        capture.Set(VideoCaptureProperties.BufferSize, 2);
+        _capture = capture;
+
+        OnConnectionEstablished();
     }
 
-    _fps = (int)_capture.Get(VideoCaptureProperties.Fps);
-    _capture.Read(Frame); // guarantee first frame
-
-    _updateThread = new Thread(Update)
+    private void ReadStream()
     {
-      IsBackground = true
-    };
+        if (_capture is null || !_capture.IsOpened())
+        {
+            _logger.LogInformation("Stream is inactive");
+            return;
+        }
 
-    _updateThread.Start();
-  }
+        _fps = (int)_capture.Get(VideoCaptureProperties.Fps);
+        _capture.Read(Frame); // guarantee first frame
 
-  private void Update()
-  {
-    // Read next stream frame in a daemon thread
-    while (_capture is not null && _capture.IsOpened())
-    {
-      _capture.Grab();
+        _updateThread = new Thread(Update)
+        {
+            IsBackground = true
+        };
 
-      Mat frame = new();
-      _capture.Retrieve(frame);
-      Frame = frame;
-
-      if (frame.Empty())
-      {
-        break;
-      }
-
-      Thread.Sleep((int)TimeSpan.FromSeconds(1 / _fps ?? DefaultFps).TotalMilliseconds); // wait time
+        _updateThread.Start();
     }
 
-    _logger.LogInformation("Connection broken");
+    private void Update()
+    {
+        // Read next stream frame in a daemon thread
+        while (_capture is not null && _capture.IsOpened())
+        {
+            _capture.Grab();
 
-    OnConnectionBroken();
-  }
+            Mat frame = new();
+            _capture.Retrieve(frame);
+            Frame = frame;
 
-  public void Dispose()
-  {
-    _updateThread?.Join();
-    _pollThread?.Join();
-    _capture?.Dispose();
-    Frame.Dispose();
-  }
+            if (frame.Empty())
+            {
+                break;
+            }
+
+            Thread.Sleep((int)TimeSpan.FromSeconds(1 / _fps ?? DefaultFps).TotalMilliseconds); // wait time
+        }
+
+        _logger.LogInformation("Connection broken");
+
+        OnConnectionBroken();
+    }
+
+    public void Dispose()
+    {
+        _updateThread?.Join();
+        _pollThread?.Join();
+        _capture?.Dispose();
+        Frame.Dispose();
+    }
 }

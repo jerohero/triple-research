@@ -6,10 +6,10 @@ namespace RealtimeCv.Infrastructure.Data.Repositories;
 
 public class VisionSetRepository : RepositoryBase<VisionSet>, IVisionSetRepository
 {
-  private readonly AppDbContext _dbContext;
+    private readonly AppDbContext _dbContext;
 
-  public VisionSetRepository(AppDbContext dbContext) : base(dbContext)
-  {
-    _dbContext = dbContext;
-  }
+    public VisionSetRepository(AppDbContext dbContext) : base(dbContext)
+    {
+        _dbContext = dbContext;
+    }
 }

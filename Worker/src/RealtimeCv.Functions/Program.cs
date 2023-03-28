@@ -13,27 +13,27 @@ using RealtimeCv.Infrastructure.Extensions;
 
 namespace RealtimeCv.Functions;
 
-class Program
+internal class Program
 {
-  public static async Task Main(string[] args)
-  {
-    var host = CreateHostBuilder(args).Build();
+    public static async Task Main(string[] args)
+    {
+        var host = CreateHostBuilder(args).Build();
 
-    await host.RunAsync();
-  }
+        await host.RunAsync();
+    }
 
-  public static IHostBuilder CreateHostBuilder(string[] args) =>
-    Host.CreateDefaultBuilder(args)
-      .ConfigureFunctionsWorkerDefaults()
-      .ConfigureServices((hostContext, services) =>
-      {
-        services.AddSingleton(typeof(ILoggerAdapter<>), typeof(LoggerAdapter<>));
+    public static IHostBuilder CreateHostBuilder(string[] args) =>
+      Host.CreateDefaultBuilder(args)
+        .ConfigureFunctionsWorkerDefaults()
+        .ConfigureServices((hostContext, services) =>
+        {
+            services.AddSingleton(typeof(ILoggerAdapter<>), typeof(LoggerAdapter<>));
 
-        services.AddDbContext(hostContext.Configuration.GetValue<string>("SqlConnectionString"));
-        services.AddRepositories();
+            services.AddDbContext(hostContext.Configuration.GetValue<string>("SqlConnectionString"));
+            services.AddRepositories();
 
-        services.AddScoped<IProjectService, ProjectService>();
+            services.AddScoped<IProjectService, ProjectService>();
 
-        services.AddAutoMapper(typeof(AutomapperMaps));
-      });
+            services.AddAutoMapper(typeof(AutomapperMaps));
+        });
 }

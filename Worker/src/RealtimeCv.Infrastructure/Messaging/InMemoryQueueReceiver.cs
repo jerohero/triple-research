@@ -10,13 +10,17 @@ namespace RealtimeCv.Infrastructure.Messaging;
 /// </summary>
 public class InMemoryQueueReceiver : IQueueReceiver
 {
-  public static Queue<string> MessageQueue = new Queue<string>();
+    public static Queue<string> MessageQueue = new Queue<string>();
 
-  public async Task<string?> GetMessageFromQueue(string queueName)
-  {
-    await Task.CompletedTask; // just so async is allowed
-    Guard.Against.NullOrWhiteSpace(queueName, nameof(queueName));
-    if (MessageQueue.Count == 0) return null;
-    return MessageQueue.Dequeue();
-  }
+    public async Task<string?> GetMessageFromQueue(string queueName)
+    {
+        await Task.CompletedTask; // just so async is allowed
+        Guard.Against.NullOrWhiteSpace(queueName, nameof(queueName));
+        if (MessageQueue.Count == 0)
+        {
+            return null;
+        }
+
+        return MessageQueue.Dequeue();
+    }
 }

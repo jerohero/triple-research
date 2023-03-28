@@ -5,6 +5,6 @@ namespace RealtimeCv.Core.Services;
 
 public interface IServiceLocator : IDisposable
 {
-  IServiceScope CreateScope();
-  T Get<T>();
+    IServiceScope CreateScope();
+    T Get<T>();
 }

@@ -6,6 +6,6 @@ namespace RealtimeCv.Core.Interfaces;
 // https://ardalis.com/testing-logging-in-aspnet-core
 public interface ILoggerAdapter<T>
 {
-  void LogInformation(string message, params object[] args);
-  void LogError(Exception ex, string message, params object[] args);
+    void LogInformation(string message, params object[] args);
+    void LogError(Exception ex, string message, params object[] args);
 }

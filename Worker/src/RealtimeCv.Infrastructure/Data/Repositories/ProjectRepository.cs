@@ -6,10 +6,10 @@ namespace RealtimeCv.Infrastructure.Data.Repositories;
 
 public class ProjectRepository : RepositoryBase<Project>, IProjectRepository
 {
-  private readonly AppDbContext _dbContext;
+    private readonly AppDbContext _dbContext;
 
-  public ProjectRepository(AppDbContext dbContext) : base(dbContext)
-  {
-    _dbContext = dbContext;
-  }
+    public ProjectRepository(AppDbContext dbContext) : base(dbContext)
+    {
+        _dbContext = dbContext;
+    }
 }

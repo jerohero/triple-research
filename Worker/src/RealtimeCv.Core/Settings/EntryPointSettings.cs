@@ -5,6 +5,6 @@
 /// </summary>
 public class EntryPointSettings
 {
-  public string ReceivingQueueName { get; set; }
-  public string SendingQueueName { get; set; }
+    public string ReceivingQueueName { get; set; }
+    public string SendingQueueName { get; set; }
 }

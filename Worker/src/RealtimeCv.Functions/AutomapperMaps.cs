@@ -6,11 +6,11 @@ namespace RealtimeCv.Functions;
 
 public class AutomapperMaps : Profile
 {
-  public AutomapperMaps()
-  {
-    CreateMap<ProjectDto, Project>();
-    CreateMap<Project, ProjectDto>();
-    CreateMap<ProjectCreateDto, Project>();
-    CreateMap<Project, ProjectCreateDto>();
-  }
+    public AutomapperMaps()
+    {
+        CreateMap<ProjectDto, Project>();
+        CreateMap<Project, ProjectDto>();
+        CreateMap<ProjectCreateDto, Project>();
+        CreateMap<Project, ProjectCreateDto>();
+    }
 }
