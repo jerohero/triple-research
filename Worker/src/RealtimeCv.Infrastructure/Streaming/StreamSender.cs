@@ -22,7 +22,7 @@ public class StreamSender : IStreamSender, IDisposable
   private string? _prepareUrl;
   private IHttpService _httpService;
   private IPubSub _pubSub;
-  
+
   public StreamSender(
     ILoggerAdapter<StreamSender> logger,
     IHttpService httpService,
@@ -33,18 +33,18 @@ public class StreamSender : IStreamSender, IDisposable
     _httpService = httpService;
     _pubSub = pubSub;
   }
-  
+
   public void SendStreamToEndpoint(IStreamReceiver streamReceiver, string targetUrl, string prepareUrl)
   {
     _streamReceiver = streamReceiver;
     _targetUrl = targetUrl;
     _prepareUrl = prepareUrl;
-    
+
     _sendThread = new Thread(SendFramesToTarget)
     {
       IsBackground = true
     };
-        
+
     _sendThread.Start();
   }
 
@@ -56,7 +56,7 @@ public class StreamSender : IStreamSender, IDisposable
     int frameCount = 0;
 
     await PrepareEndpoint();
-    
+
     while (!_streamReceiver.Frame.Empty())
     {
       frameCount++;
@@ -70,15 +70,15 @@ public class StreamSender : IStreamSender, IDisposable
 
         await _pubSub.Send(results);
 
-        double time =  (DateTime.UtcNow - now).TotalSeconds;
-      
-        _logger.LogInformation($"Sent frame { frameCount }. Took { time } seconds.");
+        double time = (DateTime.UtcNow - now).TotalSeconds;
+
+        _logger.LogInformation($"Sent frame {frameCount}. Took {time} seconds.");
       }
       catch (HttpRequestException)
       {
         // TODO it may be better to prepare the endpoint at the start, as this will result in a larger loss of frames
         await PrepareEndpoint();
-        
+
         _logger.LogInformation("Endpoint was not prepared. Preparing..");
       }
 
@@ -93,7 +93,7 @@ public class StreamSender : IStreamSender, IDisposable
   {
     await _httpService.PostAsync(_prepareUrl);
   }
-  
+
   public void Dispose()
   {
     _sendThread?.Join();

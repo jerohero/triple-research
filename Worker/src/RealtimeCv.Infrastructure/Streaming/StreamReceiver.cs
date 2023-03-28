@@ -14,7 +14,7 @@ public class StreamReceiver : IStreamReceiver, IDisposable
   public Mat Frame { get; private set; }
   public event Action OnConnectionEstablished;
   public event Action OnConnectionBroken;
-  
+
   private const int DefaultFps = 30;
   private readonly ILoggerAdapter<StreamReceiver> _logger;
   private string? _source;
@@ -27,7 +27,7 @@ public class StreamReceiver : IStreamReceiver, IDisposable
   {
     _logger = logger;
     Frame = new Mat();
-    
+
     OnConnectionEstablished += ReadStream;
     OnConnectionBroken += PollStream;
   }
@@ -35,14 +35,14 @@ public class StreamReceiver : IStreamReceiver, IDisposable
   public void ConnectStreamBySource(string source)
   {
     Guard.Against.NullOrWhiteSpace(source, nameof(source));
-    
+
     _source = source;
 
     _pollThread = new Thread(PollStream)
     {
       IsBackground = true
     };
-        
+
     _pollThread.Start();
   }
 
@@ -53,19 +53,19 @@ public class StreamReceiver : IStreamReceiver, IDisposable
       _logger.LogInformation("Source is not defined");
       return;
     }
-    
+
     VideoCapture capture = new(_source);
 
     while (!capture.IsOpened())
     {
-      _logger.LogInformation($"Failed to open { _source }. Retrying in 10 sec..");
+      _logger.LogInformation($"Failed to open {_source}. Retrying in 10 sec..");
       Thread.Sleep(1000 * 5);
       capture = new VideoCapture(_source);
     }
 
     capture.Set(VideoCaptureProperties.BufferSize, 2);
     _capture = capture;
-        
+
     OnConnectionEstablished();
   }
 
@@ -76,7 +76,7 @@ public class StreamReceiver : IStreamReceiver, IDisposable
       _logger.LogInformation("Stream is inactive");
       return;
     }
-        
+
     _fps = (int)_capture.Get(VideoCaptureProperties.Fps);
     _capture.Read(Frame); // guarantee first frame
 
@@ -84,7 +84,7 @@ public class StreamReceiver : IStreamReceiver, IDisposable
     {
       IsBackground = true
     };
-        
+
     _updateThread.Start();
   }
 
@@ -94,7 +94,7 @@ public class StreamReceiver : IStreamReceiver, IDisposable
     while (_capture is not null && _capture.IsOpened())
     {
       _capture.Grab();
-            
+
       Mat frame = new();
       _capture.Retrieve(frame);
       Frame = frame;
@@ -103,16 +103,17 @@ public class StreamReceiver : IStreamReceiver, IDisposable
       {
         break;
       }
-    
+
       Thread.Sleep((int)TimeSpan.FromSeconds(1 / _fps ?? DefaultFps).TotalMilliseconds); // wait time
     }
-    
+
     _logger.LogInformation("Connection broken");
-    
+
     OnConnectionBroken();
   }
 
-  public void Dispose() {
+  public void Dispose()
+  {
     _updateThread?.Join();
     _pollThread?.Join();
     _capture?.Dispose();

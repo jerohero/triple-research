@@ -1,7 +1,7 @@
-﻿using Microsoft.Extensions.DependencyInjection;
-using System;
+﻿using System;
 using System.Collections.Generic;
 using System.Threading.Tasks;
+using Microsoft.Extensions.DependencyInjection;
 using RealtimeCv.Core.Entities;
 using RealtimeCv.Core.Interfaces;
 using RealtimeCv.Core.Settings;
@@ -43,7 +43,7 @@ public class EntryPointService : IEntryPointService
     _logger.LogInformation("{service} running at: {time}", nameof(EntryPointService), DateTimeOffset.Now);
 
     await Task.CompletedTask; // temp
-    
+
     string[] sources = { "rtmp://live.restream.io/live/re_6435068_ac960121c66cd1e6a9f5" };
 
     // TODO Note that this is called in loops, so avoid having hundreds of threads doing the same thing
@@ -62,14 +62,14 @@ public class EntryPointService : IEntryPointService
       // };
       //
       // repository.Add(vs);
-      
+
       await _pubSub.Init();
 
       foreach (string source in sources)
       {
         _streamService.HandleStream(source, "http://127.0.0.1:5000/inference", "http://127.0.0.1:5000/start");
       }
-      
+
       // Delete below
       // // read from the queue
       // string message = await _queueReceiver.GetMessageFromQueue(_settings.ReceivingQueueName);

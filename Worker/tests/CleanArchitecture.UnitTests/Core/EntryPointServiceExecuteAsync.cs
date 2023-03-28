@@ -1,10 +1,10 @@
-﻿using RealtimeCv.Core.Interfaces;
-using RealtimeCv.Core.Services;
-using RealtimeCv.Core.Settings;
+﻿using System;
+using System.Threading.Tasks;
 using Microsoft.Extensions.DependencyInjection;
 using Moq;
-using System;
-using System.Threading.Tasks;
+using RealtimeCv.Core.Interfaces;
+using RealtimeCv.Core.Services;
+using RealtimeCv.Core.Settings;
 using Xunit;
 
 namespace CleanArchitecture.UnitTests;

@@ -1,11 +1,11 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
-using RealtimeCv.Core.Entities;
-using Microsoft.EntityFrameworkCore;
 using System.Reflection;
+using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.ChangeTracking;
 using Newtonsoft.Json;
+using RealtimeCv.Core.Entities;
 using RealtimeCv.Infrastructure.Data.Config;
 
 namespace RealtimeCv.Infrastructure.Data;
@@ -33,7 +33,7 @@ public class AppDbContext : DbContext
       (c1, c2) => c2 != null && c1 != null && c1.SequenceEqual(c2),
       c => c.Aggregate(0, (a, v) => HashCode.Combine(a, v.GetHashCode())),
       c => c.ToList());
-    
+
     builder.Entity<VisionSet>().Property(vs => vs.Sources).HasConversion(
       v => JsonConvert.SerializeObject(v),
       v => JsonConvert.DeserializeObject<List<string>>(v)!,
@@ -47,7 +47,7 @@ public class AppDbContext : DbContext
 
     builder.ApplyConfiguration(new VisionSetConfiguration());
     builder.ApplyConfiguration(new ProjectConfiguration());
-    
+
     builder.ApplyConfigurationsFromAssembly(Assembly.GetExecutingAssembly());
   }
 }

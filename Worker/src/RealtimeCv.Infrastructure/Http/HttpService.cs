@@ -1,9 +1,9 @@
 ﻿using System;
 using System.Globalization;
 using System.IO;
-using RealtimeCv.Core.Interfaces;
 using System.Net.Http;
 using System.Threading.Tasks;
+using RealtimeCv.Core.Interfaces;
 using SixLabors.ImageSharp;
 using SixLabors.ImageSharp.PixelFormats;
 
@@ -18,13 +18,13 @@ public class HttpService : IHttpService
   public async Task<int> GetUrlResponseStatusCodeAsync(string url)
   {
     using HttpClient client = new HttpClient();
-    
+
     HttpResponseMessage result = await client.GetAsync(url);
 
     return (int)result.StatusCode;
   }
 
-  public async Task<HttpResponseMessage> PostFileAsync(string url, byte[] file, string name="file")
+  public async Task<HttpResponseMessage> PostFileAsync(string url, byte[] file, string name = "file")
   {
     using HttpClient client = new HttpClient();
 
@@ -34,24 +34,24 @@ public class HttpService : IHttpService
     await img.SaveAsJpegAsync(ms);
 
     byte[] bits = ms.ToArray();
-    
+
     using var content = new MultipartFormDataContent(
       "Upload----" + DateTime.Now.ToString(CultureInfo.InvariantCulture)
     );
-    
+
     content.Add(new ByteArrayContent(bits), "file", "upload.png");
 
     HttpResponseMessage response = await client.PostAsync(url, content);
 
     return response;
   }
-  
+
   public async Task PostAsync(string url)
   {
     using HttpClient client = new HttpClient();
 
     HttpResponseMessage response = await client.PostAsync(url, null);
-    
+
     string responseString = await response.Content.ReadAsStringAsync();
   }
 }

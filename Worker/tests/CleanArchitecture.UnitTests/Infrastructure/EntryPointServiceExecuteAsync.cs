@@ -1,6 +1,6 @@
-﻿using RealtimeCv.Infrastructure.Messaging;
-using System;
+﻿using System;
 using System.Threading.Tasks;
+using RealtimeCv.Infrastructure.Messaging;
 using Xunit;
 
 namespace CleanArchitecture.UnitTests;

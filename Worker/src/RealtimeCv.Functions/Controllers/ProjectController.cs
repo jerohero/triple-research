@@ -1,4 +1,4 @@
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using System.Threading.Tasks;
 using Ardalis.Result;
 using Microsoft.Azure.Functions.Worker;
@@ -13,7 +13,7 @@ public class ProjectController : BaseController
 {
   private readonly ILoggerAdapter<ProjectController> _logger;
   private readonly IProjectService _projectService;
-  
+
   public ProjectController(
     ILoggerAdapter<ProjectController> logger,
     IProjectService projectService
@@ -22,7 +22,7 @@ public class ProjectController : BaseController
     _logger = logger;
     _projectService = projectService;
   }
-  
+
   [Function("getProject")]
   public async Task<HttpResponseData> GetProject(
     [HttpTrigger(AuthorizationLevel.Anonymous, "get", Route = "project/{projectId}")] HttpRequestData req, int projectId)
@@ -31,7 +31,7 @@ public class ProjectController : BaseController
 
     return await ResultToResponse(result, req);
   }
-  
+
   [Function("getProjects")]
   public async Task<HttpResponseData> GetProjects(
     [HttpTrigger(AuthorizationLevel.Anonymous, "get", Route = "project")] HttpRequestData req)
@@ -51,18 +51,18 @@ public class ProjectController : BaseController
 
     return await ResultToResponse(result, req);
   }
-  
+
   [Function("updateProject")]
   public async Task<HttpResponseData> UpdateProject(
     [HttpTrigger(AuthorizationLevel.Anonymous, "put", Route = "project")] HttpRequestData req)
   {
     ProjectDto? projectDto = DeserializeJson<ProjectDto>(req.Body);
-    
+
     Result<ProjectDto> result = await _projectService.UpdateProject(projectDto);
-    
+
     return await ResultToResponse(result, req);
   }
-  
+
   [Function("deleteProject")]
   public async Task<HttpResponseData> DeleteProject(
     [HttpTrigger(AuthorizationLevel.Anonymous, "delete", Route = "project/{projectId}")] HttpRequestData req, int projectId)

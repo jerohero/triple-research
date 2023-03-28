@@ -30,7 +30,7 @@ public static class ServiceCollectionSetupExtensions
     services.AddSingleton<IQueueReceiver, InMemoryQueueReceiver>();
     services.AddSingleton<IQueueSender, InMemoryQueueSender>();
   }
-  
+
   public static void AddStreamHandlers(this IServiceCollection services)
   {
     services.AddSingleton<IStreamReceiver, StreamReceiver>();
@@ -42,7 +42,7 @@ public static class ServiceCollectionSetupExtensions
   {
     services.AddTransient<IHttpService, HttpService>();
   }
-  
+
   public static void ConfigureJson(this IServiceCollection services)
   {
     services.Configure<JsonSerializerSettings>(options =>

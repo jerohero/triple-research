@@ -1,12 +1,12 @@
 ﻿using Microsoft.Extensions.Azure;
-using RealtimeCv.Core.Interfaces;
-using RealtimeCv.Core.Services;
-using RealtimeCv.Infrastructure;
+using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
-using Microsoft.Extensions.Configuration;
 using Newtonsoft.Json;
+using RealtimeCv.Core.Interfaces;
+using RealtimeCv.Core.Services;
 using RealtimeCv.Core.Settings;
+using RealtimeCv.Infrastructure;
 using RealtimeCv.Infrastructure.Extensions;
 using RealtimeCv.Infrastructure.Messaging;
 
@@ -41,11 +41,11 @@ public class Program
             services.AddStreamHandlers();
 
             services.AddSingleton<IPubSub, PubSub>();
-            
+
             services.AddDbContext(hostContext.Configuration.GetConnectionString("DefaultConnection"));
             services.AddRepositories();
             services.AddConnectionServices();
-            
+
             services.ConfigureJson();
 
             var workerSettings = new WorkerSettings();

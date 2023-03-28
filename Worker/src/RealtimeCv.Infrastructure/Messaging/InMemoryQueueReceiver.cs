@@ -1,7 +1,7 @@
-﻿using Ardalis.GuardClauses;
-using RealtimeCv.Core.Interfaces;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using System.Threading.Tasks;
+using Ardalis.GuardClauses;
+using RealtimeCv.Core.Interfaces;
 
 namespace RealtimeCv.Infrastructure.Messaging;
 

@@ -1,6 +1,6 @@
-﻿using RealtimeCv.Core.Interfaces;
+﻿using System;
 using Microsoft.Extensions.Logging;
-using System;
+using RealtimeCv.Core.Interfaces;
 
 namespace RealtimeCv.Infrastructure;
 

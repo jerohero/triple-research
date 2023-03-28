@@ -1,5 +1,5 @@
-﻿using RealtimeCv.Core.Interfaces;
-using System.Threading.Tasks;
+﻿using System.Threading.Tasks;
+using RealtimeCv.Core.Interfaces;
 
 namespace RealtimeCv.Infrastructure.Messaging;
 

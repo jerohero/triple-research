@@ -1,4 +1,4 @@
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using System.Net;
@@ -29,10 +29,10 @@ public abstract class BaseController
         ? await CreateJsonResponse(req, GetStatusCode(result.Status), result.ValidationErrors)
         : await CreateJsonResponse(req, GetStatusCode(result.Status), result.Errors);
     }
-    
+
     return await CreateJsonResponse(req, HttpStatusCode.OK, result.Value);
   }
-  
+
   protected T? DeserializeJson<T>(Stream body) where T : class
   {
     return SerializeJson<T>(new StreamReader(body).ReadToEnd());
@@ -41,17 +41,17 @@ public abstract class BaseController
   private async Task<HttpResponseData> CreateJsonResponse(HttpRequestData requestData, HttpStatusCode statusCode, object? jsonObject)
   {
     var response = requestData.CreateResponse();
-    
+
     if (jsonObject is not null)
       await response.WriteAsJsonAsync(jsonObject);
-    
+
     response.StatusCode = statusCode;
-    
+
     return response;
   }
 
   private T? SerializeJson<T>(string json) where T : class
-  { 
+  {
     try
     {
       return JsonConvert.DeserializeObject<T>(json);
@@ -61,7 +61,7 @@ public abstract class BaseController
       return null;
     }
   }
-  
+
   private HttpStatusCode GetStatusCode(ResultStatus status)
   {
     return _statusCodeDict[status];

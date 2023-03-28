@@ -28,7 +28,7 @@ public class PubSub : IPubSub
   public async Task Init()
   {
     _serviceClient = new WebPubSubServiceClient(_configuration.GetConnectionString(ConnStringName), HubName);
-    
+
     // TODO either store somewhere the client can access it or turn it into azure function negotiate func
     _logger.LogInformation("URI: " + await _serviceClient.GetClientAccessUriAsync(TimeSpan.FromHours(72)));
   }

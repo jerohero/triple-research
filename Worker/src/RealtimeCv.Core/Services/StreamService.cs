@@ -1,5 +1,5 @@
-﻿using Ardalis.GuardClauses;
-using System.Threading.Tasks;
+﻿using System.Threading.Tasks;
+using Ardalis.GuardClauses;
 using RealtimeCv.Core.Entities;
 using RealtimeCv.Core.Interfaces;
 
@@ -12,7 +12,7 @@ public class StreamService : IStreamService
 {
   private readonly IStreamReceiver _streamReceiver;
   private readonly IStreamSender _streamSender;
-  
+
   public StreamService(
     IStreamReceiver streamReceiver,
     IStreamSender streamSender)
