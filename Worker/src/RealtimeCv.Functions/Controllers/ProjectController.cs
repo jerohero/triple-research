@@ -1,13 +1,9 @@
 using System.Collections.Generic;
-using System.IO;
-using System.Net;
 using System.Threading.Tasks;
+using Ardalis.Result;
 using Microsoft.Azure.Functions.Worker;
 using Microsoft.Azure.Functions.Worker.Http;
-using Newtonsoft.Json;
-using RealtimeCv.Core.Entities;
 using RealtimeCv.Core.Interfaces;
-using RealtimeCv.Core.Specifications;
 using RealtimeCv.Functions.Interfaces;
 using RealtimeCv.Functions.Models;
 
@@ -26,24 +22,34 @@ public class ProjectController : BaseController
     _logger = logger;
     _projectService = projectService;
   }
+  
+  [Function("getProject")]
+  public async Task<HttpResponseData> GetProject(
+    [HttpTrigger(AuthorizationLevel.Anonymous, "get", Route = "project/{projectId}")] HttpRequestData req, int projectId)
+  {
+    Result<ProjectDto> result = await _projectService.GetProject(projectId);
+
+    return await ResultToResponse(result, req);
+  }
+  
+  [Function("getProjects")]
+  public async Task<HttpResponseData> GetProjects(
+    [HttpTrigger(AuthorizationLevel.Anonymous, "get", Route = "project")] HttpRequestData req)
+  {
+    Result<List<ProjectDto>> result = await _projectService.GetProjects();
+
+    return await ResultToResponse(result, req);
+  }
 
   [Function("createProject")]
   public async Task<HttpResponseData> CreateProject(
     [HttpTrigger(AuthorizationLevel.Anonymous, "post", Route = "project")] HttpRequestData req)
   {
     ProjectCreateDto? projectCreateDto = DeserializeJson<ProjectCreateDto>(req.Body);
-    
-    // TODO validation
 
-    if (projectCreateDto == null)
-    {
-      return await CreateJsonResponse(req, HttpStatusCode.BadRequest, "Missing DTO");
-    }
+    Result<ProjectDto> result = await _projectService.CreateProject(projectCreateDto);
 
-    _logger.LogInformation("Name: " + projectCreateDto.Name);
-    ProjectDto created = await _projectService.CreateProject(projectCreateDto);
-
-    return await CreateJsonResponse(req, HttpStatusCode.Created, created);
+    return await ResultToResponse(result, req);
   }
   
   [Function("updateProject")]
@@ -52,15 +58,17 @@ public class ProjectController : BaseController
   {
     ProjectDto? projectDto = DeserializeJson<ProjectDto>(req.Body);
     
-    // TODO validation
+    Result<ProjectDto> result = await _projectService.UpdateProject(projectDto);
+    
+    return await ResultToResponse(result, req);
+  }
+  
+  [Function("deleteProject")]
+  public async Task<HttpResponseData> DeleteProject(
+    [HttpTrigger(AuthorizationLevel.Anonymous, "delete", Route = "project/{projectId}")] HttpRequestData req, int projectId)
+  {
+    Result<ProjectDto> result = await _projectService.DeleteProject(projectId);
 
-    if (projectDto == null)
-    {
-      return await CreateJsonResponse(req, HttpStatusCode.BadRequest, "Missing DTO");
-    }
-
-    ProjectDto updated = await _projectService.UpdateProject(projectDto);
-
-    return await CreateJsonResponse(req, HttpStatusCode.OK, updated);
+    return await ResultToResponse(result, req);
   }
 }

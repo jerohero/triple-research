@@ -1,20 +1,44 @@
-using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using System.Net;
-using System.Security.Claims;
 using System.Threading.Tasks;
-using Microsoft.Azure.Functions.Worker;
+using Ardalis.Result;
 using Microsoft.Azure.Functions.Worker.Http;
-using Microsoft.IdentityModel.Tokens;
 using Newtonsoft.Json;
 
 namespace RealtimeCv.Functions.Controllers;
 
 public abstract class BaseController
 {
-  protected async Task<HttpResponseData> CreateJsonResponse(HttpRequestData requestData, HttpStatusCode statusCode, object? jsonObject)
+  private readonly IDictionary<ResultStatus, HttpStatusCode> _statusCodeDict = new Dictionary<ResultStatus, HttpStatusCode>
+  {
+    { ResultStatus.Ok, HttpStatusCode.OK },
+    { ResultStatus.Forbidden, HttpStatusCode.Forbidden },
+    { ResultStatus.Invalid, HttpStatusCode.BadRequest },
+    { ResultStatus.NotFound, HttpStatusCode.NotFound },
+    { ResultStatus.Error, HttpStatusCode.InternalServerError },
+    { ResultStatus.Unauthorized, HttpStatusCode.Unauthorized }
+  };
+
+  protected async Task<HttpResponseData> ResultToResponse<T>(Result<T> result, HttpRequestData req)
+  {
+    if (!result.Status.Equals(ResultStatus.Ok))
+    {
+      return result.ValidationErrors.Any()
+        ? await CreateJsonResponse(req, GetStatusCode(result.Status), result.ValidationErrors)
+        : await CreateJsonResponse(req, GetStatusCode(result.Status), result.Errors);
+    }
+    
+    return await CreateJsonResponse(req, HttpStatusCode.OK, result.Value);
+  }
+  
+  protected T? DeserializeJson<T>(Stream body) where T : class
+  {
+    return SerializeJson<T>(new StreamReader(body).ReadToEnd());
+  }
+
+  private async Task<HttpResponseData> CreateJsonResponse(HttpRequestData requestData, HttpStatusCode statusCode, object? jsonObject)
   {
     var response = requestData.CreateResponse();
     
@@ -26,14 +50,8 @@ public abstract class BaseController
     return response;
   }
 
-  protected T? DeserializeJson<T>(Stream body) where T : class
-  {
-    return SerializeJson<T>(new StreamReader(body).ReadToEnd());
-  }
-  
   private T? SerializeJson<T>(string json) where T : class
-  {
-    // simple deserializer method so we can handle faulty json objects in the Validator.  
+  { 
     try
     {
       return JsonConvert.DeserializeObject<T>(json);
@@ -44,56 +62,8 @@ public abstract class BaseController
     }
   }
   
-  // protected async Task<HttpResponseData> CreateErrorResponse(HttpRequestData requestData, HttpStatusCode statusCode, string message = "")
-  // {
-  //   // Create a response in one line to keep the controller readable. 
-  //   var response = requestData.CreateResponse(statusCode);
-  //   if (!String.IsNullOrEmpty(message))
-  //   {
-  //     await response.WriteStringAsync(message);
-  //   }
-  //   return response;
-  // }
-  //
-  // protected async Task<HttpResponseData> CreateErrorResponse(HttpRequestData requestData, HttpStatusCode statusCode, List<ValidationFailure> errors)
-  // {
-  //   // Setup a response with all Errors noted by the FluentValidation
-  //   var response = requestData.CreateResponse(statusCode);
-  //   string message = "";
-  //   errors.ForEach(e => message += $"Property: {e.PropertyName}. Problem: {e.ErrorMessage}\n");
-  //   return await CreateErrorResponse(requestData, statusCode, message);
-  // }
-  // protected UserIdentityResult GetUserIdentityResult(FunctionContext context, HttpRequestData req, Role[] AuthorizedRoles = null)
-  // {
-  //   // Given a Login Context, request, and array of Roles that can access this call:
-  //   // - Return UserId and UserRole objects
-  //   // - Return HttpResponseData object if authorization is invalid (403 Forbidden or 401 Unauthorized)
-  //   AuthorizedRoles ??= new Role[4] { Role.Student, Role.Instructor, Role.Admin, Role.SuperAdmin };
-  //
-  //   UserIdentityResult result = new UserIdentityResult();
-  //   ClaimsPrincipal loggedInUser = context.GetUser();
-  //
-  //   if (object.Equals(loggedInUser, null))
-  //     result.ResponseMessage = req.CreateResponse(HttpStatusCode.Forbidden);
-  //   else
-  //   {
-  //     int loggedInUserId;
-  //     Role loggedInUserRole;
-  //     try
-  //     {
-  //       loggedInUserId = int.Parse(loggedInUser.Claims.Where(c => c.Type == ClaimTypes.PrimarySid).First().Value);
-  //       loggedInUserRole = Enum.Parse<Role>(loggedInUser.Claims.Where(c => c.Type == ClaimTypes.Role).First().Value);
-  //       if (!AuthorizedRoles.Contains(loggedInUserRole))
-  //         result.ResponseMessage = req.CreateResponse(HttpStatusCode.Unauthorized);
-  //
-  //       result.UserId = loggedInUserId;
-  //       result.Role = loggedInUserRole;
-  //     }
-  //     catch
-  //     {
-  //       result.ResponseMessage = req.CreateResponse(HttpStatusCode.Forbidden);
-  //     }
-  //   }
-  //   return result;
-  // }
+  private HttpStatusCode GetStatusCode(ResultStatus status)
+  {
+    return _statusCodeDict[status];
+  }
 }
