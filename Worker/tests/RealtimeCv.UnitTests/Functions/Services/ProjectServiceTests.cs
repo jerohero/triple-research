@@ -277,7 +277,7 @@ public class ProjectServiceTests : ProjectServiceTestsBase
         // Assert
         Assert.That(_context.Project.Count() == expected);
     }
-    
+
     [Test]
     public void DeleteProject_WhenProjectDeleted_ItShouldReturnResultStatusOk()
     {

@@ -25,12 +25,6 @@ public static class ServiceCollectionSetupExtensions
         services.AddScoped<IVisionSetRepository, VisionSetRepository>();
     }
 
-    public static void AddMessageQueues(this IServiceCollection services)
-    {
-        services.AddSingleton<IQueueReceiver, InMemoryQueueReceiver>();
-        services.AddSingleton<IQueueSender, InMemoryQueueSender>();
-    }
-
     public static void AddStreamHandlers(this IServiceCollection services)
     {
         services.AddSingleton<IStreamReceiver, StreamReceiver>();

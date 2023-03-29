@@ -28,4 +28,8 @@
     <ProjectReference Include="..\..\src\RealtimeCv.Infrastructure\RealtimeCv.Infrastructure.csproj" />
   </ItemGroup>
 
+  <ItemGroup>
+    <Folder Include="Functions\Controllers" />
+  </ItemGroup>
+
 </Project>

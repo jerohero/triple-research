@@ -16,13 +16,6 @@ public class Program
     {
         var host = CreateHostBuilder(args).Build();
 
-        // seed some queue messages
-        var queueSender = (IQueueSender)host.Services.GetRequiredService(typeof(IQueueSender));
-        for (var i = 0; i < 10; i++)
-        {
-            queueSender.SendMessageToQueue("https://google.com", "urlcheck");
-        }
-
         host.RunAsync();
     }
 
@@ -33,9 +26,7 @@ public class Program
                 services.AddSingleton(typeof(ILoggerAdapter<>), typeof(LoggerAdapter<>));
                 services.AddSingleton<IEntryPointService, EntryPointService>();
                 services.AddSingleton<IServiceLocator, ServiceScopeFactoryLocator>();
-
-                // Infrastructure.ContainerSetup
-                services.AddMessageQueues();
+                
                 services.AddStreamHandlers();
 
                 services.AddSingleton<IPubSub, PubSub>();
@@ -53,10 +44,6 @@ public class Program
                 var entryPointSettings = new EntryPointSettings();
                 hostContext.Configuration.Bind(nameof(EntryPointSettings), entryPointSettings);
                 services.AddSingleton(entryPointSettings);
-
-                var azureSettings = new AzureSettings();
-                hostContext.Configuration.Bind(nameof(AzureSettings), azureSettings);
-                services.AddSingleton(azureSettings);
 
                 services.AddHostedService<Worker>();
             });

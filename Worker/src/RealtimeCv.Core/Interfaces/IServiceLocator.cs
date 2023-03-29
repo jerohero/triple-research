@@ -1,7 +1,7 @@
 ﻿using System;
 using Microsoft.Extensions.DependencyInjection;
 
-namespace RealtimeCv.Core.Services;
+namespace RealtimeCv.Core.Interfaces;
 
 public interface IServiceLocator : IDisposable
 {
