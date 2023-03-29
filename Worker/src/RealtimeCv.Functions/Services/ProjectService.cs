@@ -4,7 +4,6 @@ using System.Threading.Tasks;
 using Ardalis.Result;
 using Ardalis.Result.FluentValidation;
 using AutoMapper;
-using FluentValidation.Results;
 using RealtimeCv.Core.Entities;
 using RealtimeCv.Core.Interfaces;
 using RealtimeCv.Functions.Interfaces;
@@ -30,12 +29,12 @@ public class ProjectService : IProjectService
         _projectRepository = projectRepository;
     }
 
-    public async Task<Result<ProjectDto>> GetProject(int projectId)
+    public async Task<Result<ProjectDto>> GetProjectById(int projectId)
     {
         var project = await _projectRepository.GetByIdAsync(projectId);
 
         return project is null
-          ? Result<ProjectDto>.NotFound($"Project with id {projectId} does not exist")
+          ? Result<ProjectDto>.NotFound()
           : new Result<ProjectDto>(_mapper.Map<ProjectDto>(project));
     }
 
@@ -74,7 +73,7 @@ public class ProjectService : IProjectService
 
         if (project is null)
         {
-            return Result<ProjectDto>.Error("Project not found");
+            return Result<ProjectDto>.NotFound();
         }
 
         project.UpdateName(updateDto.Name);
@@ -90,7 +89,7 @@ public class ProjectService : IProjectService
 
         if (project is null)
         {
-            return Result.Error("Project not found");
+            return Result.NotFound();
         }
 
         await _projectRepository.DeleteAsync(project);

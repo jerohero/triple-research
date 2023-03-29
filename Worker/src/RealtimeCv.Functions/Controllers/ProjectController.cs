@@ -26,7 +26,7 @@ public class ProjectController : BaseController
     public async Task<HttpResponseData> GetProject(
       [HttpTrigger(AuthorizationLevel.Anonymous, "get", Route = "project/{projectId}")] HttpRequestData req, int projectId)
     {
-        var result = await _projectService.GetProject(projectId);
+        var result = await _projectService.GetProjectById(projectId);
 
         return await ResultToResponse(result, req);
     }

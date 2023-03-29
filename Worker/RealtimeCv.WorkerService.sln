@@ -9,7 +9,7 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "src", "src", "{103BC25E-93A
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "tests", "tests", "{2B6A6F0C-5CF1-4A47-84EF-05665CDCE0ED}"
 EndProject
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "CleanArchitecture.UnitTests", "tests\CleanArchitecture.UnitTests\CleanArchitecture.UnitTests.csproj", "{8B71D2C0-882B-499C-8537-2885EF26A058}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "RealtimeCv.UnitTests", "tests\RealtimeCv.UnitTests\RealtimeCv.UnitTests.csproj", "{8B71D2C0-882B-499C-8537-2885EF26A058}"
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "RealtimeCv.Infrastructure", "src\RealtimeCv.Infrastructure\RealtimeCv.Infrastructure.csproj", "{57D03E58-4CF6-48C9-AE51-45122A6DE029}"
 EndProject
