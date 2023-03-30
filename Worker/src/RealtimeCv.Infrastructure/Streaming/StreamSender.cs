@@ -15,23 +15,24 @@ namespace RealtimeCv.Infrastructure.Streaming;
 /// </summary>
 public class StreamSender : IStreamSender, IDisposable
 {
+    public event Action<object?>? OnPredictionResult;
+    
     private readonly ILoggerAdapter<StreamSender> _logger;
     private IStreamReceiver? _streamReceiver;
     private Thread? _sendThread;
+    private Thread? _prepareThread;
     private string? _targetUrl;
     private string? _prepareUrl;
+    private bool _isPrepared;
     private readonly IHttpService _httpService;
-    private readonly IPubSub _pubSub;
 
     public StreamSender(
       ILoggerAdapter<StreamSender> logger,
-      IHttpService httpService,
-      IPubSub pubSub
+      IHttpService httpService
     )
     {
         _logger = logger;
         _httpService = httpService;
-        _pubSub = pubSub;
     }
 
     public void SendStreamToEndpoint(IStreamReceiver streamReceiver, string targetUrl, string prepareUrl)
@@ -47,6 +48,21 @@ public class StreamSender : IStreamSender, IDisposable
 
         _sendThread.Start();
     }
+    
+    public void PrepareTarget()
+    {
+        if (_prepareThread is { IsAlive: true })
+        {
+            return;
+        }
+        
+        _prepareThread = new Thread(PrepareEndpoint)
+        {
+            IsBackground = true
+        };
+
+        _prepareThread.Start();
+    }
 
     private async void SendFramesToTarget()
     {
@@ -54,8 +70,6 @@ public class StreamSender : IStreamSender, IDisposable
         Guard.Against.Null(_streamReceiver, nameof(_streamReceiver));
 
         var frameCount = 0;
-
-        await PrepareEndpoint();
 
         while (!_streamReceiver.Frame.Empty())
         {
@@ -67,8 +81,8 @@ public class StreamSender : IStreamSender, IDisposable
             {
                 var res = await _httpService.PostFile(_targetUrl, _streamReceiver.Frame.ToBytes());
                 var results = await res.Content.ReadFromJsonAsync<object>();
-
-                await _pubSub.Send(results);
+                
+                OnPredictionResult?.Invoke(results);
 
                 var time = (DateTime.UtcNow - now).TotalSeconds;
 
@@ -76,26 +90,43 @@ public class StreamSender : IStreamSender, IDisposable
             }
             catch (HttpRequestException)
             {
-                // TODO it may be better to prepare the endpoint at the start, as this will result in a larger loss of frames
-                await PrepareEndpoint();
-
-                _logger.LogInformation("Endpoint was not prepared. Preparing..");
+                if (_isPrepared)
+                {
+                    // TODO throw error, as this would mean the inference API crashed
+                }
+                
+                PrepareEndpoint();
+                Thread.Sleep(5000);
             }
-
-            // Still seems too slow? might want to test with video
-            // float fps = (1f/30f);
-            // int fpsMs = (int) (fps * 1000f);
-            // Thread.Sleep(fpsMs); // wait time
         }
     }
 
-    private async Task PrepareEndpoint()
+    private async void PrepareEndpoint()
     {
-        await _httpService.Post(_prepareUrl);
+        var didPrepare = false;
+        
+        // Executes in a loop because the target may not have started yet
+        while (!didPrepare)
+        {
+            try
+            {
+                await _httpService.Post(_prepareUrl);
+
+                didPrepare = true;
+            }
+            catch (HttpRequestException)
+            {
+                didPrepare = false;
+                Thread.Sleep(5000);
+            }
+        }
+
+        _isPrepared = didPrepare;
     }
 
     public void Dispose()
     {
         _sendThread?.Join();
+        _prepareThread?.Join();
     }
 }

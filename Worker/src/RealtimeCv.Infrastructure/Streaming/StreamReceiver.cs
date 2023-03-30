@@ -14,14 +14,17 @@ public class StreamReceiver : IStreamReceiver, IDisposable
     public Mat Frame { get; private set; }
     public event Action OnConnectionEstablished;
     public event Action OnConnectionBroken;
+    public event Action? OnConnectionTimeout;
 
     private const int DefaultFps = 30;
+    private const int SecondsBetweenAttempts = 5;
     private readonly ILoggerAdapter<StreamReceiver> _logger;
     private string? _source;
     private int? _fps;
     private VideoCapture? _capture;
     private Thread? _updateThread;
     private Thread? _pollThread;
+    private int? _secondsBeforeTimeout;
 
     public StreamReceiver(ILoggerAdapter<StreamReceiver> logger)
     {
@@ -32,10 +35,11 @@ public class StreamReceiver : IStreamReceiver, IDisposable
         OnConnectionBroken += PollStream;
     }
 
-    public void ConnectStreamBySource(string source)
+    public void ConnectStreamBySource(string source, int secondsBeforeTimeout = 15)
     {
         Guard.Against.NullOrWhiteSpace(source, nameof(source));
 
+        _secondsBeforeTimeout = secondsBeforeTimeout;
         _source = source;
 
         _pollThread = new Thread(PollStream)
@@ -48,18 +52,25 @@ public class StreamReceiver : IStreamReceiver, IDisposable
 
     private void PollStream()
     {
-        if (_source is null)
-        {
-            _logger.LogInformation("Source is not defined");
-            return;
-        }
+        Guard.Against.Null(_source);
 
         VideoCapture capture = new(_source);
 
+        var failedAttempts = 0;
+
         while (!capture.IsOpened())
         {
-            _logger.LogInformation($"Failed to open {_source}. Retrying in 10 sec..");
-            Thread.Sleep(1000 * 5);
+            _logger.LogInformation($"Failed to open {_source} on attempt {failedAttempts}. Retrying in {SecondsBetweenAttempts} sec..");
+            
+            if (failedAttempts * SecondsBetweenAttempts >= _secondsBeforeTimeout)
+            {
+                OnConnectionTimeout?.Invoke();
+            }
+            
+            failedAttempts++;
+            
+            Thread.Sleep(1000 * SecondsBetweenAttempts);
+            
             capture = new VideoCapture(_source);
         }
 

@@ -15,11 +15,11 @@ namespace RealtimeCv.Functions;
 
 internal class Program
 {
-    public static async Task Main(string[] args)
+    public static void Main(string[] args)
     {
         var host = CreateHostBuilder(args).Build();
 
-        await host.RunAsync();
+        host.RunAsync();
     }
 
     public static IHostBuilder CreateHostBuilder(string[] args) =>

@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Threading;
 using System.Threading.Tasks;
 using RealtimeCv.Core.Interfaces;
 using RealtimeCv.Core.Settings;
@@ -13,6 +14,7 @@ public class EntryPointService : IEntryPointService
     private readonly IStreamService _streamService;
     private readonly IServiceLocator _serviceScopeFactoryLocator;
     private readonly IPubSub _pubSub;
+    private bool _isRunning;
 
     public EntryPointService(ILoggerAdapter<EntryPointService> logger,
         EntryPointSettings settings,
@@ -27,14 +29,21 @@ public class EntryPointService : IEntryPointService
         _pubSub = pubSub;
     }
 
-    public async Task Execute()
+    public async Task Execute(CancellationToken stoppingToken)
     {
+        if (_isRunning)
+        {
+            return;
+        }
+        
+        _isRunning = true;
+        
         _logger.LogInformation("{service} running at: {time}", nameof(EntryPointService), DateTimeOffset.Now);
 
         string[] sources = { "rtmp://live.restream.io/live/re_6435068_ac960121c66cd1e6a9f5" };
 
         // TODO Note that this is called in loops, so avoid having hundreds of threads doing the same thing
-        // TODO we can do this by polling queue messages in the loop, and only creating the stream threads when one is received
+        // TODO we can do this by polling queue messages in the loop, and only executing the below code when one is received
         try
         {
             // EF Requires a scope so we are creating one per execution here

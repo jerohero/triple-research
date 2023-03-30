@@ -28,12 +28,10 @@ public class Worker : BackgroundService
 
     protected override async Task ExecuteAsync(CancellationToken stoppingToken)
     {
-        _logger.LogInformation("RealtimeCv.Worker service starting at: {time}", DateTimeOffset.Now);
         while (!stoppingToken.IsCancellationRequested)
         {
-            await _entryPointService.Execute();
+            await _entryPointService.Execute(stoppingToken);
             await Task.Delay(_settings.DelayMilliseconds, stoppingToken);
         }
-        _logger.LogInformation("RealtimeCv.Worker service stopping at: {time}", DateTimeOffset.Now);
     }
 }

@@ -16,7 +16,7 @@ public class Program
     {
         var host = CreateHostBuilder(args).Build();
 
-        host.RunAsync();
+        host.Run();
     }
 
     private static IHostBuilder CreateHostBuilder(string[] args) =>
