@@ -8,9 +8,9 @@ public interface IStreamSender
 {
     [CanBeNull] event Action<object> OnPredictionResult;
     
-    void SendStreamToEndpoint(IStreamReceiver streamReceiver, string targetUrl, string prepareUrl);
+    void SendStreamToEndpoint(IStreamReceiver streamReceiver, string targetUrl);
     
-    void PrepareTarget();
+    void PrepareTarget(string prepareUrl);
     
     void Dispose();
 

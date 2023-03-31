@@ -12,6 +12,9 @@ using RealtimeCv.Functions.Validators;
 
 namespace RealtimeCv.Functions.Services;
 
+/// <summary>
+/// Service for Project related endpoints.
+/// </summary>
 public class ProjectService : IProjectService
 {
     private readonly IMapper _mapper;

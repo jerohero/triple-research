@@ -26,9 +26,7 @@ public sealed class ServiceScopeFactoryLocator : IServiceLocator
 
     public IServiceScope CreateScope()
     {
-        // if (_scope == null) comment this out to avoid {"Cannot access a disposed object.\r\nObject name: 'IServiceProvider'."}
-        _scope = _factory.CreateScope();
-        return _scope;
+        return _scope ??= _factory.CreateScope();
     }
 
     public void Dispose()

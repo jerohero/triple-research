@@ -3,8 +3,6 @@ using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
 using RealtimeCv.Core.Interfaces;
 using RealtimeCv.Core.Services;
-using RealtimeCv.Core.Settings;
-using RealtimeCv.Infrastructure;
 using RealtimeCv.Infrastructure.Extensions;
 using RealtimeCv.Infrastructure.Messaging;
 
@@ -40,10 +38,6 @@ public class Program
                 var workerSettings = new WorkerSettings();
                 hostContext.Configuration.Bind(nameof(WorkerSettings), workerSettings);
                 services.AddSingleton(workerSettings);
-
-                var entryPointSettings = new EntryPointSettings();
-                hostContext.Configuration.Bind(nameof(EntryPointSettings), entryPointSettings);
-                services.AddSingleton(entryPointSettings);
 
                 services.AddHostedService<Worker>();
             });

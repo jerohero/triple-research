@@ -1,15 +1,13 @@
 ﻿using System;
-using System.Threading.Tasks;
 using Ardalis.GuardClauses;
-using RealtimeCv.Core.Entities;
 using RealtimeCv.Core.Interfaces;
 
 namespace RealtimeCv.Core.Services;
 
 /// <summary>
-/// 
+/// Service that oversees the process of consuming the input, sending it to the inference API and publishing the results.
 /// </summary>
-public class StreamService : IStreamService
+public class StreamService : IStreamService, IDisposable
 {
     private readonly IStreamReceiver _streamReceiver;
     private readonly IStreamSender _streamSender;
@@ -25,21 +23,17 @@ public class StreamService : IStreamService
         _pubSub = pubSub;
     }
 
-    public void HandleStream(string source, string targetUrl, string prepareUrl)
+    public void HandleStream(string source, string targetUrl)
     {
         Guard.Against.NullOrWhiteSpace(source, nameof(source));
+        Guard.Against.NullOrEmpty(targetUrl);
 
-        _streamSender.PrepareTarget();
+        _streamSender.PrepareTarget($"{targetUrl}/start");
         _streamReceiver.ConnectStreamBySource(source);
 
         _streamReceiver.OnConnectionEstablished += () =>
         {
-            _streamSender.SendStreamToEndpoint(_streamReceiver, targetUrl, prepareUrl);
-        };
-
-        _streamReceiver.OnConnectionBroken += () =>
-        {
-            
+            _streamSender.SendStreamToEndpoint(_streamReceiver, $"{targetUrl}/inference");
         };
 
         _streamReceiver.OnConnectionTimeout += () =>
@@ -54,5 +48,11 @@ public class StreamService : IStreamService
             
             // Store in db
         };
+    }
+    
+    public void Dispose()
+    {
+        _streamReceiver.Dispose();
+        _streamSender.Dispose();
     }
 }

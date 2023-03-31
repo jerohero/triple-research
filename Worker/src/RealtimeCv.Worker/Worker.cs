@@ -7,9 +7,7 @@ using RealtimeCv.Core.Interfaces;
 namespace RealtimeCv.Worker;
 
 /// <summary>
-/// The Worker is a BackgroundService that is executed periodically
-/// It should not contain any business logic but should call an entrypoint service that
-/// execute once per time period.
+/// Base BackgroundService worker class that calls entrypoint service in a loop
 /// </summary>
 public class Worker : BackgroundService
 {
@@ -33,5 +31,7 @@ public class Worker : BackgroundService
             await _entryPointService.Execute(stoppingToken);
             await Task.Delay(_settings.DelayMilliseconds, stoppingToken);
         }
+        
+        _entryPointService.Stop();
     }
 }

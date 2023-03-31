@@ -7,11 +7,12 @@ using System.Threading.Tasks;
 using Ardalis.GuardClauses;
 using OpenCvSharp.Extensions;
 using RealtimeCv.Core.Interfaces;
+using RealtimeCv.Infrastructure.Data.Config;
 
 namespace RealtimeCv.Infrastructure.Streaming;
 
 /// <summary>
-/// Takes the latest stream frames and sends it to an inference API
+/// Takes the latest stream frames and sends it to the inference API.
 /// </summary>
 public class StreamSender : IStreamSender, IDisposable
 {
@@ -35,24 +36,15 @@ public class StreamSender : IStreamSender, IDisposable
         _httpService = httpService;
     }
 
-    public void SendStreamToEndpoint(IStreamReceiver streamReceiver, string targetUrl, string prepareUrl)
+    public void PrepareTarget(string prepareUrl)
     {
-        _streamReceiver = streamReceiver;
-        _targetUrl = targetUrl;
+        Guard.Against.NullOrEmpty(prepareUrl);
+        
         _prepareUrl = prepareUrl;
-
-        _sendThread = new Thread(SendFramesToTarget)
-        {
-            IsBackground = true
-        };
-
-        _sendThread.Start();
-    }
-    
-    public void PrepareTarget()
-    {
+        
         if (_prepareThread is { IsAlive: true })
         {
+            _logger.LogInformation("Prepare thread is already running.");
             return;
         }
         
@@ -62,6 +54,22 @@ public class StreamSender : IStreamSender, IDisposable
         };
 
         _prepareThread.Start();
+    }
+    
+    public void SendStreamToEndpoint(IStreamReceiver streamReceiver, string targetUrl)
+    {
+        Guard.Against.NullOrEmpty(targetUrl);
+        Guard.Against.NullOrEmpty(_prepareUrl);
+        
+        _streamReceiver = streamReceiver;
+        _targetUrl = targetUrl;
+
+        _sendThread = new Thread(SendFramesToTarget)
+        {
+            IsBackground = true
+        };
+
+        _sendThread.Start();
     }
 
     private async void SendFramesToTarget()
@@ -77,6 +85,14 @@ public class StreamSender : IStreamSender, IDisposable
 
             var now = DateTime.UtcNow;
 
+            if (!_isPrepared)
+            {
+                _logger.LogInformation("Target is still preparing. Retrying in 5 seconds.");
+                Thread.Sleep(Constants.DefaultActionDelayMs);
+
+                continue;
+            }
+
             try
             {
                 var res = await _httpService.PostFile(_targetUrl, _streamReceiver.Frame.ToBytes());
@@ -90,13 +106,7 @@ public class StreamSender : IStreamSender, IDisposable
             }
             catch (HttpRequestException)
             {
-                if (_isPrepared)
-                {
-                    // TODO throw error, as this would mean the inference API crashed
-                }
-                
-                PrepareEndpoint();
-                Thread.Sleep(5000);
+                // TODO throw error, as this would mean the inference API crashed
             }
         }
     }
@@ -111,13 +121,18 @@ public class StreamSender : IStreamSender, IDisposable
             try
             {
                 await _httpService.Post(_prepareUrl);
+                
+                _logger.LogInformation("Prepared target.");
 
                 didPrepare = true;
             }
             catch (HttpRequestException)
             {
                 didPrepare = false;
-                Thread.Sleep(5000);
+                
+                _logger.LogInformation("Failed to prepare target. Retrying in 5 seconds.");
+                
+                Thread.Sleep(Constants.DefaultActionDelayMs);
             }
         }
 

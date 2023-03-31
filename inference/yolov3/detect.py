@@ -1,7 +1,6 @@
 import datetime
 
 import numpy as np
-import argparse
 import time
 import cv2
 import os
@@ -9,9 +8,8 @@ import json
 
 confthres = 0.5
 nmsthres = 0.1
-path = "C:/Users/jeroe/Documents/GitHub/triple-research/inference/yolov3"
-
-yolo_path = 'C:/Users/jeroe/Documents/GitHub/triple-research/inference/yolov3'
+path = os.path.abspath('../') + '/inference/yolov3'
+yolo_path = os.path.abspath('../') + '/inference/yolov3'
 
 nets, labels, colors = None, None, None
 
@@ -263,10 +261,11 @@ def detect(img):
 
 
 def main():
+    print('')
     # load our input image and grab its spatial dimensions
-    res = predict(cv2.imread("./test1.jpg"))
-    cv2.imshow("Image", res)
-    cv2.waitKey()
+    # res = predict(cv2.imread("./test1.jpg"))
+    # cv2.imshow("Image", res)
+    # cv2.waitKey()
 
 
 if __name__ == "__main__":

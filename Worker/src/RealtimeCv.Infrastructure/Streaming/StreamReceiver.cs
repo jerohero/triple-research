@@ -7,7 +7,7 @@ using RealtimeCv.Core.Interfaces;
 namespace RealtimeCv.Infrastructure.Streaming;
 
 /// <summary>
-/// Connects to a stream input and converts it into frames
+/// Connects to a stream input and converts it into frames.
 /// </summary>
 public class StreamReceiver : IStreamReceiver, IDisposable
 {
@@ -60,12 +60,9 @@ public class StreamReceiver : IStreamReceiver, IDisposable
 
         while (!capture.IsOpened())
         {
-            _logger.LogInformation($"Failed to open {_source} on attempt {failedAttempts}. Retrying in {SecondsBetweenAttempts} sec..");
+            _logger.LogInformation($"Failed to open {_source} on attempt {failedAttempts}. Retrying in {SecondsBetweenAttempts} seconds.");
             
-            if (failedAttempts * SecondsBetweenAttempts >= _secondsBeforeTimeout)
-            {
-                OnConnectionTimeout?.Invoke();
-            }
+            HandleTimeout(failedAttempts);
             
             failedAttempts++;
             
@@ -78,6 +75,14 @@ public class StreamReceiver : IStreamReceiver, IDisposable
         _capture = capture;
 
         OnConnectionEstablished();
+    }
+
+    private void HandleTimeout(int failedAttempts)
+    {
+        if (failedAttempts * SecondsBetweenAttempts >= _secondsBeforeTimeout)
+        {
+            OnConnectionTimeout?.Invoke();
+        }
     }
 
     private void ReadStream()

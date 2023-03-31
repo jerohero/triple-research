@@ -8,6 +8,9 @@ using RealtimeCv.Functions.Models;
 
 namespace RealtimeCv.Functions.Controllers;
 
+/// <summary>
+/// Controller for Project related endpoints.
+/// </summary>
 public class ProjectController : BaseController
 {
     private readonly ILoggerAdapter<ProjectController> _logger;

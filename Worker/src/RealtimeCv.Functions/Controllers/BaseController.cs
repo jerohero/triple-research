@@ -9,6 +9,9 @@ using Newtonsoft.Json;
 
 namespace RealtimeCv.Functions.Controllers;
 
+/// <summary>
+/// Base controller that provides common functionality for all controllers.
+/// </summary>
 public abstract class BaseController
 {
     private readonly IDictionary<ResultStatus, HttpStatusCode> _statusCodeDict = new Dictionary<ResultStatus, HttpStatusCode>

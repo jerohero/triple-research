@@ -1,14 +1,10 @@
-﻿using System;
-using System.Threading.Tasks;
-using Microsoft.EntityFrameworkCore;
+﻿
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
 using RealtimeCv.Core.Interfaces;
 using RealtimeCv.Functions.Interfaces;
 using RealtimeCv.Functions.Services;
-using RealtimeCv.Infrastructure;
-using RealtimeCv.Infrastructure.Data;
 using RealtimeCv.Infrastructure.Extensions;
 
 namespace RealtimeCv.Functions;
