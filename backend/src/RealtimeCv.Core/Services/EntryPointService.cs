@@ -11,18 +11,18 @@ namespace RealtimeCv.Core.Services;
 public class EntryPointService : IEntryPointService
 {
     private readonly ILoggerAdapter<EntryPointService> _logger;
-    private readonly IStreamService _streamService;
+    private readonly IStreamInferenceService _streamInferenceService;
     private readonly IServiceLocator _serviceScopeFactoryLocator;
     private readonly IPubSub _pubSub;
     private bool _isRunning;
 
     public EntryPointService(ILoggerAdapter<EntryPointService> logger,
-        IStreamService streamService,
+        IStreamInferenceService streamInferenceService,
         IServiceLocator serviceScopeFactoryLocator,
         IPubSub pubSub)
     {
         _logger = logger;
-        _streamService = streamService;
+        _streamInferenceService = streamInferenceService;
         _serviceScopeFactoryLocator = serviceScopeFactoryLocator;
         _pubSub = pubSub;
     }
@@ -46,12 +46,12 @@ public class EntryPointService : IEntryPointService
 
         await _pubSub.Init();
 
-        _streamService.HandleStream(source, targetUrl);
+        _streamInferenceService.HandleStream(source, targetUrl);
     }
     
     public void Stop()
     {
         _isRunning = false;
-        _streamService.Dispose();
+        _streamInferenceService.Dispose();
     }
 }

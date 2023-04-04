@@ -50,6 +50,18 @@ public class StreamReceiver : IStreamReceiver, IDisposable
         _pollThread.Start();
     }
 
+    public bool CheckConnection(string source)
+    {
+        // TODO check if using something like an RTMP handshake is faster than opening a stream
+        VideoCapture capture = new(source);
+        
+        var isOpened = capture.IsOpened();
+        
+        capture.Release();
+        
+        return isOpened;
+    }
+
     private void PollStream()
     {
         Guard.Against.Null(_source);

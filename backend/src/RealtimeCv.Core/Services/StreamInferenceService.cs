@@ -7,13 +7,13 @@ namespace RealtimeCv.Core.Services;
 /// <summary>
 /// Service that oversees the process of consuming the input, sending it to the inference API and publishing the results.
 /// </summary>
-public class StreamService : IStreamService, IDisposable
+public class StreamInferenceService : IStreamInferenceService, IDisposable
 {
     private readonly IStreamReceiver _streamReceiver;
     private readonly IStreamSender _streamSender;
     private readonly IPubSub _pubSub;
 
-    public StreamService(
+    public StreamInferenceService(
       IStreamReceiver streamReceiver,
       IStreamSender streamSender,
       IPubSub pubSub)
@@ -45,11 +45,11 @@ public class StreamService : IStreamService, IDisposable
         _streamSender.OnPredictionResult += async result =>
         {
             await _pubSub.Send(result);
-            
+
             // Store in db
         };
     }
-    
+
     public void Dispose()
     {
         _streamReceiver.Dispose();

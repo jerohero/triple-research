@@ -25,16 +25,27 @@ public static class ServiceCollectionSetupExtensions
         services.AddScoped<IVisionSetRepository, VisionSetRepository>();
     }
 
-    public static void AddStreamHandlers(this IServiceCollection services)
+    public static void AddStreamInferenceHandlers(this IServiceCollection services)
     {
+        services.AddTransient<IStreamInferenceService, StreamInferenceService>();
         services.AddSingleton<IStreamReceiver, StreamReceiver>();
         services.AddSingleton<IStreamSender, StreamSender>();
-        services.AddTransient<IStreamService, StreamService>();
+    }
+
+    public static void AddStreamPollHandlers(this IServiceCollection services)
+    {
+        services.AddTransient<IStreamPollService, StreamPollService>();
+        services.AddSingleton<IStreamReceiver, StreamReceiver>();
     }
 
     public static void AddConnectionServices(this IServiceCollection services)
     {
         services.AddTransient<IHttpService, HttpService>();
+    }
+    
+    public static void AddMessagingServices(this IServiceCollection services)
+    {
+        services.AddSingleton<IPubSub, PubSub>();
     }
 
     public static void ConfigureJson(this IServiceCollection services)

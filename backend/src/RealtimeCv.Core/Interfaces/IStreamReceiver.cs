@@ -12,5 +12,7 @@ public interface IStreamReceiver
 
     void ConnectStreamBySource(string source, int secondsBeforeTimeout = 15);
 
+    bool CheckConnection(string source);
+
     void Dispose();
 }

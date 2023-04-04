@@ -25,13 +25,12 @@ public class Program
                 services.AddSingleton<IEntryPointService, EntryPointService>();
                 services.AddSingleton<IServiceLocator, ServiceScopeFactoryLocator>();
                 
-                services.AddStreamHandlers();
-
-                services.AddSingleton<IPubSub, PubSub>();
+                services.AddStreamInferenceHandlers();
 
                 services.AddDbContext(hostContext.Configuration.GetConnectionString("DefaultConnection"));
                 services.AddRepositories();
                 services.AddConnectionServices();
+                services.AddMessagingServices();
 
                 services.ConfigureJson();
 
