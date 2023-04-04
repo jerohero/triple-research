@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Net.Sockets;
 using System.Threading;
 using Ardalis.GuardClauses;
 using OpenCvSharp;
@@ -53,12 +54,13 @@ public class StreamReceiver : IStreamReceiver, IDisposable
     public bool CheckConnection(string source)
     {
         // TODO check if using something like an RTMP handshake is faster than opening a stream
+        // This approach takes 10-15 seconds per URL, but only takes a second when the list is smaller?
         VideoCapture capture = new(source);
         
         var isOpened = capture.IsOpened();
         
         capture.Release();
-        
+
         return isOpened;
     }
 

@@ -43,9 +43,14 @@ public static class ServiceCollectionSetupExtensions
         services.AddTransient<IHttpService, HttpService>();
     }
     
-    public static void AddMessagingServices(this IServiceCollection services)
+    public static void AddAsynchronousMessagingServices(this IServiceCollection services)
     {
         services.AddSingleton<IPubSub, PubSub>();
+    }
+    
+    public static void AddQueueMessagingServices(this IServiceCollection services)
+    {
+        services.AddSingleton<IQueue, Queue>();
     }
 
     public static void ConfigureJson(this IServiceCollection services)

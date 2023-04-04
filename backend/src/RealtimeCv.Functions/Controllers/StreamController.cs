@@ -1,11 +1,15 @@
 ﻿using System;
+using System.Linq;
+using System.Threading.Tasks;
 using Microsoft.Azure.Functions.Worker;
 using RealtimeCv.Core.Interfaces;
+using RealtimeCv.Core.Models;
+using RealtimeCv.Infrastructure.Data.Config;
+using RealtimeCv.Infrastructure.Extensions;
 
 namespace RealtimeCv.Functions.Controllers;
 
-/// <summary>
-/// 
+/// <summary> 
 /// </summary>
 public class StreamController : BaseController
 {
@@ -23,12 +27,29 @@ public class StreamController : BaseController
 
     [Function("PollStreams")]
     public void PollStreams(
-      [TimerTrigger("*/5 * * * * *")] TimerInfo timerInfo, FunctionContext context)
+      [TimerTrigger("*/10 * * * * *")] TimerInfo timerInfo, FunctionContext context)
     {
-        var sources = new[] { "rtmp://live.restream.io/live/re_6435068_ac960121c66cd1e6a9f5", "rtmp://live.restream.io/live/re_6435068_ac960121c66cd1e6a9fx" };
+        var sources = Enumerable.Repeat("rtmp://live.restream.io/live/re_6435068_fake", 19).ToList();
+        sources.Add("rtmp://live.restream.io/live/re_6435068_ac960121c66cd1e6a9f5");
+
+        var sourcesChunks = sources.Chunk(Constants.StreamPollChunkSize);
+
+        foreach (var chunk in sourcesChunks)
+        {
+            _streamPollService.SendStreamPollChunkToQueue(chunk.ToList());
+        }
+    }
+
+    [Function("DetectStreamsFromChunk")]
+    public void DetectStreamsFromChunk([QueueTrigger("stream-poll-chunk")] StreamPollChunkMessage message)
+    {
+        var now = DateTime.UtcNow;
+
+        var activeStreams = _streamPollService.DetectActiveStreams(message.Sources.ToList());
+
+        var duration = DateTime.UtcNow - now;
         
-        var activeStreams = _streamPollService.DetectActiveStreams(sources);
-        
-        _logger.LogInformation("Active streams: {activeStreams}", activeStreams);
+        _logger.LogInformation(">>> Took " + duration.TotalSeconds + "s to poll " + message.Sources.Count + " streams. ");
+        _logger.LogInformation($">>> {activeStreams.Count}");
     }
 }

@@ -36,7 +36,8 @@ internal class Program
             services.AddSingleton<IStreamReceiver, StreamReceiver>();
             
             services.AddConnectionServices();
-            
+            services.AddQueueMessagingServices();
+
             services.AddStreamPollHandlers();
 
             services.AddAutoMapper(typeof(AutomapperMaps));

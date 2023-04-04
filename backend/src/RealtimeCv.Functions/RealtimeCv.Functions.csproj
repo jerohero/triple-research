@@ -18,6 +18,7 @@
     <PackageReference Include="Ardalis.Result.FluentValidation" />
     <PackageReference Include="AutoMapper" />
     <PackageReference Include="AutoMapper.Extensions.Microsoft.DependencyInjection" />
+    <PackageReference Include="Microsoft.Azure.Functions.Worker.Extensions.Storage.Queues" />
   </ItemGroup>
   
   <ItemGroup>

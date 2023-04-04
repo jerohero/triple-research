@@ -30,7 +30,7 @@ public class Program
                 services.AddDbContext(hostContext.Configuration.GetConnectionString("DefaultConnection"));
                 services.AddRepositories();
                 services.AddConnectionServices();
-                services.AddMessagingServices();
+                services.AddAsynchronousMessagingServices();
 
                 services.ConfigureJson();
 
