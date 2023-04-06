@@ -1,7 +1,9 @@
 ﻿using System;
+using System.Diagnostics;
 using System.Net.Sockets;
 using System.Threading;
 using Ardalis.GuardClauses;
+using Newtonsoft.Json;
 using OpenCvSharp;
 using RealtimeCv.Core.Interfaces;
 
@@ -53,15 +55,39 @@ public class StreamReceiver : IStreamReceiver, IDisposable
 
     public bool CheckConnection(string source)
     {
-        // TODO check if using something like an RTMP handshake is faster than opening a stream
-        // This approach takes 10-15 seconds per URL, but only takes a second when the list is smaller?
+        // return CheckConnectionOpenCv(source);
+        return CheckConnectionFfmpeg(source);
+    }
+
+    // For research
+    private bool CheckConnectionOpenCv(string source)
+    {
+        // Due to its synchronous nature this tends to take very long (10+ seconds per URL in larger loops for some reason) and create false results
+        
         VideoCapture capture = new(source);
-        
         var isOpened = capture.IsOpened();
-        
         capture.Release();
 
         return isOpened;
+    }
+
+    private bool CheckConnectionFfmpeg(string source)
+    {
+        // ~1 second per URL. I did find that ffprobe tends to return empty results at times, even though the stream is active
+        
+        var ffprobePath = "C:/ffmpeg/bin/ffprobe.exe";
+        
+        var process = new Process();
+        process.StartInfo.FileName = ffprobePath;
+        process.StartInfo.Arguments = $"-v quiet -print_format json -show_streams {source}";
+        process.StartInfo.UseShellExecute = false;
+        process.StartInfo.RedirectStandardOutput = true;
+        
+        process.Start();
+        var output = JsonConvert.DeserializeObject(process.StandardOutput.ReadToEnd());
+        process.Close();
+        
+        return  !output?.ToString()?.Equals("{}") ?? false;
     }
 
     private void PollStream()

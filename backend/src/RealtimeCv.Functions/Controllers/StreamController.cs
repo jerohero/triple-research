@@ -1,6 +1,9 @@
 ﻿using System;
+using System.Diagnostics;
 using System.Linq;
 using System.Threading.Tasks;
+using FFMpegCore;
+using FFMpegCore.Enums;
 using Microsoft.Azure.Functions.Worker;
 using RealtimeCv.Core.Interfaces;
 using RealtimeCv.Core.Models;
@@ -26,8 +29,8 @@ public class StreamController : BaseController
     }
 
     [Function("PollStreams")]
-    public void PollStreams(
-      [TimerTrigger("*/10 * * * * *")] TimerInfo timerInfo, FunctionContext context)
+    public async Task PollStreams(
+      [TimerTrigger("*/20 * * * * *")] TimerInfo timerInfo, FunctionContext context)
     {
         var sources = Enumerable.Repeat("rtmp://live.restream.io/live/re_6435068_fake", 19).ToList();
         sources.Add("rtmp://live.restream.io/live/re_6435068_ac960121c66cd1e6a9f5");
@@ -36,7 +39,7 @@ public class StreamController : BaseController
 
         foreach (var chunk in sourcesChunks)
         {
-            _streamPollService.SendStreamPollChunkToQueue(chunk.ToList());
+            await _streamPollService.SendStreamPollChunkToQueue(chunk.ToList());
         }
     }
 
