@@ -3,10 +3,12 @@ using System.Diagnostics;
 using System.Net.Sockets;
 using System.Threading;
 using Ardalis.GuardClauses;
+using Microsoft.IdentityModel.Tokens;
 using Newtonsoft.Json;
 using OpenCvSharp;
 using RealtimeCv.Core.Interfaces;
-
+using FFMpegCore;
+using FFMpegCore.Pipes;
 namespace RealtimeCv.Infrastructure.Streaming;
 
 /// <summary>
@@ -79,15 +81,15 @@ public class StreamReceiver : IStreamReceiver, IDisposable
         
         var process = new Process();
         process.StartInfo.FileName = ffprobePath;
-        process.StartInfo.Arguments = $"-v quiet -print_format json -show_streams {source}";
+        process.StartInfo.Arguments = $"-v quiet -show_streams {source}";
         process.StartInfo.UseShellExecute = false;
         process.StartInfo.RedirectStandardOutput = true;
         
         process.Start();
-        var output = JsonConvert.DeserializeObject(process.StandardOutput.ReadToEnd());
+        var output = process.StandardOutput.ReadToEnd();
         process.Close();
         
-        return  !output?.ToString()?.Equals("{}") ?? false;
+        return !output.IsNullOrEmpty();
     }
 
     private void PollStream()
@@ -146,9 +148,13 @@ public class StreamReceiver : IStreamReceiver, IDisposable
 
     private void Update()
     {
+        // Retrieving a frame with OpenCV takes about 0.01-0.03 seconds
+        
         // Read next stream frame in a daemon thread
         while (_capture is not null && _capture.IsOpened())
         {
+            var now = DateTime.UtcNow;
+
             _capture.Grab();
 
             Mat frame = new();
@@ -159,7 +165,11 @@ public class StreamReceiver : IStreamReceiver, IDisposable
             {
                 break;
             }
-
+            
+            var duration = DateTime.UtcNow - now;
+            
+            _logger.LogInformation( $">>> Retrieving frame took { duration.TotalSeconds }s");
+            
             Thread.Sleep((int)TimeSpan.FromSeconds(1 / _fps ?? DefaultFps).TotalMilliseconds); // wait time
         }
 
@@ -175,4 +185,51 @@ public class StreamReceiver : IStreamReceiver, IDisposable
         _capture?.Dispose();
         Frame.Dispose();
     }
+
+
+
+    // private bool _isRunning;
+    // private Thread? _thread;
+    //
+    // public void StartFfmpeg()
+    // {
+    //     _thread = new Thread(RunFfmpeg);
+    //     _isRunning = true;
+    //     _thread.Start();
+    // }
+    //
+    // public void StopFfmpeg()
+    // {
+    //     _isRunning = false;
+    //     _thread.Join();
+    // }
+    //
+    // private void RunFfmpeg()
+    // {
+    //     // Retrieving a frame with FFmpeg takes about 0.02 seconds
+    //     var source = "rtmp://live.restream.io/live/re_6435068_ac960121c66cd1e6a9f5";
+    //     
+    //     var ffmpegStartInfo = new ProcessStartInfo
+    //     {
+    //         FileName = "ffmpeg",
+    //         Arguments = $"-i {source} -f image2pipe -vcodec rawvideo -pix_fmt rgb24 -",
+    //         RedirectStandardOutput = true,
+    //         UseShellExecute = false
+    //     };
+    //     var ffmpeg = new Process { StartInfo = ffmpegStartInfo };
+    //     ffmpeg.Start();
+    //     while (_isRunning)
+    //     {
+    //         var now = DateTime.UtcNow;
+    //         
+    //         var frameData = new byte[1920 * 1080 * 3];
+    //         ffmpeg.StandardOutput.BaseStream.Read(frameData, 0, frameData.Length);
+    //         // do something with the frame data
+    //         
+    //         var duration = DateTime.UtcNow - now;
+    //         
+    //         _logger.LogInformation( $">>> Retrieving frame took { duration.TotalSeconds }s");
+    //     }
+    //     ffmpeg.Kill();
+    // }
 }
