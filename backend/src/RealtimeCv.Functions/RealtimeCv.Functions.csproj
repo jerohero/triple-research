@@ -18,6 +18,7 @@
     <PackageReference Include="Ardalis.Result.FluentValidation" />
     <PackageReference Include="AutoMapper" />
     <PackageReference Include="AutoMapper.Extensions.Microsoft.DependencyInjection" />
+    <PackageReference Include="KubernetesClient" />
   </ItemGroup>
   
   <ItemGroup>

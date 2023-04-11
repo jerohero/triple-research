@@ -1,5 +1,7 @@
-﻿using System.Threading.Tasks;
+﻿using System.Security.Cryptography.X509Certificates;
+using System.Threading.Tasks;
 using Ardalis.Result;
+using k8s;
 using Microsoft.Azure.Functions.Worker;
 using Microsoft.Azure.Functions.Worker.Http;
 using RealtimeCv.Core.Interfaces;
@@ -72,5 +74,20 @@ public class ProjectController : BaseController
         Result<ProjectDto> result = await _projectService.DeleteProject(projectId);
 
         return await ResultToResponse(result, req);
+    }
+    
+    [Function("test")]
+    public async Task<HttpResponseData> Test(
+        [HttpTrigger(AuthorizationLevel.Anonymous, "post", Route = "test")] HttpRequestData req)
+    {
+        var config = KubernetesClientConfiguration.BuildConfigFromConfigFile("C:/Users/jeroe/Documents/GitHub/triple-research/k8s/kubeconfig.conf");
+
+        var client = new Kubernetes(config);
+
+        var pods = await client.CoreV1.ListPodForAllNamespacesAsync();
+        
+        _logger.LogInformation(pods.Items.Count.ToString());
+
+        return await ResultToResponse(new Result<string>("Fakka"), req);
     }
 }
