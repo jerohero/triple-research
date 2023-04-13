@@ -17,6 +17,7 @@
     <PackageReference Include="Azure.Messaging.WebPubSub" />
     <PackageReference Include="SixLabors.ImageSharp" />
     <PackageReference Include="Newtonsoft.Json" />
+    <PackageReference Include="KubernetesClient" />
   </ItemGroup>
 
   <ItemGroup>

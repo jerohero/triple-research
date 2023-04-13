@@ -17,14 +17,17 @@ public class ProjectController : BaseController
 {
     private readonly ILoggerAdapter<ProjectController> _logger;
     private readonly IProjectService _projectService;
+    private readonly IKubernetes _kubernetes;
 
     public ProjectController(
       ILoggerAdapter<ProjectController> logger,
-      IProjectService projectService
+      IProjectService projectService, 
+      IKubernetes kubernetes
     )
     {
         _logger = logger;
         _projectService = projectService;
+        _kubernetes = kubernetes;
     }
 
     [Function("getProject")]
@@ -80,11 +83,7 @@ public class ProjectController : BaseController
     public async Task<HttpResponseData> Test(
         [HttpTrigger(AuthorizationLevel.Anonymous, "post", Route = "test")] HttpRequestData req)
     {
-        var config = KubernetesClientConfiguration.BuildConfigFromConfigFile("C:/Users/jeroe/Documents/GitHub/triple-research/k8s/kubeconfig.conf");
-
-        var client = new Kubernetes(config);
-
-        var pods = await client.CoreV1.ListPodForAllNamespacesAsync();
+        var pods = await _kubernetes.CoreV1.ListPodForAllNamespacesAsync();
         
         _logger.LogInformation(pods.Items.Count.ToString());
 

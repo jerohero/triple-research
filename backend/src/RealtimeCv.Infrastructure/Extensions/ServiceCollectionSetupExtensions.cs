@@ -1,4 +1,7 @@
-﻿using Microsoft.EntityFrameworkCore;
+﻿using System;
+using System.IO;
+using k8s;
+using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Newtonsoft.Json;
@@ -30,6 +33,19 @@ public static class ServiceCollectionSetupExtensions
         services.AddSingleton<IStreamReceiver, StreamReceiver>();
         services.AddSingleton<IStreamSender, StreamSender>();
         services.AddTransient<IStreamService, StreamService>();
+    }
+
+    public static void AddKubernetes(this IServiceCollection services)
+    {
+        // TODO: replace with AKS API access
+        // Enable proxy with "kubectl proxy --port=8080 &"
+        
+        services.AddTransient(typeof(IKubernetes), _ => 
+            new Kubernetes(new KubernetesClientConfiguration
+            {
+                Host = "http://localhost:8080/"
+            })
+        );
     }
 
     public static void AddConnectionServices(this IServiceCollection services)

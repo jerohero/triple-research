@@ -1,5 +1,6 @@
 ﻿
 using System.Threading.Tasks;
+using k8s;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
@@ -28,6 +29,7 @@ internal class Program
 
             services.AddDbContext(hostContext.Configuration.GetValue<string>("SqlConnectionString"));
             services.AddRepositories();
+            services.AddKubernetes();
 
             services.AddScoped<IProjectService, ProjectService>();
 
