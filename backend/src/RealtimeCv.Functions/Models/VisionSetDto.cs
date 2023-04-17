@@ -12,11 +12,15 @@ public class VisionSetDto
     
     [JsonRequired]
     public string[] Sources { get; set; }
+    
+    [JsonRequired]
+    public int ProjectId { get; set; }
 
-    public VisionSetDto(int id, string name, string[] sources)
+    public VisionSetDto(int id, string name, string[] sources, int projectId)
     {
         Id = id;
         Name = name;
         Sources = sources;
+        ProjectId = projectId;
     }
 }

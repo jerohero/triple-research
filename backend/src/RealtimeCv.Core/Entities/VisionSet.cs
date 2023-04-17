@@ -10,6 +10,8 @@ public class VisionSet : BaseEntity
     public string Name { get; set; }
     
     public Project Project { get; set; }
+    
+    public int ProjectId { get; set; }
 
     [JsonIgnore(Condition = JsonIgnoreCondition.WhenWritingDefault)]
     public ICollection<string> Sources { get; set; }

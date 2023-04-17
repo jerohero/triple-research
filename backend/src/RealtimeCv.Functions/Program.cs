@@ -32,6 +32,7 @@ internal class Program
             services.AddKubernetes();
 
             services.AddScoped<IProjectService, ProjectService>();
+            services.AddScoped<IVisionSetService, VisionSetService>();
 
             services.AddAutoMapper(typeof(AutomapperMaps));
         });

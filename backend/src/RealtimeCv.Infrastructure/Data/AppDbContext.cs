@@ -31,7 +31,8 @@ public class AppDbContext : DbContext
         builder.Entity<Project>()
             .HasMany(p => p.VisionSets)
             .WithOne(vs => vs.Project)
-            .OnDelete(DeleteBehavior.Cascade);
+            .HasForeignKey(vs => vs.ProjectId)
+            .IsRequired();
 
         // Convert non-supported formats
         var valueComparer = new ValueComparer<ICollection<string>>(

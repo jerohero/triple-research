@@ -20,16 +20,19 @@ public class VisionSetService : IVisionSetService
     private readonly IMapper _mapper;
     private readonly ILoggerAdapter<VisionSetService> _logger;
     private readonly IVisionSetRepository _visionSetRepository;
+    private readonly IProjectRepository _projectRepository;
 
     public VisionSetService(
-      ILoggerAdapter<VisionSetService> logger,
-      IMapper mapper,
-      IVisionSetRepository visionSetRepository
+        ILoggerAdapter<VisionSetService> logger,
+        IMapper mapper,
+        IVisionSetRepository visionSetRepository,
+        IProjectRepository projectRepository
     )
     {
         _mapper = mapper;
         _logger = logger;
         _visionSetRepository = visionSetRepository;
+        _projectRepository = projectRepository;
     }
 
     public async Task<Result<VisionSetDto>> GetVisionSetById(int visionSetId)
@@ -41,16 +44,15 @@ public class VisionSetService : IVisionSetService
           : new Result<VisionSetDto>(_mapper.Map<VisionSetDto>(visionSet));
     }
 
-    public async Task<Result<List<VisionSetDto>>> GetVisionSets()
+    public async Task<Result<List<VisionSetDto>>> GetVisionSetsByProject(int projectId)
     {
         var visionSets = await _visionSetRepository.ListAsync();
 
         return new Result<List<VisionSetDto>>(_mapper.Map<List<VisionSetDto>>(visionSets));
     }
 
-    public async Task<Result<VisionSetDto>> CreateVisionSet(VisionSetCreateDto? createDto)
+    public async Task<Result<VisionSetDto>> CreateVisionSet(VisionSetCreateDto? createDto, int projectId)
     {
-        // Don't want to use the dammit operator here, but the method requires a non-null value even though the validator will catch it
         var validationResult = await new VisionSetCreateDtoValidator().ValidateAsync(createDto!);
 
         if (createDto is null || validationResult.Errors.Any())
@@ -58,7 +60,17 @@ public class VisionSetService : IVisionSetService
             return Result<VisionSetDto>.Invalid(validationResult.AsErrors());
         }
 
-        var visionSet = await _visionSetRepository.AddAsync(_mapper.Map<VisionSet>(createDto));
+        var project = await _projectRepository.GetByIdAsync(projectId);
+
+        if (project is null)
+        {
+            return Result<VisionSetDto>.NotFound();
+        }
+        
+        var mappedVisionSet = _mapper.Map<VisionSet>(createDto);
+        mappedVisionSet.ProjectId = projectId;
+
+        var visionSet = await _visionSetRepository.AddAsync(mappedVisionSet);
 
         return new Result<VisionSetDto>(_mapper.Map<VisionSetDto>(visionSet));
     }
