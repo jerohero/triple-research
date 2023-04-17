@@ -46,7 +46,10 @@ public class ProjectServiceTestsBase
 
         for (var i = 0; i < count; i++)
         {
-            fakeProjects.Add(new Project($"Project{i+1}"));
+            fakeProjects.Add(new Project
+            {
+                Name = $"Project{i+1}"
+            });
         }
         
         _context.Project.AddRange(fakeProjects);

@@ -15,8 +15,6 @@ public class VisionSetConfiguration : IEntityTypeConfiguration<VisionSet>
         builder.Property(vs => vs.Name)
           .IsRequired()
           .HasMaxLength(Constants.DefaultMaxStringLength);
-        builder.Property(vs => vs.Models)
-          .IsRequired();
         builder.Property(vs => vs.Sources)
           .IsRequired();
     }

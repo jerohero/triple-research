@@ -26,6 +26,12 @@ public class AppDbContext : DbContext
         // Auto-generate Id on creation
         builder.Entity<VisionSet>().Property(vs => vs.Id).ValueGeneratedOnAdd();
         builder.Entity<Project>().Property(p => p.Id).ValueGeneratedOnAdd();
+        
+        // Set entity relations
+        builder.Entity<Project>()
+            .HasMany(p => p.VisionSets)
+            .WithOne(vs => vs.Project)
+            .OnDelete(DeleteBehavior.Cascade);
 
         // Convert non-supported formats
         var valueComparer = new ValueComparer<ICollection<string>>(
@@ -38,12 +44,8 @@ public class AppDbContext : DbContext
           v => JsonConvert.DeserializeObject<List<string>>(v)!,
           valueComparer
         );
-        builder.Entity<VisionSet>().Property(vs => vs.Models).HasConversion(
-          v => JsonConvert.SerializeObject(v),
-          v => JsonConvert.DeserializeObject<List<string>>(v)!,
-          valueComparer
-        );
 
+        // Apply configurations
         builder.ApplyConfiguration(new VisionSetConfiguration());
         builder.ApplyConfiguration(new ProjectConfiguration());
 
