@@ -1,5 +1,7 @@
 ﻿using System;
 using System.IO;
+using System.Text.Json;
+using System.Text.Json.Serialization;
 using k8s;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
@@ -59,5 +61,11 @@ public static class ServiceCollectionSetupExtensions
         {
             options.ReferenceLoopHandling = ReferenceLoopHandling.Ignore;
         });
+
+        // services.Configure<JsonSerializerOptions>(options =>
+        // {
+        //     options.ReferenceHandler = ReferenceHandler.IgnoreCycles;
+        //     options.WriteIndented = true;
+        // });
     }
 }

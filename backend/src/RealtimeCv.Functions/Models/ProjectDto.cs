@@ -13,9 +13,9 @@ public class ProjectDto
     public string Name { get; set; }
     
     [JsonRequired]
-    public ICollection<VisionSet> VisionSets { get; set; }
+    public ICollection<VisionSetDto> VisionSets { get; set; }
 
-    public ProjectDto(int id, string name, ICollection<VisionSet> visionSets)
+    public ProjectDto(int id, string name, ICollection<VisionSetDto> visionSets)
     {
         Id = id;
         Name = name;

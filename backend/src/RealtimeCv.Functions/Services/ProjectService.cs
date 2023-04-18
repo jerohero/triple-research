@@ -6,6 +6,7 @@ using Ardalis.Result.FluentValidation;
 using AutoMapper;
 using RealtimeCv.Core.Entities;
 using RealtimeCv.Core.Interfaces;
+using RealtimeCv.Core.Specifications;
 using RealtimeCv.Functions.Interfaces;
 using RealtimeCv.Functions.Models;
 using RealtimeCv.Functions.Validators;
@@ -34,7 +35,9 @@ public class ProjectService : IProjectService
 
     public async Task<Result<ProjectDto>> GetProjectById(int projectId)
     {
-        var project = await _projectRepository.GetByIdAsync(projectId);
+        var spec = new ProjectSpec(projectId);
+        
+        var project = await _projectRepository.SingleOrDefaultAsync(spec, CancellationToken.None);
 
         return project is null
           ? Result<ProjectDto>.NotFound()
