@@ -44,11 +44,11 @@ public class ProjectService : IProjectService
           : new Result<ProjectDto>(_mapper.Map<ProjectDto>(project));
     }
 
-    public async Task<Result<List<ProjectDto>>> GetProjects()
+    public async Task<Result<List<ProjectsDto>>> GetProjects()
     {
         var projects = await _projectRepository.ListAsync();
 
-        return new Result<List<ProjectDto>>(_mapper.Map<List<ProjectDto>>(projects));
+        return new Result<List<ProjectsDto>>(_mapper.Map<List<ProjectsDto>>(projects));
     }
 
     public async Task<Result<ProjectDto>> CreateProject(ProjectCreateDto? createDto)
@@ -66,9 +66,9 @@ public class ProjectService : IProjectService
         return new Result<ProjectDto>(_mapper.Map<ProjectDto>(project));
     }
 
-    public async Task<Result<ProjectDto>> UpdateProject(ProjectDto? updateDto)
+    public async Task<Result<ProjectDto>> UpdateProject(ProjectUpdateDto? updateDto)
     {
-        var validationResult = await new ProjectDtoValidator().ValidateAsync(updateDto!);
+        var validationResult = await new ProjectUpdateDtoValidator().ValidateAsync(updateDto!);
 
         if (updateDto is null || validationResult.Errors.Any())
         {
@@ -86,7 +86,7 @@ public class ProjectService : IProjectService
 
         await _projectRepository.UpdateAsync(project);
 
-        return new Result<ProjectDto>(updateDto);
+        return new Result<ProjectDto>(_mapper.Map<ProjectDto>(project));
     }
 
     public async Task<Result> DeleteProject(int projectId)

@@ -29,7 +29,7 @@ public class VisionSetController : BaseController
 
     [Function("getVisionSet")]
     public async Task<HttpResponseData> GetVisionSet(
-      [HttpTrigger(AuthorizationLevel.Anonymous, "get", Route = "vision-set/{visionSetId}")] HttpRequestData req, int projectId, int visionSetId)
+      [HttpTrigger(AuthorizationLevel.Anonymous, "get", Route = "vision-set/{visionSetId}")] HttpRequestData req, int visionSetId)
     {
         var result = await _visionSetService.GetVisionSetById(visionSetId);
 

@@ -8,11 +8,11 @@ public class AutomapperMaps : Profile
 {
     public AutomapperMaps()
     {
-        CreateMap<ProjectDto, Project>();
         CreateMap<Project, ProjectDto>();
+        CreateMap<Project, ProjectsDto>();
         CreateMap<ProjectCreateDto, Project>();
-        CreateMap<Project, ProjectCreateDto>();
-        
+        CreateMap<ProjectUpdateDto, Project>();
+
         CreateMap<VisionSetDto, VisionSet>();
         CreateMap<VisionSet, VisionSetDto>();
         CreateMap<VisionSetCreateDto, VisionSet>();

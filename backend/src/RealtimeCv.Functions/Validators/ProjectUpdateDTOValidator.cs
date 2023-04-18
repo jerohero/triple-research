@@ -5,16 +5,16 @@ using RealtimeCv.Infrastructure.Data.Config;
 
 namespace RealtimeCv.Functions.Validators;
 
-public class ProjectDtoValidator : AbstractValidator<ProjectDto>
+public class ProjectUpdateDtoValidator : AbstractValidator<ProjectUpdateDto>
 {
-    public ProjectDtoValidator()
+    public ProjectUpdateDtoValidator()
     {
         RuleFor(x => x.Id).GreaterThan(0);
-
+        
         RuleFor(x => x.Name).MinimumLength(1).MaximumLength(Constants.DefaultMaxStringLength);
     }
 
-    protected override bool PreValidate(ValidationContext<ProjectDto> context, ValidationResult result)
+    protected override bool PreValidate(ValidationContext<ProjectUpdateDto> context, ValidationResult result)
     {
         if (context.InstanceToValidate is not null)
         {

@@ -32,6 +32,7 @@ public class AppDbContext : DbContext
             .HasMany(p => p.VisionSets)
             .WithOne(vs => vs.Project)
             .HasForeignKey(vs => vs.ProjectId)
+            .OnDelete(DeleteBehavior.Cascade)
             .IsRequired();
 
         // Convert non-supported formats

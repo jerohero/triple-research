@@ -63,7 +63,7 @@ public class ProjectController : BaseController
     public async Task<HttpResponseData> UpdateProject(
       [HttpTrigger(AuthorizationLevel.Anonymous, "put", Route = "project")] HttpRequestData req)
     {
-        var projectDto = DeserializeJson<ProjectDto>(req.Body);
+        var projectDto = DeserializeJson<ProjectUpdateDto>(req.Body);
 
         var result = await _projectService.UpdateProject(projectDto);
 
