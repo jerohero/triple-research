@@ -14,6 +14,7 @@ public class AppDbContext : DbContext
 {
     public DbSet<VisionSet>? VisionSet { get; set; }
     public DbSet<Project>? Project { get; set; }
+    public DbSet<Session>? Session { get; set; }
 
     public AppDbContext(DbContextOptions<AppDbContext> options) : base(options)
     {
@@ -26,12 +27,20 @@ public class AppDbContext : DbContext
         // Auto-generate Id on creation
         builder.Entity<VisionSet>().Property(vs => vs.Id).ValueGeneratedOnAdd();
         builder.Entity<Project>().Property(p => p.Id).ValueGeneratedOnAdd();
+        builder.Entity<Session>().Property(p => p.Id).ValueGeneratedOnAdd();
         
         // Set entity relations
         builder.Entity<Project>()
             .HasMany(p => p.VisionSets)
             .WithOne(vs => vs.Project)
             .HasForeignKey(vs => vs.ProjectId)
+            .OnDelete(DeleteBehavior.Cascade)
+            .IsRequired();
+        
+        builder.Entity<VisionSet>()
+            .HasMany(vs => vs.Sessions)
+            .WithOne(s => s.VisionSet)
+            .HasForeignKey(vs => vs.VisionSetId)
             .OnDelete(DeleteBehavior.Cascade)
             .IsRequired();
 

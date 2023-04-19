@@ -20,9 +20,11 @@ namespace RealtimeCv.Infrastructure.Extensions;
 public static class ServiceCollectionSetupExtensions
 {
     public static void AddDbContext(this IServiceCollection services, string? connectionString) =>
-      services.AddDbContext<AppDbContext>(options =>
-        options.UseSqlServer(connectionString)
-      );
+        services.AddDbContext<AppDbContext>(dbContextOptions =>
+            dbContextOptions.UseSqlServer(connectionString, sqlServerOptions => 
+                sqlServerOptions.EnableRetryOnFailure()
+            )
+        );
 
     public static void AddRepositories(this IServiceCollection services)
     {

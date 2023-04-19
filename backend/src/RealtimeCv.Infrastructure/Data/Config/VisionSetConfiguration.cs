@@ -11,11 +11,13 @@ public class VisionSetConfiguration : IEntityTypeConfiguration<VisionSet>
         builder.ToTable(nameof(VisionSet));
 
         builder.Property(vs => vs.Id)
-          .IsRequired();
+            .IsRequired();
         builder.Property(vs => vs.Name)
-          .IsRequired()
-          .HasMaxLength(Constants.DefaultMaxStringLength);
+            .IsRequired()
+            .HasMaxLength(Constants.DefaultMaxStringLength);
         builder.Property(vs => vs.Sources)
-          .IsRequired();
+            .IsRequired();
+        builder.Property(vs => vs.ProjectId)
+            .IsRequired();
     }
 }
