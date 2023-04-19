@@ -51,7 +51,7 @@ public class VisionSetService : IVisionSetService
         return new Result<List<VisionSetDto>>(_mapper.Map<List<VisionSetDto>>(visionSets));
     }
 
-    public async Task<Result<VisionSetDto>> CreateVisionSet(VisionSetCreateDto? createDto, int projectId)
+    public async Task<Result<VisionSetDto>> CreateVisionSet(VisionSetCreateDto? createDto)
     {
         var validationResult = await new VisionSetCreateDtoValidator().ValidateAsync(createDto!);
 
@@ -60,7 +60,7 @@ public class VisionSetService : IVisionSetService
             return Result<VisionSetDto>.Invalid(validationResult.AsErrors());
         }
 
-        var project = await _projectRepository.GetByIdAsync(projectId);
+        var project = await _projectRepository.GetByIdAsync(createDto.ProjectId);
 
         if (project is null)
         {
@@ -68,7 +68,6 @@ public class VisionSetService : IVisionSetService
         }
         
         var mappedVisionSet = _mapper.Map<VisionSet>(createDto);
-        mappedVisionSet.ProjectId = projectId;
 
         var visionSet = await _visionSetRepository.AddAsync(mappedVisionSet);
 

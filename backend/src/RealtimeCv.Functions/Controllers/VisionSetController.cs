@@ -47,11 +47,11 @@ public class VisionSetController : BaseController
 
     [Function("createVisionSet")]
     public async Task<HttpResponseData> CreateVisionSet(
-      [HttpTrigger(AuthorizationLevel.Anonymous, "post", Route = "project/{projectId}/vision-set")] HttpRequestData req, int projectId)
+      [HttpTrigger(AuthorizationLevel.Anonymous, "post", Route = "vision-set")] HttpRequestData req)
     {
         var visionSetCreateDto = DeserializeJson<VisionSetCreateDto>(req.Body);
 
-        var result = await _visionSetService.CreateVisionSet(visionSetCreateDto, projectId);
+        var result = await _visionSetService.CreateVisionSet(visionSetCreateDto);
 
         return await ResultToResponse(result, req);
     }

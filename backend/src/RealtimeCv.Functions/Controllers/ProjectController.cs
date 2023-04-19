@@ -21,16 +21,19 @@ public class ProjectController : BaseController
 {
     private readonly ILoggerAdapter<ProjectController> _logger;
     private readonly IProjectService _projectService;
+    private readonly ISessionService _sessionService;
     private readonly Kubernetes _kubernetes;
 
     public ProjectController(
       ILoggerAdapter<ProjectController> logger,
-      IProjectService projectService, 
+      IProjectService projectService,
+      ISessionService sessionService,
       Kubernetes kubernetes
     )
     {
         _logger = logger;
         _projectService = projectService;
+        _sessionService = sessionService;
         _kubernetes = kubernetes;
     }
 
@@ -105,16 +108,22 @@ public class ProjectController : BaseController
         // deployment.Spec.Replicas--;
         // var updatedDeployment =
         //     await _kubernetes.ReplaceNamespacedDeploymentAsync(deployment, "cv-deployment", "default");
+
+        var createSessionDto = new SessionCreateDto(1, "rtmp://live.restream.io/live/re_6435068_ac960121c66cd1e6a9f5");
         
-        // updatedDeployment.Status.
+        var session = await _sessionService.CreateSession(createSessionDto);
+
+        var podName = $"cv-pod-{session.Value.Id}";
+
+        // TODO: Get vision set information from database
 
         var pod = new V1Pod
         {
             Metadata = new V1ObjectMeta
             {
-                Name = "cv-podx", Labels = new Dictionary<string, string>
+                Name = podName, Labels = new Dictionary<string, string>
                 {
-                    { "app", "cv-podx" }
+                    { "app", podName }
                 }
             },
             Spec = new V1PodSpec
@@ -124,7 +133,7 @@ public class ProjectController : BaseController
                     new()
                     {
                         Name = "cv-inference",
-                        Image = "yeruhero/yolov3api:latest",
+                        Image = "yeruhero/yolov3api:latest", // TODO VisionSet image
                         Ports = new List<V1ContainerPort>
                         {
                             new() {
@@ -136,7 +145,7 @@ public class ProjectController : BaseController
                     new()
                     {
                         Name = "cv-worker",
-                        Image = "yeruhero/cv-worker:latest",
+                        Image = "yeruhero/cv-worker:latest", // TODO VisionSet image
                         Ports = new List<V1ContainerPort>
                         {
                             new()
@@ -151,7 +160,12 @@ public class ProjectController : BaseController
                             {
                                 Name = "SESSION_ID",
                                 Value = "1"
-                            }
+                            },
+                            new()
+                            {
+                                Name = "STREAM_SOURCE",
+                                Value = session.Value.Source
+                            },
                         }
                     }
                 }

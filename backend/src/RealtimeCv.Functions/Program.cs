@@ -33,6 +33,7 @@ internal class Program
 
             services.AddScoped<IProjectService, ProjectService>();
             services.AddScoped<IVisionSetService, VisionSetService>();
+            services.AddScoped<ISessionService, SessionService>();
 
             services.AddAutoMapper(typeof(AutomapperMaps));
         });

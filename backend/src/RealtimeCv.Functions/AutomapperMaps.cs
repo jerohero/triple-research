@@ -16,6 +16,9 @@ public class AutomapperMaps : Profile
         CreateMap<VisionSetDto, VisionSet>();
         CreateMap<VisionSet, VisionSetDto>();
         CreateMap<VisionSetCreateDto, VisionSet>();
-        CreateMap<VisionSet, VisionSetCreateDto>();
+        
+        CreateMap<SessionDto, Session>();
+        CreateMap<Session, SessionDto>();
+        CreateMap<SessionCreateDto, Session>();
     }
 }
