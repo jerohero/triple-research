@@ -42,7 +42,7 @@ public static class ServiceCollectionSetupExtensions
         // TODO: replace with AKS API access
         // Enable proxy with "kubectl proxy --port=8080 &"
         
-        services.AddTransient(typeof(IKubernetes), _ => 
+        services.AddTransient(typeof(Kubernetes), _ => 
             new Kubernetes(new KubernetesClientConfiguration
             {
                 Host = "http://localhost:8080/"

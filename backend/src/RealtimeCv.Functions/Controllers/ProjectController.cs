@@ -1,9 +1,13 @@
-﻿using System.Security.Cryptography.X509Certificates;
+﻿using System.Collections.Generic;
+using System.Security.Cryptography.X509Certificates;
 using System.Threading.Tasks;
 using Ardalis.Result;
 using k8s;
+using k8s.Models;
 using Microsoft.Azure.Functions.Worker;
 using Microsoft.Azure.Functions.Worker.Http;
+using Microsoft.CodeAnalysis;
+using Newtonsoft.Json.Serialization;
 using RealtimeCv.Core.Interfaces;
 using RealtimeCv.Functions.Interfaces;
 using RealtimeCv.Functions.Models;
@@ -17,12 +21,12 @@ public class ProjectController : BaseController
 {
     private readonly ILoggerAdapter<ProjectController> _logger;
     private readonly IProjectService _projectService;
-    private readonly IKubernetes _kubernetes;
+    private readonly Kubernetes _kubernetes;
 
     public ProjectController(
       ILoggerAdapter<ProjectController> logger,
       IProjectService projectService, 
-      IKubernetes kubernetes
+      Kubernetes kubernetes
     )
     {
         _logger = logger;
@@ -83,9 +87,78 @@ public class ProjectController : BaseController
     public async Task<HttpResponseData> Test(
         [HttpTrigger(AuthorizationLevel.Anonymous, "post", Route = "test")] HttpRequestData req)
     {
-        var pods = await _kubernetes.CoreV1.ListPodForAllNamespacesAsync();
+        var deployment = await _kubernetes.ReadNamespacedDeploymentAsync("cv-deployment", "default");
+        deployment.Spec.Replicas++;
+        var updatedDeployment =
+            await _kubernetes.ReplaceNamespacedDeploymentAsync(deployment, "cv-deployment", "default");
         
-        _logger.LogInformation(pods.Items.Count.ToString());
+        // updatedDeployment.Status.
+
+        return await ResultToResponse(new Result<string>("Fakka"), req);
+    }
+    
+    [Function("test2")]
+    public async Task<HttpResponseData> Test2(
+        [HttpTrigger(AuthorizationLevel.Anonymous, "post", Route = "test2")] HttpRequestData req)
+    {
+        // var deployment = await _kubernetes.ReadNamespacedDeploymentAsync("cv-deployment", "default");
+        // deployment.Spec.Replicas--;
+        // var updatedDeployment =
+        //     await _kubernetes.ReplaceNamespacedDeploymentAsync(deployment, "cv-deployment", "default");
+        
+        // updatedDeployment.Status.
+
+        var pod = new V1Pod
+        {
+            Metadata = new V1ObjectMeta
+            {
+                Name = "cv-podx", Labels = new Dictionary<string, string>
+                {
+                    { "app", "cv-podx" }
+                }
+            },
+            Spec = new V1PodSpec
+            {
+                Containers = new List<V1Container>
+                {
+                    new()
+                    {
+                        Name = "cv-inference",
+                        Image = "yeruhero/yolov3api:latest",
+                        Ports = new List<V1ContainerPort>
+                        {
+                            new() {
+                                ContainerPort = 5000
+                            }
+                        },
+                        ImagePullPolicy = "IfNotPresent"
+                    },
+                    new()
+                    {
+                        Name = "cv-worker",
+                        Image = "yeruhero/cv-worker:latest",
+                        Ports = new List<V1ContainerPort>
+                        {
+                            new()
+                            {
+                                ContainerPort = 9300
+                            }
+                        },
+                        ImagePullPolicy = "IfNotPresent",
+                        Env = new List<V1EnvVar>
+                        {
+                            new()
+                            {
+                                Name = "SESSION_ID",
+                                Value = "1"
+                            }
+                        }
+                    }
+                }
+            }
+        };
+
+        var createdPod = await _kubernetes.CreateNamespacedPodAsync(pod, "default");
 
         return await ResultToResponse(new Result<string>("Fakka"), req);
     }
