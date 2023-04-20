@@ -14,12 +14,15 @@ namespace RealtimeCv.Core.Services;
 public class VisionSessionService : IVisionSessionService, IDisposable
 {
     private ISessionRepository _sessionRepository;
+    private IKubernetesService _kubernetesService;
     
     public VisionSessionService(
-        ISessionRepository sessionRepository
+        ISessionRepository sessionRepository,
+        IKubernetesService kubernetesService
     )
     {
         _sessionRepository = sessionRepository;
+        _kubernetesService = kubernetesService;
     }
 
     public async Task<Session> Start(int sessionId)
@@ -29,24 +32,32 @@ public class VisionSessionService : IVisionSessionService, IDisposable
         
         Guard.Against.Null(session, nameof(session));
 
-        session = await SetIsActive(session, true);
-
-        return session;
-    }
-
-    public async Task Stop()
-    {
-        await Task.CompletedTask;
-    }
-    
-    private async Task<Session> SetIsActive(Session session, bool isActive)
-    {
         session.IsActive = true;
-        
         await _sessionRepository.UpdateAsync(session);
 
         return session;
     }
+
+    public async Task Stop(int sessionId)
+    {
+        var session = await _sessionRepository.GetByIdAsync(sessionId);
+        
+        Guard.Against.Null(session, nameof(session));
+        
+        session.IsActive = false;
+        await _sessionRepository.UpdateAsync(session);
+        
+        await _kubernetesService.DeletePod("d");
+    }
+    
+    // private async Task<Session> SetIsActive(Session session, bool isActive)
+    // {
+    //     session.IsActive = true;
+    //     
+    //     await _sessionRepository.UpdateAsync(session);
+    //
+    //     return session;
+    // }
     
     public void Dispose()
     {

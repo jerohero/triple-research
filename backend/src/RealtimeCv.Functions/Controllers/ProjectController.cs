@@ -25,21 +25,21 @@ public class ProjectController : BaseController
     private readonly IProjectService _projectService;
     private readonly ISessionService _sessionService;
     private readonly IVisionSetService _visionSetService;
-    private readonly Kubernetes _kubernetes;
+    private readonly IKubernetesService _kubernetesService;
 
     public ProjectController(
-      ILoggerAdapter<ProjectController> logger,
-      IProjectService projectService,
-      ISessionService sessionService,
-      IVisionSetService visionSetService,
-      Kubernetes kubernetes
+        ILoggerAdapter<ProjectController> logger,
+        IProjectService projectService,
+        ISessionService sessionService,
+        IVisionSetService visionSetService,
+        IKubernetesService kubernetesService
     )
     {
         _logger = logger;
         _projectService = projectService;
         _sessionService = sessionService;
         _visionSetService = visionSetService;
-        _kubernetes = kubernetes;
+        _kubernetesService = kubernetesService;
     }
 
     [Function("getProject")]
@@ -91,19 +91,19 @@ public class ProjectController : BaseController
         return await ResultToResponse(result, req);
     }
     
-    [Function("test")]
-    public async Task<HttpResponseData> Test(
-        [HttpTrigger(AuthorizationLevel.Anonymous, "post", Route = "test")] HttpRequestData req)
-    {
-        var deployment = await _kubernetes.ReadNamespacedDeploymentAsync("cv-deployment", "default");
-        deployment.Spec.Replicas++;
-        var updatedDeployment =
-            await _kubernetes.ReplaceNamespacedDeploymentAsync(deployment, "cv-deployment", "default");
-        
-        // updatedDeployment.Status.
-
-        return await ResultToResponse(new Result<string>("Fakka"), req);
-    }
+    // [Function("test")]
+    // public async Task<HttpResponseData> Test(
+    //     [HttpTrigger(AuthorizationLevel.Anonymous, "post", Route = "test")] HttpRequestData req)
+    // {
+    //     var deployment = await _kubernetes.ReadNamespacedDeploymentAsync("cv-deployment", "default");
+    //     deployment.Spec.Replicas++;
+    //     var updatedDeployment =
+    //         await _kubernetes.ReplaceNamespacedDeploymentAsync(deployment, "cv-deployment", "default");
+    //     
+    //     // updatedDeployment.Status.
+    //
+    //     return await ResultToResponse(new Result<string>("Fakka"), req);
+    // }
     
     [Function("test2")]
     public async Task<HttpResponseData> Test2(
@@ -120,65 +120,7 @@ public class ProjectController : BaseController
         
         var visionSet = await _visionSetService.GetVisionSetById(createSessionDto.VisionSetId);
 
-        var podName = $"cv-{visionSet.Value.Name}-{session.Value.Id}";
-        // visionSet.Value.
-        
-        var pod = new V1Pod
-        {
-            Metadata = new V1ObjectMeta
-            {
-                Name = podName, Labels = new Dictionary<string, string>
-                {
-                    { "app", podName }
-                }
-            },
-            Spec = new V1PodSpec
-            {
-                Containers = new List<V1Container>
-                {
-                    new()
-                    {
-                        Name = "cv-inference",
-                        Image = "yeruhero/yolov3api:latest", // TODO VisionSet image
-                        Ports = new List<V1ContainerPort>
-                        {
-                            new() {
-                                ContainerPort = 5000
-                            }
-                        },
-                        ImagePullPolicy = "Always" // TODO: IfNotPresent
-                    },
-                    new()
-                    {
-                        Name = "cv-worker",
-                        Image = "yeruhero/cv-worker:latest", // TODO VisionSet image
-                        Ports = new List<V1ContainerPort>
-                        {
-                            new()
-                            {
-                                ContainerPort = 9300
-                            }
-                        },
-                        ImagePullPolicy = "Always", // TODO Always
-                        Env = new List<V1EnvVar>
-                        {
-                            new()
-                            {
-                                Name = "SESSION_ID",
-                                Value = session.Value.Id.ToString()
-                            },
-                            new()
-                            {
-                                Name = "STREAM_SOURCE",
-                                Value = session.Value.Source
-                            },
-                        }
-                    }
-                }
-            }
-        };
-        
-        var createdPod = await _kubernetes.CreateNamespacedPodAsync(pod, "default");
+        await _kubernetesService.CreateCvPod(session.Value.Id, visionSet.Value.Name);
 
         return await ResultToResponse(new Result<string>("Fakka"), req);
     }

@@ -12,6 +12,7 @@ using RealtimeCv.Core.Services;
 using RealtimeCv.Infrastructure.Data;
 using RealtimeCv.Infrastructure.Data.Repositories;
 using RealtimeCv.Infrastructure.Http;
+using RealtimeCv.Infrastructure.Kubernetes;
 using RealtimeCv.Infrastructure.Messaging;
 using RealtimeCv.Infrastructure.Streaming;
 
@@ -44,9 +45,10 @@ public static class ServiceCollectionSetupExtensions
     {
         // TODO: replace with AKS API access
         // Enable proxy with "kubectl proxy --port=8080 &"
+        services.AddSingleton<IKubernetesService, KubernetesService>();
         
-        services.AddTransient(typeof(Kubernetes), _ => 
-            new Kubernetes(new KubernetesClientConfiguration
+        services.AddTransient(typeof(k8s.Kubernetes), _ => 
+            new k8s.Kubernetes(new KubernetesClientConfiguration
             {
                 Host = "http://localhost:8080/"
             })

@@ -7,7 +7,7 @@ public interface IVisionSessionService
 {
     Task<Session> Start(int sessionId);
 
-    public Task Stop();
+    public Task Stop(int sessionId);
     
     void Dispose();
 }

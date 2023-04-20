@@ -65,7 +65,7 @@ public class EntryPointService : IEntryPointService
         
         _streamService.OnStreamEnded += () =>
         {
-            _visionSessionService.Stop();
+            _visionSessionService.Stop(session.Id);
             _isRunning = false;
         };
     }

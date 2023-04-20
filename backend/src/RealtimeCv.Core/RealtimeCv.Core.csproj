@@ -10,6 +10,7 @@
     <PackageReference Include="OpenCvSharp4" />
     <PackageReference Include="Ardalis.Specification" />
     <PackageReference Include="Ardalis.Specification.EntityFrameworkCore" />
+    <PackageReference Include="KubernetesClient" />
   </ItemGroup>
 
 </Project>

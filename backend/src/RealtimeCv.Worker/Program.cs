@@ -26,6 +26,7 @@ public class Program
                 services.AddSingleton<IServiceLocator, ServiceScopeFactoryLocator>();
                 
                 services.AddStreamHandlers();
+                services.AddKubernetes();
 
                 services.AddSingleton<IPubSub, PubSub>();
                 services.AddSingleton<IVisionSessionService, VisionSessionService>();
