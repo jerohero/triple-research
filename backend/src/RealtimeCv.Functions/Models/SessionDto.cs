@@ -23,11 +23,11 @@ public class SessionDto
     [JsonRequired]
     public DateTime StoppedAt { get; set; }
 
-    public SessionDto(int id, int visionSetId, string sources, bool isActive, DateTime startedAt, DateTime stoppedAt)
+    public SessionDto(int id, int visionSetId, string source, bool isActive, DateTime startedAt, DateTime stoppedAt)
     {
         Id = id;
         VisionSetId = visionSetId;
-        Source = sources;
+        Source = source;
         IsActive = isActive;
         StartedAt = startedAt;
         StoppedAt = stoppedAt;

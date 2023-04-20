@@ -28,6 +28,7 @@ public class Program
                 services.AddStreamHandlers();
 
                 services.AddSingleton<IPubSub, PubSub>();
+                services.AddSingleton<IVisionSessionService, VisionSessionService>();
 
                 services.AddDbContext(hostContext.Configuration.GetConnectionString("DefaultConnection"));
                 services.AddRepositories();

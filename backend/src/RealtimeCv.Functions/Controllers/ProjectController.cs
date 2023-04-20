@@ -1,4 +1,5 @@
 ﻿using System.Collections.Generic;
+using System.Linq;
 using System.Security.Cryptography.X509Certificates;
 using System.Threading.Tasks;
 using Ardalis.Result;
@@ -7,6 +8,7 @@ using k8s.Models;
 using Microsoft.Azure.Functions.Worker;
 using Microsoft.Azure.Functions.Worker.Http;
 using Microsoft.CodeAnalysis;
+using Newtonsoft.Json;
 using Newtonsoft.Json.Serialization;
 using RealtimeCv.Core.Interfaces;
 using RealtimeCv.Functions.Interfaces;
@@ -22,18 +24,21 @@ public class ProjectController : BaseController
     private readonly ILoggerAdapter<ProjectController> _logger;
     private readonly IProjectService _projectService;
     private readonly ISessionService _sessionService;
+    private readonly IVisionSetService _visionSetService;
     private readonly Kubernetes _kubernetes;
 
     public ProjectController(
       ILoggerAdapter<ProjectController> logger,
       IProjectService projectService,
       ISessionService sessionService,
+      IVisionSetService visionSetService,
       Kubernetes kubernetes
     )
     {
         _logger = logger;
         _projectService = projectService;
         _sessionService = sessionService;
+        _visionSetService = visionSetService;
         _kubernetes = kubernetes;
     }
 
@@ -104,19 +109,20 @@ public class ProjectController : BaseController
     public async Task<HttpResponseData> Test2(
         [HttpTrigger(AuthorizationLevel.Anonymous, "post", Route = "test2")] HttpRequestData req)
     {
-        // var deployment = await _kubernetes.ReadNamespacedDeploymentAsync("cv-deployment", "default");
-        // deployment.Spec.Replicas--;
-        // var updatedDeployment =
-        //     await _kubernetes.ReplaceNamespacedDeploymentAsync(deployment, "cv-deployment", "default");
-
         var createSessionDto = new SessionCreateDto(1, "rtmp://live.restream.io/live/re_6435068_ac960121c66cd1e6a9f5");
-        
+
         var session = await _sessionService.CreateSession(createSessionDto);
+        
+        if (session.Errors.Any())
+        {
+            return await ResultToResponse(new Result<string>("Error"), req);
+        }
+        
+        var visionSet = await _visionSetService.GetVisionSetById(createSessionDto.VisionSetId);
 
-        var podName = $"cv-pod-{session.Value.Id}";
-
-        // TODO: Get vision set information from database
-
+        var podName = $"cv-{visionSet.Value.Name}-{session.Value.Id}";
+        // visionSet.Value.
+        
         var pod = new V1Pod
         {
             Metadata = new V1ObjectMeta
@@ -140,7 +146,7 @@ public class ProjectController : BaseController
                                 ContainerPort = 5000
                             }
                         },
-                        ImagePullPolicy = "IfNotPresent"
+                        ImagePullPolicy = "Always" // TODO: IfNotPresent
                     },
                     new()
                     {
@@ -153,13 +159,13 @@ public class ProjectController : BaseController
                                 ContainerPort = 9300
                             }
                         },
-                        ImagePullPolicy = "IfNotPresent",
+                        ImagePullPolicy = "Always", // TODO Always
                         Env = new List<V1EnvVar>
                         {
                             new()
                             {
                                 Name = "SESSION_ID",
-                                Value = "1"
+                                Value = session.Value.Id.ToString()
                             },
                             new()
                             {
@@ -171,7 +177,7 @@ public class ProjectController : BaseController
                 }
             }
         };
-
+        
         var createdPod = await _kubernetes.CreateNamespacedPodAsync(pod, "default");
 
         return await ResultToResponse(new Result<string>("Fakka"), req);

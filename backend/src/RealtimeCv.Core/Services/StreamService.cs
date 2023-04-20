@@ -9,6 +9,7 @@ namespace RealtimeCv.Core.Services;
 /// </summary>
 public class StreamService : IStreamService, IDisposable
 {
+    public event Action OnStreamEnded;
     private readonly IStreamReceiver _streamReceiver;
     private readonly IStreamSender _streamSender;
     private readonly IPubSub _pubSub;
@@ -40,6 +41,7 @@ public class StreamService : IStreamService, IDisposable
         {
             _streamReceiver.Dispose();
             _streamSender.Dispose();
+            OnStreamEnded?.Invoke();
         };
 
         _streamSender.OnPredictionResult += async result =>
