@@ -14,6 +14,10 @@ public class SessionConfiguration : IEntityTypeConfiguration<Session>
           .IsRequired();
         builder.Property(s => s.IsActive)
             .IsRequired();
+        builder.Property(s => s.Pod)
+            .IsRequired(false);
+        builder.Property(s => s.CreatedAt)
+            .IsRequired();
         builder.Property(s => s.StartedAt)
             .IsRequired();
         builder.Property(s => s.StoppedAt)

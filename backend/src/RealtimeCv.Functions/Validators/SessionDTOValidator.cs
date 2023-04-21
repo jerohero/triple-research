@@ -5,15 +5,20 @@ using RealtimeCv.Infrastructure.Data.Config;
 
 namespace RealtimeCv.Functions.Validators;
 
-public class SessionCreateDtoValidator : AbstractValidator<SessionCreateDto>
+public class SessionDtoValidator : AbstractValidator<SessionDto>
 {
-    public SessionCreateDtoValidator()
+    public SessionDtoValidator()
     {
-        RuleFor(x => x.VisionSetId).GreaterThan(0);
+        RuleFor(x => x.Id).GreaterThan(0);
+
+        RuleFor(x => x.Pod).MinimumLength(1).MaximumLength(Constants.DefaultMaxStringLength);
+        
         RuleFor(x => x.Source).MinimumLength(1).MaximumLength(Constants.DefaultMaxStringLength);
+        
+        RuleFor(x => x.VisionSetId).GreaterThan(0);
     }
 
-    protected override bool PreValidate(ValidationContext<SessionCreateDto> context, ValidationResult result)
+    protected override bool PreValidate(ValidationContext<SessionDto> context, ValidationResult result)
     {
         if (context.InstanceToValidate is not null)
         {

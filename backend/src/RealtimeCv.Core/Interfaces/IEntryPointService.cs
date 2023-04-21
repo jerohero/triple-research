@@ -5,7 +5,7 @@ namespace RealtimeCv.Core.Interfaces;
 
 public interface IEntryPointService
 {
-    Task Execute(CancellationToken stoppingToken);
+    Task Execute(int sessionId, CancellationToken stoppingToken);
 
     void Stop();
 }

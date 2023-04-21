@@ -3,11 +3,11 @@ using RealtimeCv.Core.Entities;
 
 namespace RealtimeCv.Core.Interfaces;
 
-public interface IVisionSessionService
+public interface ISessionHandlerService
 {
-    Task<Session> Start(int sessionId);
+    Task<Session> SetSessionActive(int sessionId);
 
-    public Task Stop(int sessionId);
+    public Task EndSession(int sessionId);
     
     void Dispose();
 }

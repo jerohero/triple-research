@@ -28,7 +28,10 @@ public class Worker : BackgroundService
     {
         while (!stoppingToken.IsCancellationRequested)
         {
-            await _entryPointService.Execute(stoppingToken);
+            // var sessionId = 7;
+            int.TryParse(Environment.GetEnvironmentVariable("SESSION_ID"), out var sessionId);
+            
+            await _entryPointService.Execute(sessionId, stoppingToken);
             await Task.Delay(_settings.DelayMilliseconds, stoppingToken);
         }
         

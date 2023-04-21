@@ -90,38 +90,22 @@ public class ProjectController : BaseController
 
         return await ResultToResponse(result, req);
     }
-    
-    // [Function("test")]
-    // public async Task<HttpResponseData> Test(
-    //     [HttpTrigger(AuthorizationLevel.Anonymous, "post", Route = "test")] HttpRequestData req)
-    // {
-    //     var deployment = await _kubernetes.ReadNamespacedDeploymentAsync("cv-deployment", "default");
-    //     deployment.Spec.Replicas++;
-    //     var updatedDeployment =
-    //         await _kubernetes.ReplaceNamespacedDeploymentAsync(deployment, "cv-deployment", "default");
-    //     
-    //     // updatedDeployment.Status.
-    //
-    //     return await ResultToResponse(new Result<string>("Fakka"), req);
-    // }
-    
+
     [Function("test2")]
     public async Task<HttpResponseData> Test2(
         [HttpTrigger(AuthorizationLevel.Anonymous, "post", Route = "test2")] HttpRequestData req)
     {
         var createSessionDto = new SessionCreateDto(1, "rtmp://live.restream.io/live/re_6435068_ac960121c66cd1e6a9f5");
 
-        var session = await _sessionService.CreateSession(createSessionDto);
+        var result = await _sessionService.CreateSession(createSessionDto);
         
-        if (session.Errors.Any())
+        if (result.Errors.Any())
         {
-            return await ResultToResponse(new Result<string>("Error"), req);
+            return await ResultToResponse(result, req);
         }
-        
-        var visionSet = await _visionSetService.GetVisionSetById(createSessionDto.VisionSetId);
 
-        await _kubernetesService.CreateCvPod(session.Value.Id, visionSet.Value.Name);
+        await _kubernetesService.CreateCvPod(result.Value.Id, result.Value.Pod);
 
-        return await ResultToResponse(new Result<string>("Fakka"), req);
+        return await ResultToResponse(result, req);
     }
 }

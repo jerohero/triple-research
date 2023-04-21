@@ -18,10 +18,8 @@ public class KubernetesService : IKubernetesService
         _kubernetes = kubernetes;
     }
 
-    public async Task<V1Pod> CreateCvPod(int sessionId, string visionSetName)
+    public async Task<V1Pod> CreateCvPod(int sessionId, string podName)
     {
-        var podName = $"cv-{visionSetName}-{sessionId}";
-
         var pod = new V1Pod
         {
             Metadata = new V1ObjectMeta

@@ -59,6 +59,7 @@ public class AppDbContext : DbContext
         // Apply configurations
         builder.ApplyConfiguration(new VisionSetConfiguration());
         builder.ApplyConfiguration(new ProjectConfiguration());
+        builder.ApplyConfiguration(new SessionConfiguration());
 
         builder.ApplyConfigurationsFromAssembly(Assembly.GetExecutingAssembly());
     }

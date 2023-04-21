@@ -1,11 +1,16 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using System.Linq;
+using System.Threading;
 using System.Threading.Tasks;
+using Ardalis.GuardClauses;
 using Ardalis.Result;
 using Ardalis.Result.FluentValidation;
 using AutoMapper;
+using Newtonsoft.Json;
 using RealtimeCv.Core.Entities;
 using RealtimeCv.Core.Interfaces;
+using RealtimeCv.Core.Specifications;
 using RealtimeCv.Functions.Interfaces;
 using RealtimeCv.Functions.Models;
 using RealtimeCv.Functions.Validators;
@@ -59,43 +64,47 @@ public class SessionService : ISessionService
         {
             return Result<SessionDto>.Invalid(validationResult.AsErrors());
         }
-
-        var visionSet = await _visionSetRepository.GetByIdAsync(createDto.VisionSetId);
-
-        if (visionSet is null)
-        {
-            return Result<SessionDto>.NotFound();
-        }
         
-        var mappedSession = _mapper.Map<Session>(createDto);
+        var session = _mapper.Map<Session>(createDto);
+        
+        session.CreatedAt = DateTime.Now;
 
-        var session = await _sessionRepository.AddAsync(mappedSession);
+        var createdSession = await _sessionRepository.AddAsync(session);
+
+        var spec = new SessionWithVisionSetSpec(createdSession.Id);
+        session = await _sessionRepository.SingleOrDefaultAsync(spec, CancellationToken.None);
+        
+        Guard.Against.Null(session, nameof(session));
+
+        createdSession.Pod = $"cv-{createdSession.VisionSet.Name}-{session.Id}";
+
+        await _sessionRepository.UpdateAsync(createdSession);
 
         return new Result<SessionDto>(_mapper.Map<SessionDto>(session));
     }
 
-    // public async Task<Result<SessionDto>> UpdateSession(SessionDto? updateDto)
-    // {
-    //     var validationResult = await new SessionDtoValidator().ValidateAsync(updateDto!);
-    //
-    //     if (updateDto is null || validationResult.Errors.Any())
-    //     {
-    //         return Result<SessionDto>.Invalid(validationResult.AsErrors());
-    //     }
-    //
-    //     var session = await _sessionRepository.GetByIdAsync(updateDto.Id);
-    //
-    //     if (session is null)
-    //     {
-    //         return Result<SessionDto>.NotFound();
-    //     }
-    //
-    //     session.UpdateName(updateDto.Name);
-    //
-    //     await _sessionRepository.UpdateAsync(session);
-    //
-    //     return new Result<SessionDto>(updateDto);
-    // }
+    public async Task<Result<SessionDto>> UpdateSession(SessionDto? updateDto)
+    {
+        var validationResult = await new SessionDtoValidator().ValidateAsync(updateDto!);
+    
+        if (updateDto is null || validationResult.Errors.Any())
+        {
+            return Result<SessionDto>.Invalid(validationResult.AsErrors());
+        }
+    
+        var session = await _sessionRepository.GetByIdAsync(updateDto.Id);
+    
+        if (session is null)
+        {
+            return Result<SessionDto>.NotFound();
+        }
+    
+        session.Pod = updateDto.Pod;
+    
+        await _sessionRepository.UpdateAsync(session);
+    
+        return new Result<SessionDto>(updateDto);
+    }
 
     public async Task<Result> DeleteSession(int sessionId)
     {

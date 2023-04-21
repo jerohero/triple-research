@@ -12,7 +12,7 @@ using RealtimeCv.Infrastructure.Data;
 namespace RealtimeCv.Infrastructure.Data.Migrations
 {
     [DbContext(typeof(AppDbContext))]
-    [Migration("20230419181502_InitialModel")]
+    [Migration("20230421102414_InitialModel")]
     partial class InitialModel
     {
         /// <inheritdoc />
@@ -51,8 +51,14 @@ namespace RealtimeCv.Infrastructure.Data.Migrations
 
                     SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
 
+                    b.Property<DateTime>("CreatedAt")
+                        .HasColumnType("datetime2");
+
                     b.Property<bool>("IsActive")
                         .HasColumnType("bit");
+
+                    b.Property<string>("Pod")
+                        .HasColumnType("nvarchar(max)");
 
                     b.Property<string>("Source")
                         .HasColumnType("nvarchar(max)");

@@ -53,7 +53,9 @@ namespace RealtimeCv.Infrastructure.Data.Migrations
                         .Annotation("SqlServer:Identity", "1, 1"),
                     VisionSetId = table.Column<int>(type: "int", nullable: false),
                     Source = table.Column<string>(type: "nvarchar(max)", nullable: true),
+                    Pod = table.Column<string>(type: "nvarchar(max)", nullable: true),
                     IsActive = table.Column<bool>(type: "bit", nullable: false),
+                    CreatedAt = table.Column<DateTime>(type: "datetime2", nullable: false),
                     StartedAt = table.Column<DateTime>(type: "datetime2", nullable: false),
                     StoppedAt = table.Column<DateTime>(type: "datetime2", nullable: false)
                 },

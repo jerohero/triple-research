@@ -29,7 +29,7 @@ public class Program
                 services.AddKubernetes();
 
                 services.AddSingleton<IPubSub, PubSub>();
-                services.AddSingleton<IVisionSessionService, VisionSessionService>();
+                services.AddSingleton<ISessionHandlerService, SessionHandlerHandlerService>();
 
                 services.AddDbContext(hostContext.Configuration.GetConnectionString("DefaultConnection"));
                 services.AddRepositories();

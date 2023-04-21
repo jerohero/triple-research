@@ -39,9 +39,9 @@ public class StreamService : IStreamService, IDisposable
 
         _streamReceiver.OnConnectionTimeout += () =>
         {
+            OnStreamEnded?.Invoke();
             _streamReceiver.Dispose();
             _streamSender.Dispose();
-            OnStreamEnded?.Invoke();
         };
 
         _streamSender.OnPredictionResult += async result =>
