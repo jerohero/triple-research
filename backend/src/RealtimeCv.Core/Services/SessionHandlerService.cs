@@ -32,10 +32,9 @@ public class SessionHandlerHandlerService : ISessionHandlerService, IDisposable
     public async Task<Session> SetSessionActive(int sessionId)
     {
         // TODO: Probably shouldn't do this here?
-        using var scope = _serviceScopeFactoryLocator.CreateScope();
-        var repository =
-            scope.ServiceProvider
-                .GetService<ISessionRepository>();
+        // using var scope = _serviceScopeFactoryLocator.CreateScope();
+        using var scope = _serviceScopeFactoryLocator;
+        var repository = scope.Get<ISessionRepository>();
         
         var spec = new SessionWithVisionSetSpec(sessionId);
         var session = await repository.SingleOrDefaultAsync(spec, CancellationToken.None);
@@ -43,6 +42,7 @@ public class SessionHandlerHandlerService : ISessionHandlerService, IDisposable
         Guard.Against.Null(session, nameof(session));
 
         session.IsActive = true;
+        session.StartedAt = DateTime.Now;
         await repository.UpdateAsync(session);
 
         return session;
@@ -50,18 +50,17 @@ public class SessionHandlerHandlerService : ISessionHandlerService, IDisposable
 
     public async Task EndSession(int sessionId)
     {
-        using var scope = _serviceScopeFactoryLocator.CreateScope();
-        var repository =
-            scope.ServiceProvider
-                .GetService<ISessionRepository>();
+        using var scope = _serviceScopeFactoryLocator;
+        var repository = scope.Get<ISessionRepository>();
         
         var session = await repository.GetByIdAsync(sessionId);
         
         Guard.Against.Null(session, nameof(session));
         
         session.IsActive = false;
+        session.StoppedAt = DateTime.Now;
         await repository.UpdateAsync(session);
-
+        
         await _kubernetesService.DeletePod(session.Pod);
     }
     
