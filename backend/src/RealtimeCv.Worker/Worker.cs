@@ -2,6 +2,7 @@
 using System.Threading;
 using System.Threading.Tasks;
 using Microsoft.Extensions.Hosting;
+using Microsoft.Extensions.Options;
 using RealtimeCv.Core.Interfaces;
 
 namespace RealtimeCv.Worker;
@@ -17,11 +18,11 @@ public class Worker : BackgroundService
 
     public Worker(ILoggerAdapter<Worker> logger,
         IEntryPointService entryPointService,
-        WorkerSettings settings)
+        IOptions<WorkerSettings> workerSettingsOptions)
     {
         _logger = logger;
         _entryPointService = entryPointService;
-        _settings = settings;
+        _settings = workerSettingsOptions.Value;
     }
 
     protected override async Task ExecuteAsync(CancellationToken stoppingToken)

@@ -35,9 +35,7 @@ public class Program
 
                 services.ConfigureJson();
 
-                var workerSettings = new WorkerSettings();
-                hostContext.Configuration.Bind(nameof(WorkerSettings), workerSettings);
-                services.AddSingleton(workerSettings);
+                services.Configure<WorkerSettings>(hostContext.Configuration.GetSection("WorkerSettings"));
 
                 services.AddHostedService<Worker>();
             });
