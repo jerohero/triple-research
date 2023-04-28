@@ -12,4 +12,5 @@ public interface ISessionService
     Task<Result<SessionDto>> CreateSession(SessionCreateDto? createDto);
     Task<Result<SessionDto>> UpdateSession(SessionDto? updateDto);
     Task<Result> DeleteSession(int sessionId);
+    Task<Result> StopSession(int sessionId);
 }

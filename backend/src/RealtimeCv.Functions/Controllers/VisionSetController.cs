@@ -11,7 +11,7 @@ using RealtimeCv.Functions.Models;
 namespace RealtimeCv.Functions.Controllers;
 
 /// <summary>
-/// Controller for Project related endpoints.
+/// Controller for VisionSet related endpoints.
 /// </summary>
 public class VisionSetController : BaseController
 {

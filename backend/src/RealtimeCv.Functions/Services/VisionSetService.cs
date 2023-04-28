@@ -46,7 +46,7 @@ public class VisionSetService : IVisionSetService
 
     public async Task<Result<List<VisionSetDto>>> GetVisionSetsByProject(int projectId)
     {
-        var visionSets = await _visionSetRepository.ListAsync();
+        var visionSets = await _visionSetRepository.ListAsync(); // TODO: By project
 
         return new Result<List<VisionSetDto>>(_mapper.Map<List<VisionSetDto>>(visionSets));
     }

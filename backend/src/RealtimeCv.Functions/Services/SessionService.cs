@@ -26,18 +26,21 @@ public class SessionService : ISessionService
     private readonly ILoggerAdapter<SessionService> _logger;
     private readonly ISessionRepository _sessionRepository;
     private readonly IVisionSetRepository _visionSetRepository;
+    private readonly IKubernetesService _kubernetesService;
 
     public SessionService(
         ILoggerAdapter<SessionService> logger,
         IMapper mapper,
         ISessionRepository sessionRepository,
-        IVisionSetRepository visionSetRepository
+        IVisionSetRepository visionSetRepository,
+        IKubernetesService kubernetesService
     )
     {
         _mapper = mapper;
         _logger = logger;
         _sessionRepository = sessionRepository;
         _visionSetRepository = visionSetRepository;
+        _kubernetesService = kubernetesService;
     }
 
     public async Task<Result<SessionDto>> GetSessionById(int sessionId)
@@ -51,7 +54,7 @@ public class SessionService : ISessionService
 
     public async Task<Result<List<SessionDto>>> GetSessionsByVisionSet(int visionSetId)
     {
-        var sessions = await _sessionRepository.ListAsync();
+        var sessions = await _sessionRepository.ListAsync(); // TODO: By project
 
         return new Result<List<SessionDto>>(_mapper.Map<List<SessionDto>>(sessions));
     }
@@ -117,6 +120,24 @@ public class SessionService : ISessionService
 
         await _sessionRepository.DeleteAsync(session);
 
+        return Result.Success();
+    }
+    
+    public async Task<Result> StopSession(int sessionId)
+    {
+        var session = await _sessionRepository.GetByIdAsync(sessionId);
+        
+        if (session is null)
+        {
+            return Result.NotFound();
+        }
+        
+        session.IsActive = false;
+        session.StoppedAt = DateTime.Now;
+        await _sessionRepository.UpdateAsync(session);
+        
+        await _kubernetesService.DeletePod(session.Pod);
+        
         return Result.Success();
     }
 }
