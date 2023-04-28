@@ -17,6 +17,7 @@ namespace RealtimeCv.Infrastructure.Streaming;
 public class StreamSender : IStreamSender, IDisposable
 {
     public event Action<object?>? OnPredictionResult;
+    public event Action? OnConnectionTimeout;
     
     private readonly ILoggerAdapter<StreamSender> _logger;
     private IStreamReceiver? _streamReceiver;
@@ -26,6 +27,7 @@ public class StreamSender : IStreamSender, IDisposable
     private string? _prepareUrl;
     private bool _isPrepared;
     private readonly IHttpService _httpService;
+    private int? _secondsBeforeTimeout;
 
     public StreamSender(
       ILoggerAdapter<StreamSender> logger,
@@ -36,11 +38,12 @@ public class StreamSender : IStreamSender, IDisposable
         _httpService = httpService;
     }
 
-    public void PrepareTarget(string prepareUrl)
+    public void PrepareTarget(string prepareUrl, int secondsBeforeTimeout = 180)
     {
         Guard.Against.NullOrEmpty(prepareUrl);
         
         _prepareUrl = prepareUrl;
+        _secondsBeforeTimeout = secondsBeforeTimeout;
         
         if (_prepareThread is { IsAlive: true })
         {
@@ -115,6 +118,8 @@ public class StreamSender : IStreamSender, IDisposable
     {
         var didPrepare = false;
         
+        var failedAttempts = 0;
+        
         // Executes in a loop because the target may not have started yet
         while (!didPrepare)
         {
@@ -132,11 +137,22 @@ public class StreamSender : IStreamSender, IDisposable
                 
                 _logger.LogInformation("Failed to prepare target. Retrying in 5 seconds.");
                 
+                HandleTimeout(failedAttempts);
+                failedAttempts++;
+                
                 Thread.Sleep(Constants.DefaultActionDelayMs);
             }
         }
 
         _isPrepared = didPrepare;
+    }
+    
+    private void HandleTimeout(int failedAttempts)
+    {
+        if (failedAttempts * Constants.DefaultActionDelayMs >= _secondsBeforeTimeout)
+        {
+            OnConnectionTimeout?.Invoke();
+        }
     }
 
     public void Dispose()

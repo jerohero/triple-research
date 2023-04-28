@@ -7,10 +7,11 @@ namespace RealtimeCv.Core.Interfaces;
 public interface IStreamSender
 {
     [CanBeNull] event Action<object> OnPredictionResult;
+    event Action OnConnectionTimeout;
     
     void SendStreamToEndpoint(IStreamReceiver streamReceiver, string targetUrl);
     
-    void PrepareTarget(string prepareUrl);
+    void PrepareTarget(string prepareUrl, int secondsBeforeTimeout = 180);
     
     void Dispose();
 
