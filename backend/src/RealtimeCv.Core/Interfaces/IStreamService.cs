@@ -1,5 +1,4 @@
 ﻿using System.Threading.Tasks;
-using RealtimeCv.Core.Entities;
 
 namespace RealtimeCv.Core.Interfaces;
 

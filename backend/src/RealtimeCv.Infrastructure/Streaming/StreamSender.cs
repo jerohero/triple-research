@@ -8,6 +8,7 @@ using Ardalis.GuardClauses;
 using OpenCvSharp.Extensions;
 using RealtimeCv.Core.Interfaces;
 using RealtimeCv.Infrastructure.Data.Config;
+using RealtimeCv.Infrastructure.Interfaces;
 
 namespace RealtimeCv.Infrastructure.Streaming;
 
@@ -38,7 +39,7 @@ public class StreamSender : IStreamSender, IDisposable
         _httpService = httpService;
     }
 
-    public void PrepareTarget(string prepareUrl, int secondsBeforeTimeout = 180)
+    public void PrepareTarget(string? prepareUrl, int secondsBeforeTimeout = 180)
     {
         Guard.Against.NullOrEmpty(prepareUrl);
         

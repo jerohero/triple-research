@@ -2,6 +2,7 @@
 using System.Threading;
 using System.Threading.Tasks;
 using RealtimeCv.Core.Interfaces;
+using RealtimeCv.Infrastructure.Interfaces;
 
 namespace RealtimeCv.Core.Services;
 
@@ -44,7 +45,8 @@ public class EntryPointService : IEntryPointService
         // EF Requires a scope so we are creating one per execution here
         // using var scope = _serviceScopeFactoryLocator.CreateScope();
 
-        await _pubSub.Init();
+        // await _pubSub.Init();
+        await Task.CompletedTask;
 
         _streamService.HandleStream(source, targetUrl);
     }

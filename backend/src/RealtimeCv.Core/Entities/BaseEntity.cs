@@ -1,4 +1,4 @@
-﻿namespace RealtimeCv.Core.Entities;
+﻿namespace RealtimeCv.Infrastructure.Entities;
 
 public abstract class BaseEntity
 {

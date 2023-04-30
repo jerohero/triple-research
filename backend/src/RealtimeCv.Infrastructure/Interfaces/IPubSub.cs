@@ -1,9 +1,8 @@
 ﻿using System.Threading.Tasks;
 
-namespace RealtimeCv.Core.Interfaces;
+namespace RealtimeCv.Infrastructure.Interfaces;
 
 public interface IPubSub
 {
-    Task Init();
     Task Send(object message);
 }

@@ -1,6 +1,6 @@
 ﻿using AutoMapper;
-using RealtimeCv.Core.Entities;
 using RealtimeCv.Functions.Models;
+using RealtimeCv.Infrastructure.Entities;
 
 namespace RealtimeCv.Functions;
 

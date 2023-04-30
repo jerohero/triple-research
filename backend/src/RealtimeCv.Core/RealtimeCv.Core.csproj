@@ -7,9 +7,10 @@
   <ItemGroup>
     <PackageReference Include="Ardalis.GuardClauses" />
     <PackageReference Include="Microsoft.Extensions.DependencyInjection.Abstractions" />
-    <PackageReference Include="OpenCvSharp4" />
-    <PackageReference Include="Ardalis.Specification" />
-    <PackageReference Include="Ardalis.Specification.EntityFrameworkCore" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\RealtimeCv.Infrastructure\RealtimeCv.Infrastructure.csproj" />
   </ItemGroup>
 
 </Project>

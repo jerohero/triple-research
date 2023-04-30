@@ -1,7 +1,7 @@
 ﻿using Ardalis.Specification;
-using RealtimeCv.Core.Entities;
+using RealtimeCv.Infrastructure.Entities;
 
-namespace RealtimeCv.Core.Interfaces;
+namespace RealtimeCv.Infrastructure.Interfaces;
 
 public interface IProjectRepository : IRepositoryBase<Project>
 {

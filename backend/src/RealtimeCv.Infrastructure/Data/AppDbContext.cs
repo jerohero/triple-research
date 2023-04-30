@@ -5,8 +5,8 @@ using System.Reflection;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.ChangeTracking;
 using Newtonsoft.Json;
-using RealtimeCv.Core.Entities;
 using RealtimeCv.Infrastructure.Data.Config;
+using RealtimeCv.Infrastructure.Entities;
 
 namespace RealtimeCv.Infrastructure.Data;
 

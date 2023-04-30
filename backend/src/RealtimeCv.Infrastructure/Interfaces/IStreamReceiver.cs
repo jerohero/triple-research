@@ -1,7 +1,7 @@
 ﻿using System;
 using OpenCvSharp;
 
-namespace RealtimeCv.Core.Interfaces;
+namespace RealtimeCv.Infrastructure.Interfaces;
 
 public interface IStreamReceiver
 {

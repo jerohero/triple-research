@@ -1,6 +1,7 @@
 ﻿using System;
 using Ardalis.GuardClauses;
 using RealtimeCv.Core.Interfaces;
+using RealtimeCv.Infrastructure.Interfaces;
 
 namespace RealtimeCv.Core.Services;
 
@@ -45,9 +46,7 @@ public class StreamService : IStreamService, IDisposable
 
         _streamSender.OnPredictionResult += async result =>
         {
-            await _pubSub.Send(result);
-            
-            // Store in db
+            await _pubSub.Send(result); // Store in db
         };
 
         _streamSender.OnConnectionTimeout += () =>

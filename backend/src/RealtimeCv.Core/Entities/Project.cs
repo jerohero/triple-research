@@ -1,6 +1,6 @@
 ﻿using Ardalis.GuardClauses;
 
-namespace RealtimeCv.Core.Entities;
+namespace RealtimeCv.Infrastructure.Entities;
 
 public class Project : BaseEntity
 {
