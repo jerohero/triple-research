@@ -45,9 +45,7 @@ public class EntryPointService : IEntryPointService
 
         var session = await _sessionHandlerService.SetSessionActive(sessionId);
 
-        await _pubSub.Init();
-
-        _streamService.HandleStream(session.Source, targetUrl);
+        _streamService.HandleStream(session.Source, targetUrl, session.Pod);
         
         _streamService.OnStreamEnded += () =>
         {

@@ -1,7 +1,11 @@
-Worker/src/bin/
-Worker/src/obj/
-Worker/src/**/obj/
-Worker/src/packages/
+backend/src/bin/
+backend/src/obj/
+backend/src/**/obj/
+backend/src/packages/
+backend/tests/RealtimeCv.UnitTests/obj/*
+backend/src/RealtimeCv.Functions/obj/*
+backend/src/RealtimeCv.Worker/obj/*
+backend/src/RealtimeCv.Infrastructure/obj/*
 riderModule.iml
 _ReSharper.Caches/
 **/obj

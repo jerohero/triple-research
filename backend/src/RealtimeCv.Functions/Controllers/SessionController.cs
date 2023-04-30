@@ -84,4 +84,13 @@ public class SessionController : BaseController
 
         return await ResultToResponse(result, req);
     }
+    
+    [Function("negotiate")]
+    public async Task<HttpResponseData> NegotiateSession(
+        [HttpTrigger(AuthorizationLevel.Anonymous, "post", Route = "session/{sessionId}/negotiate")] HttpRequestData req, int sessionId)
+    {
+        var result = await _sessionService.NegotiateSession(sessionId);
+
+        return await ResultToResponse(result, req);
+    }
 }

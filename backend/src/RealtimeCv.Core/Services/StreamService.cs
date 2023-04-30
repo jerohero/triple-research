@@ -24,7 +24,7 @@ public class StreamService : IStreamService, IDisposable
         _pubSub = pubSub;
     }
 
-    public void HandleStream(string source, string targetUrl)
+    public void HandleStream(string source, string targetUrl, string targetHub)
     {
         Guard.Against.NullOrWhiteSpace(source, nameof(source));
         Guard.Against.NullOrEmpty(targetUrl);
@@ -46,7 +46,7 @@ public class StreamService : IStreamService, IDisposable
 
         _streamSender.OnPredictionResult += async result =>
         {
-            await _pubSub.Send(result);
+            await _pubSub.Send(result, targetHub);
             
             // Store in db
         };

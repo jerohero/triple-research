@@ -15,7 +15,6 @@ public class PubSub : IPubSub
 {
     private readonly ILoggerAdapter<PubSub> _logger;
     private readonly IConfiguration _configuration;
-    private const string HubName = "predictions";
     private const string ConnStringName = "AzureWebPubSub";
     private WebPubSubServiceClient? _serviceClient;
 
@@ -28,19 +27,30 @@ public class PubSub : IPubSub
         _logger = logger;
     }
 
-    public async Task Init()
+    public async Task Send(object message, string hub)
     {
-        _serviceClient = new WebPubSubServiceClient(_configuration.GetConnectionString(ConnStringName), HubName);
-
-        // TODO: Functions app needs a negotiate endpoint
-        _logger.LogInformation("URI: " + await _serviceClient.GetClientAccessUriAsync(TimeSpan.FromHours(72)));
+        Guard.Against.Null(message, nameof(message));
+        Guard.Against.NullOrEmpty(hub, nameof(hub));
+        
+        Connect(hub);
+        
+        await _serviceClient!.SendToAllAsync(RequestContent.Create(message), ContentType.ApplicationJson);
     }
 
-    public async Task Send(object message)
+    public async Task<Uri> Negotiate(string hub)
     {
-        Guard.Against.Null(_serviceClient);
+        Guard.Against.NullOrEmpty(hub, nameof(hub));
+        
+        Connect(hub);
 
-        // TODO: To SendToGroup
-        await _serviceClient!.SendToAllAsync(RequestContent.Create(message), ContentType.ApplicationJson);
+        return await _serviceClient!.GetClientAccessUriAsync(TimeSpan.FromHours(24));
+    }
+
+    private void Connect(string podName)
+    {
+        if (_serviceClient?.Hub != podName)
+        {
+            _serviceClient = new WebPubSubServiceClient(_configuration.GetConnectionString(ConnStringName), podName);
+        }
     }
 }

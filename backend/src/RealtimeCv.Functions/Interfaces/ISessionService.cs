@@ -13,4 +13,5 @@ public interface ISessionService
     Task<Result<SessionDto>> UpdateSession(SessionDto? updateDto);
     Task<Result> DeleteSession(int sessionId);
     Task<Result> StopSession(int sessionId);
+    Task<Result<SessionNegotiateDto>> NegotiateSession(int sessionId);
 }

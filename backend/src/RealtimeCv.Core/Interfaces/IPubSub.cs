@@ -1,9 +1,10 @@
-﻿using System.Threading.Tasks;
+﻿using System;
+using System.Threading.Tasks;
 
 namespace RealtimeCv.Core.Interfaces;
 
 public interface IPubSub
 {
-    Task Init();
-    Task Send(object message);
+    Task Send(object message, string hub);
+    Task<Uri> Negotiate(string hub);
 }

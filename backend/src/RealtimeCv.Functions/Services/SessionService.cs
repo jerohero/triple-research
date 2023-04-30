@@ -27,13 +27,15 @@ public class SessionService : ISessionService
     private readonly ISessionRepository _sessionRepository;
     private readonly IVisionSetRepository _visionSetRepository;
     private readonly IKubernetesService _kubernetesService;
+    private readonly IPubSub _pubSub;
 
     public SessionService(
         ILoggerAdapter<SessionService> logger,
         IMapper mapper,
         ISessionRepository sessionRepository,
         IVisionSetRepository visionSetRepository,
-        IKubernetesService kubernetesService
+        IKubernetesService kubernetesService,
+        IPubSub pubSub
     )
     {
         _mapper = mapper;
@@ -41,6 +43,7 @@ public class SessionService : ISessionService
         _sessionRepository = sessionRepository;
         _visionSetRepository = visionSetRepository;
         _kubernetesService = kubernetesService;
+        _pubSub = pubSub;
     }
 
     public async Task<Result<SessionDto>> GetSessionById(int sessionId)
@@ -139,5 +142,19 @@ public class SessionService : ISessionService
         await _kubernetesService.DeletePod(session.Pod);
         
         return Result.Success();
+    }
+    
+    public async Task<Result<SessionNegotiateDto>> NegotiateSession(int sessionId)
+    {
+        var session = await _sessionRepository.GetByIdAsync(sessionId);
+        
+        if (session is null)
+        {
+            return Result.NotFound();
+        }
+
+        var uri = await _pubSub.Negotiate(session.Pod);
+        
+        return new Result<SessionNegotiateDto>(new SessionNegotiateDto(uri.AbsoluteUri));
     }
 }

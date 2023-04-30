@@ -8,6 +8,7 @@ using RealtimeCv.Core.Interfaces;
 using RealtimeCv.Functions.Interfaces;
 using RealtimeCv.Functions.Services;
 using RealtimeCv.Infrastructure.Extensions;
+using RealtimeCv.Infrastructure.Messaging;
 
 namespace RealtimeCv.Functions;
 
@@ -30,6 +31,7 @@ internal class Program
             services.AddDbContext(hostContext.Configuration.GetValue<string>("SqlConnectionString"));
             services.AddRepositories();
             services.AddKubernetes();
+            services.AddSingleton<IPubSub, PubSub>();
 
             services.AddScoped<IProjectService, ProjectService>();
             services.AddScoped<IVisionSetService, VisionSetService>();
