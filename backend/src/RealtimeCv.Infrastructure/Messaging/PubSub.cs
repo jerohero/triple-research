@@ -27,30 +27,30 @@ public class PubSub : IPubSub
         _logger = logger;
     }
 
-    public async Task Send(object message, string hub)
+    public async Task Send(object message, string group, string hub)
     {
         Guard.Against.Null(message, nameof(message));
         Guard.Against.NullOrEmpty(hub, nameof(hub));
         
         Connect(hub);
-        
-        await _serviceClient!.SendToAllAsync(RequestContent.Create(message), ContentType.ApplicationJson);
+
+        await _serviceClient!.SendToGroupAsync(group, RequestContent.Create(message), ContentType.ApplicationJson);
     }
 
-    public async Task<Uri> Negotiate(string hub)
+    public async Task<Uri> Negotiate(string hub, string group)
     {
         Guard.Against.NullOrEmpty(hub, nameof(hub));
         
         Connect(hub);
-
-        return await _serviceClient!.GetClientAccessUriAsync(TimeSpan.FromHours(24));
+        
+        return await _serviceClient!.GetClientAccessUriAsync(groups: new[] { group });
     }
 
-    private void Connect(string podName)
+    private void Connect(string hub)
     {
-        if (_serviceClient?.Hub != podName)
+        if (_serviceClient?.Hub != hub)
         {
-            _serviceClient = new WebPubSubServiceClient(_configuration.GetConnectionString(ConnStringName), podName);
+            _serviceClient = new WebPubSubServiceClient(_configuration.GetConnectionString(ConnStringName), hub);
         }
     }
 }

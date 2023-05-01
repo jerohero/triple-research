@@ -1,5 +1,6 @@
 ﻿using System;
 using Ardalis.GuardClauses;
+using RealtimeCv.Core.Entities;
 using RealtimeCv.Core.Interfaces;
 
 namespace RealtimeCv.Core.Services;
@@ -24,13 +25,13 @@ public class StreamService : IStreamService, IDisposable
         _pubSub = pubSub;
     }
 
-    public void HandleStream(string source, string targetUrl, string targetHub)
+    public void HandleStream(Session session, string targetUrl)
     {
-        Guard.Against.NullOrWhiteSpace(source, nameof(source));
+        Guard.Against.NullOrWhiteSpace(session.Source, nameof(session.Source));
         Guard.Against.NullOrEmpty(targetUrl);
 
         _streamSender.PrepareTarget($"{targetUrl}/start");
-        _streamReceiver.ConnectStreamBySource(source);
+        _streamReceiver.ConnectStreamBySource(session.Source);
 
         _streamReceiver.OnConnectionEstablished += () =>
         {
@@ -46,7 +47,7 @@ public class StreamService : IStreamService, IDisposable
 
         _streamSender.OnPredictionResult += async result =>
         {
-            await _pubSub.Send(result, targetHub);
+            await _pubSub.Send(result, session.Pod, "predictions");
             
             // Store in db
         };

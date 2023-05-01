@@ -153,7 +153,7 @@ public class SessionService : ISessionService
             return Result.NotFound();
         }
 
-        var uri = await _pubSub.Negotiate(session.Pod);
+        var uri = await _pubSub.Negotiate("predictions", session.Pod);
         
         return new Result<SessionNegotiateDto>(new SessionNegotiateDto(uri.AbsoluteUri));
     }
