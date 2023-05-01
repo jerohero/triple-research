@@ -104,6 +104,7 @@ public class ProjectController : BaseController
             return await ResultToResponse(result, req);
         }
 
+        // When running locally, don't forget to enable Minikube proxy
         await _kubernetesService.CreateCvPod(result.Value.Id, result.Value.Pod);
 
         return await ResultToResponse(result, req);

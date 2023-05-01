@@ -10,6 +10,8 @@ riderModule.iml
 _ReSharper.Caches/
 **/obj
 
+node_modules
+
 
 .idea/
 .vs/*
