@@ -1,0 +1,123 @@
+# Starter pipeline
+# Start with a minimal pipeline that you can customize to build and deploy your code.
+# Add steps that build, run tests, deploy, and more:
+# https://aka.ms/yaml
+
+trigger: 
+ - master
+
+parameters:
+  - name: ServiceConnection
+    type: string
+    default: $(subscriptionStudent)
+
+variables:
+  - name: resourceTemplate
+    value: "$(System.DefaultWorkingDirectory)/template.bicep" 
+  - name: resourceGroupName
+    value: "triple"
+  - name: functionAppName
+    value: "triplejbfunctionapp"
+  - name: storageName
+    value: "triplejbstorage"
+  - name: sqlServerName
+    value: "triplejbdbserver"
+  - name: sqlServerAdminLogin
+    value: $(sqlServerUsername)
+  - name: sqlServerAdminLoginPassword
+    value: $(sqlServerPassword)
+  - name: dbName
+    value: "triplejbdb"
+  - name: webPubSubName
+    value: "triplejbpubsub"
+  - name: aksName
+    value: "triplejbaks"
+
+stages:
+  - stage: "BUILD"
+    dependsOn: []
+    condition: always()
+    jobs:
+    - job: "BUILD_DOTNET_APP"
+      pool:
+        vmImage: 'ubuntu-latest'
+      steps: 
+        - checkout: self
+        - task: UseDotNet@2
+          displayName: 'Use .NET core 7.x'
+          inputs: 
+            packageType: 'sdk'
+            version: '7.x'
+        - task: DotNetCoreCLI@2
+          inputs:
+            command: test
+            projects: '**/backend/tests/RealtimeCv.UnitTests/*.csproj'
+        - task: DotNetCoreCLI@2
+          displayName: 'Publish'
+          inputs:
+            command: 'publish'
+            publishWebProjects: false
+            arguments: '--configuration Release --output publish_output'
+            projects: "$(System.DefaultWorkingDirectory)/backend/src/RealtimeCv.Functions/RealtimeCv.Functions.csproj"
+            modifyOutputPath: false
+            zipAfterPublish: false
+        - task: ArchiveFiles@2
+          displayName: "Archive files"
+          inputs:
+            rootFolderOrFile: "$(System.DefaultWorkingDirectory)/publish_output"
+            includeRootFolder: false
+            archiveFile: "$(System.DefaultWorkingDirectory)/build$(Build.BuildId)-net.zip"
+        - task: PublishBuildArtifacts@1
+          displayName: 'Upload artifacts'
+          inputs:
+            PathtoPublish: '$(System.DefaultWorkingDirectory)/build$(Build.BuildId)-net.zip'
+            artifactName: 'drop_net'
+
+  - stage: "DEPLOY"
+    dependsOn: ["BUILD"]
+    condition: succeeded()
+    jobs:
+    - deployment: "DEPLOY_DOTNET_APP"
+      environment: "DEV"
+      pool:
+        vmImage: 'ubuntu-latest'
+      strategy:
+        runOnce:
+          deploy:
+            steps:
+            - checkout: self
+            - download: current
+              artifact: drop_net
+            - task: AzureCLI@2
+              continueOnError: true
+              displayName: 'Resource Template Deployment'
+              inputs:
+                azureSubscription: "${{ parameters['ServiceConnection'] }}"
+                scriptType: "pscore"
+                scriptLocation: "inlineScript"
+                inlineScript: |
+                  az group create -l "westeurope" -n "${{ variables.resourceGroupName }}"
+                  az deployment group create `
+                      -n "$(Build.BuildNumber)-$(System.PhaseAttempt)" `
+                      -g "${{ variables.resourceGroupName }}" `
+                      -f "${{ variables.ResourceTemplate }}" `
+                      --parameters functionAppName="${{variables.functionAppName}}" storageName="${{variables.storageName}}" sqlServerName="${{variables.sqlServerName}}"`
+                        sqlServerAdminLogin="${{variables.sqlServerAdminLogin}}" sqlServerAdminLoginPassword="${{variables.sqlServerAdminLoginPassword}}" dbName="${{variables.dbName}}"`
+                        webPubSubName="${{variables.webPubSubName}} aksName="${{variables.aksName}}""
+            - task: DownloadBuildArtifacts@0
+              inputs:
+                buildType: 'current'
+                downloadType: 'single'
+                artifactName: drop_net
+                downloadPath: '$(System.ArtifactsDirectory)'
+            - task: AzureRmWebAppDeployment@4
+              displayName: 'Functions App deployment'
+              inputs:
+                ConnectionType: "AzureRM"
+                azureSubscription: "${{ parameters['ServiceConnection'] }}"
+                appType: "functionApp"
+                deployToSlotOrASE: false
+                SlotName: deployment
+                ResourceGroupName: "${{ variables.resourceGroupName }}"
+                WebAppName: "${{ variables.functionAppName }}"
+                packageForLinux: "$(System.ArtifactsDirectory)/**/build$(Build.BuildId)-net.zip" 
