@@ -1,3 +1,4 @@
+import os.path
 import sys
 
 import logging
@@ -12,8 +13,6 @@ import detect
 
 confthres = 0.3
 nmsthres = 0.1
-yolo_path = './'
-
 
 def image_to_byte_array(image: Image):
     imgByteArr = io.BytesIO()

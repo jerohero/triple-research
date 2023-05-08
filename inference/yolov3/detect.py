@@ -8,8 +8,7 @@ import json
 
 confthres = 0.5
 nmsthres = 0.1
-path = os.path.abspath('../') + '/inference/yolov3'
-yolo_path = os.path.abspath('../') + '/inference/yolov3'
+path = './'
 
 nets, labels, colors = None, None, None
 
@@ -17,8 +16,8 @@ nets, labels, colors = None, None, None
 def get_labels(labels_path):
     # load the COCO class labels our YOLO model was trained on
     # labelsPath = os.path.sep.join([yolo_path, "yolo_v3/coco.names"])
-    print(yolo_path, labels_path)
-    lpath = os.path.sep.join([yolo_path, labels_path])
+    print(path, labels_path)
+    lpath = os.path.sep.join([path, labels_path])
     print(lpath)
     LABELS = open(path + '/yolo_v3/coco.names').read().strip().split("\n")
     return LABELS
@@ -33,12 +32,12 @@ def get_colors(LABELS):
 
 def get_weights(weights_path):
     # derive the paths to the YOLO weights and model configuration
-    weightsPath = os.path.sep.join([yolo_path, weights_path])
+    weightsPath = os.path.sep.join([path, weights_path])
     return weightsPath
 
 
 def get_config(config_path):
-    configPath = os.path.sep.join([yolo_path, config_path])
+    configPath = os.path.sep.join([path, config_path])
     return configPath
 
 
