@@ -24,3 +24,4 @@ inference/yolov7/__pycache__
 inference/yolov3/__pycache__
 inference/yolov7/yolov7.pt
 inference/yolov7/traced_model.pt
+inference/yolov3/yolo_v3/yolov3.weights
