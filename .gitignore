@@ -1,9 +1,20 @@
-Worker/CvWorker/bin/
-Worker/CvWorker/obj/
-Worker/CvWorker/packages/
+Worker/src/bin/
+Worker/src/obj/
+Worker/src/**/obj/
+Worker/src/packages/
 riderModule.iml
 _ReSharper.Caches/
+**/obj
 
 
 .idea/
-Worker/CvWorker/Assets/
+.vs/*
+Worker/src/Assets/
+
+inference/yolov7/models
+inference/yolov7/runs
+inference/yolov7/utils/__pycache__
+inference/yolov7/__pycache__
+inference/yolov3/__pycache__
+inference/yolov7/yolov7.pt
+inference/yolov7/traced_model.pt
