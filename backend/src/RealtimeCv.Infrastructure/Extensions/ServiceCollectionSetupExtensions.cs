@@ -8,7 +8,6 @@ using RealtimeCv.Core.Services;
 using RealtimeCv.Infrastructure.Data;
 using RealtimeCv.Infrastructure.Data.Repositories;
 using RealtimeCv.Infrastructure.Http;
-using RealtimeCv.Infrastructure.Interfaces;
 using RealtimeCv.Infrastructure.Streaming;
 
 namespace RealtimeCv.Infrastructure.Extensions;

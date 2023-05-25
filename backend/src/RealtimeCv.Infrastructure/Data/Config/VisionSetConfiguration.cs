@@ -1,6 +1,6 @@
 ﻿using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Metadata.Builders;
-using RealtimeCv.Infrastructure.Entities;
+using RealtimeCv.Core.Entities;
 
 namespace RealtimeCv.Infrastructure.Data.Config;
 

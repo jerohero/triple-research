@@ -4,7 +4,6 @@ using Ardalis.GuardClauses;
 using OpenCvSharp;
 using RealtimeCv.Core.Interfaces;
 using RealtimeCv.Infrastructure.Data.Config;
-using RealtimeCv.Infrastructure.Interfaces;
 
 namespace RealtimeCv.Infrastructure.Streaming;
 

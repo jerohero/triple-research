@@ -4,7 +4,6 @@ using System.IO;
 using System.Net.Http;
 using System.Threading.Tasks;
 using RealtimeCv.Core.Interfaces;
-using RealtimeCv.Infrastructure.Interfaces;
 using SixLabors.ImageSharp;
 using SixLabors.ImageSharp.PixelFormats;
 
@@ -42,7 +41,7 @@ public class HttpService : IHttpService
           "Upload----" + DateTime.Now.ToString(CultureInfo.InvariantCulture)
         )
         {
-            { new ByteArrayContent(bits), "file", "upload.jpg" }
+            { new ByteArrayContent(bits), "file", "upload.png" }
         };
 
         var response = await _httpClient.PostAsync(url, content);
@@ -50,7 +49,7 @@ public class HttpService : IHttpService
         return response;
     }
 
-    public async Task Post(string? url)
+    public async Task Post(string url)
     {
         var response = await _httpClient.PostAsync(url, null);
 

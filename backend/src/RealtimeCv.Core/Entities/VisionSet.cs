@@ -1,8 +1,9 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using System.Text.Json.Serialization;
 using Ardalis.GuardClauses;
 
-namespace RealtimeCv.Infrastructure.Entities;
+namespace RealtimeCv.Core.Entities;
 
 public class VisionSet : BaseEntity
 {
@@ -13,13 +14,6 @@ public class VisionSet : BaseEntity
 
     [JsonIgnore(Condition = JsonIgnoreCondition.WhenWritingDefault)]
     public ICollection<string> Models { get; set; }
-    
-    public VisionSet(string name, ICollection<string> sources, ICollection<string> models)
-    {
-        Sources = sources;
-        Models = models;
-        Name = Guard.Against.NullOrEmpty(name, nameof(name));
-    }
     
     public void UpdateName(string newName)
     {

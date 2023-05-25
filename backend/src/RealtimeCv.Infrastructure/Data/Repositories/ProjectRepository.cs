@@ -1,7 +1,6 @@
 ﻿using Ardalis.Specification.EntityFrameworkCore;
+using RealtimeCv.Core.Entities;
 using RealtimeCv.Core.Interfaces;
-using RealtimeCv.Infrastructure.Entities;
-using RealtimeCv.Infrastructure.Interfaces;
 
 namespace RealtimeCv.Infrastructure.Data.Repositories;
 

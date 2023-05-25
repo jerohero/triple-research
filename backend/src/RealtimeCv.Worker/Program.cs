@@ -4,7 +4,6 @@ using Microsoft.Extensions.Hosting;
 using RealtimeCv.Core.Interfaces;
 using RealtimeCv.Core.Services;
 using RealtimeCv.Infrastructure.Extensions;
-using RealtimeCv.Infrastructure.Interfaces;
 using RealtimeCv.Infrastructure.Messaging;
 
 namespace RealtimeCv.Worker;

@@ -4,12 +4,11 @@ using System.Threading.Tasks;
 using Ardalis.Result;
 using Ardalis.Result.FluentValidation;
 using AutoMapper;
+using RealtimeCv.Core.Entities;
 using RealtimeCv.Core.Interfaces;
 using RealtimeCv.Functions.Interfaces;
 using RealtimeCv.Functions.Models;
 using RealtimeCv.Functions.Validators;
-using RealtimeCv.Infrastructure.Entities;
-using RealtimeCv.Infrastructure.Interfaces;
 
 namespace RealtimeCv.Functions.Services;
 
