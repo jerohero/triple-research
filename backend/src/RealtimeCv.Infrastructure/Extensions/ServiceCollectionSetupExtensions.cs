@@ -4,9 +4,9 @@ using System.Text.Json;
 using System.Text.Json.Serialization;
 using k8s;
 using Microsoft.EntityFrameworkCore;
-using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Newtonsoft.Json;
+using Polly;
 using RealtimeCv.Core.Interfaces;
 using RealtimeCv.Core.Services;
 using RealtimeCv.Infrastructure.Data;
@@ -57,7 +57,13 @@ public static class ServiceCollectionSetupExtensions
 
     public static void AddConnectionServices(this IServiceCollection services)
     {
-        services.AddTransient<IHttpService, HttpService>();
+        services.AddHttpClient<IHttpService, HttpService>()
+            .AddTransientHttpErrorPolicy(builder => builder.WaitAndRetryAsync(new[]
+            {
+                TimeSpan.FromSeconds(1),
+                TimeSpan.FromSeconds(5),
+                TimeSpan.FromSeconds(10)
+            }));
     }
 
     public static void ConfigureJson(this IServiceCollection services)

@@ -43,6 +43,7 @@ public class StreamService : IStreamService, IDisposable
             OnStreamEnded?.Invoke();
             _streamReceiver.Dispose();
             _streamSender.Dispose();
+            // TODO terminate pod
         };
 
         _streamSender.OnPredictionResult += async result =>
@@ -50,6 +51,13 @@ public class StreamService : IStreamService, IDisposable
             await _pubSub.Send(result, session.Pod, "predictions");
             
             // Store in db
+        };
+
+        _streamSender.OnConnectionTimeout += () =>
+        {
+            _streamReceiver.Dispose();
+            _streamSender.Dispose();
+            // TODO terminate pod
         };
     }
     

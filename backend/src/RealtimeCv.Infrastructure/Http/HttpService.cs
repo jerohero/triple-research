@@ -11,23 +11,25 @@ namespace RealtimeCv.Infrastructure.Http;
 
 /// <summary>
 /// An implementation of IHttpService using HttpClient
-/// TODO https://learn.microsoft.com/en-us/dotnet/architecture/microservices/implement-resilient-applications/use-httpclientfactory-to-implement-resilient-http-requests#what-is-httpclientfactory
 /// </summary>
 public class HttpService : IHttpService
 {
+    private readonly HttpClient _httpClient;
+    
+    public HttpService(HttpClient httpClient)
+    {
+        _httpClient = httpClient;
+    }
+    
     public async Task<int> GetUrlResponseStatusCode(string url)
     {
-        using var client = new HttpClient();
-
-        var result = await client.GetAsync(url);
+        var result = await _httpClient.GetAsync(url);
 
         return (int)result.StatusCode;
     }
 
     public async Task<HttpResponseMessage> PostFile(string url, byte[] file, string name = "file")
     {
-        using var client = new HttpClient();
-
         using var ms = new MemoryStream();
 
         Image img = Image.Load<Rgba32>(file);
@@ -39,19 +41,17 @@ public class HttpService : IHttpService
           "Upload----" + DateTime.Now.ToString(CultureInfo.InvariantCulture)
         )
         {
-            { new ByteArrayContent(bits), "file", "upload.png" }
+            { new ByteArrayContent(bits), "file", "upload.jpg" }
         };
 
-        var response = await client.PostAsync(url, content);
+        var response = await _httpClient.PostAsync(url, content);
 
         return response;
     }
 
     public async Task Post(string url)
     {
-        using var client = new HttpClient();
-
-        var response = await client.PostAsync(url, null);
+        var response = await _httpClient.PostAsync(url, null);
 
         var responseString = await response.Content.ReadAsStringAsync();
     }

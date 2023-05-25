@@ -10,6 +10,8 @@
     <PackageReference Include="Ardalis.GuardClauses" />
     <PackageReference Include="Microsoft.EntityFrameworkCore.SqlServer" />
     <PackageReference Include="Microsoft.Extensions.Logging.Abstractions" />
+    <PackageReference Include="Microsoft.Extensions.Http" />
+    <PackageReference Include="Microsoft.Extensions.Http.Polly" />
     <PackageReference Include="OpenCvSharp4" />
     <PackageReference Include="OpenCvSharp4.Extensions" />
     <PackageReference Include="OpenCvSharp4_.runtime.ubuntu.20.04-x64" />

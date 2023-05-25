@@ -3,6 +3,7 @@ using System.Threading;
 using Ardalis.GuardClauses;
 using OpenCvSharp;
 using RealtimeCv.Core.Interfaces;
+using RealtimeCv.Infrastructure.Data.Config;
 
 namespace RealtimeCv.Infrastructure.Streaming;
 
@@ -17,7 +18,6 @@ public class StreamReceiver : IStreamReceiver, IDisposable
     public event Action? OnConnectionTimeout;
 
     private const int DefaultFps = 30;
-    private const int SecondsBetweenAttempts = 5;
     private readonly ILoggerAdapter<StreamReceiver> _logger;
     private string? _source;
     private int? _fps;
@@ -60,13 +60,12 @@ public class StreamReceiver : IStreamReceiver, IDisposable
 
         while (!capture.IsOpened())
         {
-            _logger.LogInformation($"Failed to open {_source} on attempt {failedAttempts}. Retrying in {SecondsBetweenAttempts} seconds.");
+            _logger.LogInformation($"Failed to open {_source} on attempt {failedAttempts}. Retrying in {Constants.DefaultActionDelayMs / 1000} seconds.");
             
             HandleTimeout(failedAttempts);
-            
             failedAttempts++;
             
-            Thread.Sleep(1000 * SecondsBetweenAttempts);
+            Thread.Sleep(Constants.DefaultActionDelayMs);
             
             capture = new VideoCapture(_source);
         }
@@ -79,7 +78,7 @@ public class StreamReceiver : IStreamReceiver, IDisposable
 
     private void HandleTimeout(int failedAttempts)
     {
-        if (failedAttempts * SecondsBetweenAttempts >= _secondsBeforeTimeout)
+        if (failedAttempts * (Constants.DefaultActionDelayMs / 1000) >= _secondsBeforeTimeout)
         {
             OnConnectionTimeout?.Invoke();
         }
