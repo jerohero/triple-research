@@ -1,7 +1,4 @@
 ﻿using System;
-using System.IO;
-using System.Text.Json;
-using System.Text.Json.Serialization;
 using k8s;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.DependencyInjection;
@@ -13,7 +10,6 @@ using RealtimeCv.Infrastructure.Data;
 using RealtimeCv.Infrastructure.Data.Repositories;
 using RealtimeCv.Infrastructure.Http;
 using RealtimeCv.Infrastructure.Kubernetes;
-using RealtimeCv.Infrastructure.Messaging;
 using RealtimeCv.Infrastructure.Streaming;
 
 namespace RealtimeCv.Infrastructure.Extensions;
