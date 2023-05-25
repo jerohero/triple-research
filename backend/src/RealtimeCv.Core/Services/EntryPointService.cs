@@ -44,8 +44,6 @@ public class EntryPointService : IEntryPointService
         // EF Requires a scope so we are creating one per execution here
         // using var scope = _serviceScopeFactoryLocator.CreateScope();
 
-        await _pubSub.Init();
-
         _streamService.HandleStream(source, targetUrl);
     }
     

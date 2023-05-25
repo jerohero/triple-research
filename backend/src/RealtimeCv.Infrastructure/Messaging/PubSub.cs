@@ -26,14 +26,7 @@ public class PubSub : IPubSub
     {
         _configuration = configuration;
         _logger = logger;
-    }
-
-    public async Task Init()
-    {
         _serviceClient = new WebPubSubServiceClient(_configuration.GetConnectionString(ConnStringName), HubName);
-
-        // TODO: Functions app needs a negotiate endpoint
-        _logger.LogInformation("URI: " + await _serviceClient.GetClientAccessUriAsync(TimeSpan.FromHours(72)));
     }
 
     public async Task Send(object message)

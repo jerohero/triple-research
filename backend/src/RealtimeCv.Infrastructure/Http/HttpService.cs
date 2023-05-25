@@ -41,7 +41,7 @@ public class HttpService : IHttpService
           "Upload----" + DateTime.Now.ToString(CultureInfo.InvariantCulture)
         )
         {
-            { new ByteArrayContent(bits), "file", "upload.png" }
+            { new ByteArrayContent(bits), "file", "upload.jpg" }
         };
 
         var response = await _httpClient.PostAsync(url, content);
