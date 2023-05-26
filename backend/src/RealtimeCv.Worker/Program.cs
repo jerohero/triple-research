@@ -30,10 +30,12 @@ public class Program
 
                 services.AddSingleton<IPubSub, PubSub>();
                 services.AddSingleton<ISessionHandlerService, SessionHandlerHandlerService>();
+                services.AddStreamInferenceHandlers();
 
                 services.AddDbContext(hostContext.Configuration.GetConnectionString("DefaultConnection"));
                 services.AddRepositories();
                 services.AddConnectionServices();
+                services.AddAsynchronousMessagingServices();
 
                 services.ConfigureJson();
 

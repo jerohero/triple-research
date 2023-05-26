@@ -1,10 +1,15 @@
 ﻿using System;
+using System.Diagnostics;
+using System.Net.Sockets;
 using System.Threading;
 using Ardalis.GuardClauses;
+using Microsoft.IdentityModel.Tokens;
+using Newtonsoft.Json;
 using OpenCvSharp;
 using RealtimeCv.Core.Interfaces;
 using RealtimeCv.Infrastructure.Data.Config;
-
+using FFMpegCore;
+using FFMpegCore.Pipes;
 namespace RealtimeCv.Infrastructure.Streaming;
 
 /// <summary>
@@ -48,6 +53,43 @@ public class StreamReceiver : IStreamReceiver, IDisposable
         };
 
         _pollThread.Start();
+    }
+
+    public bool CheckConnection(string source)
+    {
+        // return CheckConnectionOpenCv(source);
+        return CheckConnectionFfmpeg(source);
+    }
+
+    // For research
+    private bool CheckConnectionOpenCv(string source)
+    {
+        // Due to its synchronous nature this tends to take very long (10+ seconds per URL in larger loops for some reason) and create false results
+        
+        VideoCapture capture = new(source);
+        var isOpened = capture.IsOpened();
+        capture.Release();
+
+        return isOpened;
+    }
+
+    private bool CheckConnectionFfmpeg(string source)
+    {
+        // ~1 second per URL. I did find that ffprobe tends to return empty results at times, even though the stream is active
+        
+        var ffprobePath = "C:/ffmpeg/bin/ffprobe.exe";
+        
+        var process = new Process();
+        process.StartInfo.FileName = ffprobePath;
+        process.StartInfo.Arguments = $"-v quiet -show_streams {source}";
+        process.StartInfo.UseShellExecute = false;
+        process.StartInfo.RedirectStandardOutput = true;
+        
+        process.Start();
+        var output = process.StandardOutput.ReadToEnd();
+        process.Close();
+        
+        return !output.IsNullOrEmpty();
     }
 
     private void PollStream()

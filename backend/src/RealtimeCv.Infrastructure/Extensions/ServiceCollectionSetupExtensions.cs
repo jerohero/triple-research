@@ -30,11 +30,17 @@ public static class ServiceCollectionSetupExtensions
         services.AddScoped<ISessionRepository, SessionRepository>();
     }
 
-    public static void AddStreamHandlers(this IServiceCollection services)
+    public static void AddStreamInferenceHandlers(this IServiceCollection services)
     {
+        services.AddTransient<IStreamInferenceService, StreamInferenceService>();
         services.AddSingleton<IStreamReceiver, StreamReceiver>();
         services.AddSingleton<IStreamSender, StreamSender>();
-        services.AddTransient<IStreamService, StreamService>();
+    }
+
+    public static void AddStreamPollHandlers(this IServiceCollection services)
+    {
+        services.AddTransient<IStreamPollService, StreamPollService>();
+        services.AddSingleton<IStreamReceiver, StreamReceiver>();
     }
 
     public static void AddKubernetes(this IServiceCollection services)
@@ -60,6 +66,16 @@ public static class ServiceCollectionSetupExtensions
                 TimeSpan.FromSeconds(5),
                 TimeSpan.FromSeconds(10)
             }));
+    }
+    
+    public static void AddAsynchronousMessagingServices(this IServiceCollection services)
+    {
+        services.AddSingleton<IPubSub, PubSub>();
+    }
+    
+    public static void AddQueueMessagingServices(this IServiceCollection services)
+    {
+        services.AddSingleton<IQueue, Queue>();
     }
 
     public static void ConfigureJson(this IServiceCollection services)
