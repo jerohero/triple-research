@@ -5,7 +5,7 @@
 
     <IsPackable>false</IsPackable>
 
-    <RootNamespace>CleanArchitecture.UnitTests</RootNamespace>
+    <RootNamespace>RealtimeCv.UnitTests</RootNamespace>
   </PropertyGroup>
 
   <ItemGroup>

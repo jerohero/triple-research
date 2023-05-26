@@ -25,12 +25,11 @@ public class Program
                 services.AddSingleton<IEntryPointService, EntryPointService>();
                 services.AddSingleton<IServiceLocator, ServiceScopeFactoryLocator>();
                 
-                services.AddStreamHandlers();
                 services.AddKubernetes();
+                services.AddStreamHandlers();
 
                 services.AddSingleton<IPubSub, PubSub>();
                 services.AddSingleton<ISessionHandlerService, SessionHandlerHandlerService>();
-                services.AddStreamInferenceHandlers();
 
                 services.AddDbContext(hostContext.Configuration.GetConnectionString("DefaultConnection"));
                 services.AddRepositories();

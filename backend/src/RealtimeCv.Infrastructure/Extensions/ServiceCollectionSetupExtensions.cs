@@ -10,6 +10,7 @@ using RealtimeCv.Infrastructure.Data;
 using RealtimeCv.Infrastructure.Data.Repositories;
 using RealtimeCv.Infrastructure.Http;
 using RealtimeCv.Infrastructure.Kubernetes;
+using RealtimeCv.Infrastructure.Messaging;
 using RealtimeCv.Infrastructure.Streaming;
 
 namespace RealtimeCv.Infrastructure.Extensions;
@@ -30,9 +31,9 @@ public static class ServiceCollectionSetupExtensions
         services.AddScoped<ISessionRepository, SessionRepository>();
     }
 
-    public static void AddStreamInferenceHandlers(this IServiceCollection services)
+    public static void AddStreamHandlers(this IServiceCollection services)
     {
-        services.AddTransient<IStreamInferenceService, StreamInferenceService>();
+        services.AddTransient<IStreamService, StreamService>();
         services.AddSingleton<IStreamReceiver, StreamReceiver>();
         services.AddSingleton<IStreamSender, StreamSender>();
     }
