@@ -11,12 +11,12 @@ namespace RealtimeCv.Core.Services;
 /// <summary>
 /// Service that oversees the process of consuming the input, sending it to the inference API and publishing the results.
 /// </summary>
-public class StreamPollService : IStreamPollService, IDisposable
+public class StreamDetectionService : IStreamDetectionService, IDisposable
 {
     private readonly IStreamReceiver _streamReceiver;
     private readonly IQueue _queue;
 
-    public StreamPollService(
+    public StreamDetectionService(
         IStreamReceiver streamReceiver,
         IQueue queue)
     {

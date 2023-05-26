@@ -3,7 +3,7 @@ using System.Threading.Tasks;
 
 namespace RealtimeCv.Core.Interfaces;
 
-public interface IStreamPollService
+public interface IStreamDetectionService
 {
     List<string> DetectActiveStreams(List<string> sources);
 

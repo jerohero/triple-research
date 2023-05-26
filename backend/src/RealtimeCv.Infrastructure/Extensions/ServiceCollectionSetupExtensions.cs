@@ -40,7 +40,7 @@ public static class ServiceCollectionSetupExtensions
 
     public static void AddStreamPollHandlers(this IServiceCollection services)
     {
-        services.AddTransient<IStreamPollService, StreamPollService>();
+        services.AddTransient<IStreamDetectionService, StreamDetectionService>();
         services.AddSingleton<IStreamReceiver, StreamReceiver>();
     }
 

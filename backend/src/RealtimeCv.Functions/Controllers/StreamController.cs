@@ -17,15 +17,15 @@ namespace RealtimeCv.Functions.Controllers;
 public class StreamController : BaseController
 {
     private readonly ILoggerAdapter<StreamController> _logger;
-    private readonly IStreamPollService _streamPollService;
+    private readonly IStreamDetectionService _streamDetectionService;
 
     public StreamController(
       ILoggerAdapter<StreamController> logger,
-        IStreamPollService streamPollService
+        IStreamDetectionService streamDetectionService
     )
     {
         _logger = logger;
-        _streamPollService = streamPollService;
+        _streamDetectionService = streamDetectionService;
     }
 
     [Function("PollStreams")]
@@ -39,7 +39,7 @@ public class StreamController : BaseController
 
         foreach (var chunk in sourcesChunks)
         {
-            await _streamPollService.SendStreamPollChunkToQueue(chunk.ToList());
+            await _streamDetectionService.SendStreamPollChunkToQueue(chunk.ToList());
         }
     }
 
@@ -48,7 +48,7 @@ public class StreamController : BaseController
     {
         var now = DateTime.UtcNow;
 
-        var activeStreams = _streamPollService.DetectActiveStreams(message.Sources.ToList());
+        var activeStreams = _streamDetectionService.DetectActiveStreams(message.Sources.ToList());
 
         var duration = DateTime.UtcNow - now;
         
