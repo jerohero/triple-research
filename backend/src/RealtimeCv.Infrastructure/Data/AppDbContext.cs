@@ -15,6 +15,7 @@ public class AppDbContext : DbContext
     public DbSet<VisionSet>? VisionSet { get; set; }
     public DbSet<Project>? Project { get; set; }
     public DbSet<Session>? Session { get; set; }
+    public DbSet<TrainedModel>? TrainedModel { get; set; }
 
     public AppDbContext(DbContextOptions<AppDbContext> options) : base(options)
     {
@@ -28,10 +29,18 @@ public class AppDbContext : DbContext
         builder.Entity<VisionSet>().Property(vs => vs.Id).ValueGeneratedOnAdd();
         builder.Entity<Project>().Property(p => p.Id).ValueGeneratedOnAdd();
         builder.Entity<Session>().Property(p => p.Id).ValueGeneratedOnAdd();
+        builder.Entity<TrainedModel>().Property(p => p.Id).ValueGeneratedOnAdd();
         
         // Set entity relations
         builder.Entity<Project>()
             .HasMany(p => p.VisionSets)
+            .WithOne(vs => vs.Project)
+            .HasForeignKey(vs => vs.ProjectId)
+            .OnDelete(DeleteBehavior.Cascade)
+            .IsRequired();
+        
+        builder.Entity<Project>()
+            .HasMany(p => p.TrainedModels)
             .WithOne(vs => vs.Project)
             .HasForeignKey(vs => vs.ProjectId)
             .OnDelete(DeleteBehavior.Cascade)
@@ -60,6 +69,7 @@ public class AppDbContext : DbContext
         builder.ApplyConfiguration(new VisionSetConfiguration());
         builder.ApplyConfiguration(new ProjectConfiguration());
         builder.ApplyConfiguration(new SessionConfiguration());
+        builder.ApplyConfiguration(new TrainedModelConfiguration());
 
         builder.ApplyConfigurationsFromAssembly(Assembly.GetExecutingAssembly());
     }

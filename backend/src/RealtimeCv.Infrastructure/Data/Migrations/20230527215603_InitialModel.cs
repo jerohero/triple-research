@@ -25,6 +25,26 @@ namespace RealtimeCv.Infrastructure.Data.Migrations
                 });
 
             migrationBuilder.CreateTable(
+                name: "TrainedModel",
+                columns: table => new
+                {
+                    Id = table.Column<int>(type: "int", nullable: false)
+                        .Annotation("SqlServer:Identity", "1, 1"),
+                    Name = table.Column<string>(type: "nvarchar(100)", maxLength: 100, nullable: false),
+                    ProjectId = table.Column<int>(type: "int", nullable: false)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_TrainedModel", x => x.Id);
+                    table.ForeignKey(
+                        name: "FK_TrainedModel_Project_ProjectId",
+                        column: x => x.ProjectId,
+                        principalTable: "Project",
+                        principalColumn: "Id",
+                        onDelete: ReferentialAction.Cascade);
+                });
+
+            migrationBuilder.CreateTable(
                 name: "VisionSet",
                 columns: table => new
                 {
@@ -76,6 +96,11 @@ namespace RealtimeCv.Infrastructure.Data.Migrations
                 column: "VisionSetId");
 
             migrationBuilder.CreateIndex(
+                name: "IX_TrainedModel_ProjectId",
+                table: "TrainedModel",
+                column: "ProjectId");
+
+            migrationBuilder.CreateIndex(
                 name: "IX_VisionSet_ProjectId",
                 table: "VisionSet",
                 column: "ProjectId");
@@ -86,6 +111,9 @@ namespace RealtimeCv.Infrastructure.Data.Migrations
         {
             migrationBuilder.DropTable(
                 name: "Session");
+
+            migrationBuilder.DropTable(
+                name: "TrainedModel");
 
             migrationBuilder.DropTable(
                 name: "VisionSet");

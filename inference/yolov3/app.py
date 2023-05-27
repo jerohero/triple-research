@@ -50,8 +50,8 @@ def inference():
 # route http posts to this method
 @app.route('/start', methods=['POST'])
 def start():
-    dataset_uri = request.data
-    success = detect.start(dataset_uri)
+    model_uri = request.data
+    success = detect.start(model_uri)
     return Response(response=str(success), status=200)
 
 

@@ -76,6 +76,29 @@ namespace RealtimeCv.Infrastructure.Data.Migrations
                     b.ToTable("Session", (string)null);
                 });
 
+            modelBuilder.Entity("RealtimeCv.Core.Entities.TrainedModel", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int");
+
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
+
+                    b.Property<string>("Name")
+                        .IsRequired()
+                        .HasMaxLength(100)
+                        .HasColumnType("nvarchar(100)");
+
+                    b.Property<int>("ProjectId")
+                        .HasColumnType("int");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("ProjectId");
+
+                    b.ToTable("TrainedModel", (string)null);
+                });
+
             modelBuilder.Entity("RealtimeCv.Core.Entities.VisionSet", b =>
                 {
                     b.Property<int>("Id")
@@ -114,6 +137,17 @@ namespace RealtimeCv.Infrastructure.Data.Migrations
                     b.Navigation("VisionSet");
                 });
 
+            modelBuilder.Entity("RealtimeCv.Core.Entities.TrainedModel", b =>
+                {
+                    b.HasOne("RealtimeCv.Core.Entities.Project", "Project")
+                        .WithMany("TrainedModels")
+                        .HasForeignKey("ProjectId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("Project");
+                });
+
             modelBuilder.Entity("RealtimeCv.Core.Entities.VisionSet", b =>
                 {
                     b.HasOne("RealtimeCv.Core.Entities.Project", "Project")
@@ -127,6 +161,8 @@ namespace RealtimeCv.Infrastructure.Data.Migrations
 
             modelBuilder.Entity("RealtimeCv.Core.Entities.Project", b =>
                 {
+                    b.Navigation("TrainedModels");
+
                     b.Navigation("VisionSets");
                 });
 

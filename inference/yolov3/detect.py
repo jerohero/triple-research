@@ -232,15 +232,15 @@ def predict(image, net, LABELS, COLORS):
     return json.dumps(result)
 
 
-def start(dataset_uri):
+def start(model_uri):
     # load our input image and grab its spatial dimensions
     global nets, labels, colors
 
     labels_path = "yolo_v3/coco.names"
     cfgpath = "yolo_v3/yolov3.cfg"
-    wpath = "yolo_v3/dataset.file"
+    wpath = "yolo_v3/model.file"
 
-    response = requests.get(dataset_uri, stream=True)
+    response = requests.get(model_uri, stream=True)
 
     with open(wpath, "wb") as f:
         for chunk in response.iter_content(chunk_size=8192):
