@@ -6,6 +6,8 @@ import cv2
 import os
 import json
 
+import requests as requests
+
 confthres = 0.5
 nmsthres = 0.1
 path = './'
@@ -230,13 +232,20 @@ def predict(image, net, LABELS, COLORS):
     return json.dumps(result)
 
 
-def start():
+def start(dataset_uri):
     # load our input image and grab its spatial dimensions
     global nets, labels, colors
 
     labels_path = "yolo_v3/coco.names"
     cfgpath = "yolo_v3/yolov3.cfg"
-    wpath = "yolo_v3/yolov3.weights"
+    wpath = "yolo_v3/dataset.file"
+
+    response = requests.get(dataset_uri, stream=True)
+
+    with open(wpath, "wb") as f:
+        for chunk in response.iter_content(chunk_size=8192):
+            f.write(chunk)
+
     labels = get_labels(labels_path)
     cfg = get_config(cfgpath)
     weights = get_weights(wpath)
