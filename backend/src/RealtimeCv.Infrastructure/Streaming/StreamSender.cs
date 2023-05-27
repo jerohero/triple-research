@@ -38,7 +38,7 @@ public class StreamSender : IStreamSender, IDisposable
         _httpService = httpService;
     }
 
-    public void PrepareTarget(string prepareUrl, int secondsBeforeTimeout = 180)
+    public void PrepareTarget(string prepareUrl, string datasetUri, int secondsBeforeTimeout = 180)
     {
         Guard.Against.NullOrEmpty(prepareUrl);
         
@@ -51,7 +51,7 @@ public class StreamSender : IStreamSender, IDisposable
             return;
         }
         
-        _prepareThread = new Thread(PrepareEndpoint)
+        _prepareThread = new Thread(() => AttemptPrepareTarget(datasetUri))
         {
             IsBackground = true
         };
@@ -98,7 +98,9 @@ public class StreamSender : IStreamSender, IDisposable
 
             try
             {
-                var res = await _httpService.PostFile(_targetUrl, _streamReceiver.Frame.ToBytes());
+                var payload = await _httpService.ImageToHttpContent(_streamReceiver.Frame.ToBytes());
+                var res = await _httpService.Post(_targetUrl, payload);
+                
                 var results = await res.Content.ReadFromJsonAsync<object>();
                 
                 OnPredictionResult?.Invoke(results);
@@ -114,7 +116,7 @@ public class StreamSender : IStreamSender, IDisposable
         }
     }
 
-    private async void PrepareEndpoint()
+    private async void AttemptPrepareTarget(string datasetUri)
     {
         var didPrepare = false;
         
@@ -125,7 +127,8 @@ public class StreamSender : IStreamSender, IDisposable
         {
             try
             {
-                await _httpService.Post(_prepareUrl);
+                var content = _httpService.StringToHttpContent(datasetUri);
+                await _httpService.Post(_prepareUrl, content);
                 
                 _logger.LogInformation("Prepared target.");
 

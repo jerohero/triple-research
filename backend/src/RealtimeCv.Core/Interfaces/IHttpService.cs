@@ -6,6 +6,7 @@ namespace RealtimeCv.Core.Interfaces;
 public interface IHttpService
 {
     Task<int> GetUrlResponseStatusCode(string url);
-    Task<HttpResponseMessage> PostFile(string url, byte[] file, string name = "file");
-    Task Post(string url);
+    Task<HttpResponseMessage> Post(string url, HttpContent content);
+    Task<HttpContent> ImageToHttpContent(byte[] input);
+    HttpContent StringToHttpContent(string text);
 }

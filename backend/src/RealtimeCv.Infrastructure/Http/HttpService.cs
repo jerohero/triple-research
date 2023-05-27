@@ -28,31 +28,34 @@ public class HttpService : IHttpService
         return (int)result.StatusCode;
     }
 
-    public async Task<HttpResponseMessage> PostFile(string url, byte[] file, string name = "file")
+    public async Task<HttpResponseMessage> Post(string url, HttpContent? content)
     {
-        using var ms = new MemoryStream();
-
-        Image img = Image.Load<Rgba32>(file);
-        await img.SaveAsJpegAsync(ms);
-
-        var bits = ms.ToArray();
-
-        using var content = new MultipartFormDataContent(
-          "Upload----" + DateTime.Now.ToString(CultureInfo.InvariantCulture)
-        )
-        {
-            { new ByteArrayContent(bits), "file", "upload.jpg" }
-        };
-
         var response = await _httpClient.PostAsync(url, content);
 
         return response;
     }
 
-    public async Task Post(string url)
+    public async Task<HttpContent> ImageToHttpContent(byte[] input)
     {
-        var response = await _httpClient.PostAsync(url, null);
+        using var ms = new MemoryStream();
 
-        var responseString = await response.Content.ReadAsStringAsync();
+        Image img = Image.Load<Rgba32>(input);
+        await img.SaveAsJpegAsync(ms);
+
+        var bits = ms.ToArray();
+
+        var content = new MultipartFormDataContent(
+            "Upload----" + DateTime.Now.ToString(CultureInfo.InvariantCulture)
+        )
+        {
+            { new ByteArrayContent(bits), "file", "upload.jpg" }
+        };
+
+        return content;
+    }
+
+    public HttpContent StringToHttpContent(string input)
+    {
+        return new StringContent(input);
     }
 }

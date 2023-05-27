@@ -1,4 +1,5 @@
-﻿using Microsoft.Extensions.Configuration;
+﻿using Microsoft.Extensions.Azure;
+using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
 using RealtimeCv.Core.Interfaces;
@@ -27,14 +28,14 @@ public class Program
                 
                 services.AddKubernetes();
                 services.AddStreamHandlers();
+                services.AddAsynchronousMessagingServices();
+                services.AddBlobServices();
 
-                services.AddSingleton<IPubSub, PubSub>();
                 services.AddSingleton<ISessionHandlerService, SessionHandlerHandlerService>();
 
                 services.AddDbContext(hostContext.Configuration.GetConnectionString("DefaultConnection"));
                 services.AddRepositories();
                 services.AddConnectionServices();
-                services.AddAsynchronousMessagingServices();
 
                 services.ConfigureJson();
 

@@ -14,15 +14,18 @@ public class StreamService : IStreamService, IDisposable
     private readonly IStreamReceiver _streamReceiver;
     private readonly IStreamSender _streamSender;
     private readonly IPubSub _pubSub;
+    private readonly IBlob _blob;
 
     public StreamService(
       IStreamReceiver streamReceiver,
       IStreamSender streamSender,
-      IPubSub pubSub)
+      IPubSub pubSub,
+      IBlob blob)
     {
         _streamReceiver = streamReceiver;
         _streamSender = streamSender;
         _pubSub = pubSub;
+        _blob = blob;
     }
 
     public void HandleStream(Session session, string targetUrl)
@@ -30,7 +33,9 @@ public class StreamService : IStreamService, IDisposable
         Guard.Against.NullOrWhiteSpace(session.Source, nameof(session.Source));
         Guard.Against.NullOrEmpty(targetUrl);
 
-        _streamSender.PrepareTarget($"{targetUrl}/start");
+        var uri = _blob.GetBlobUri("yolov3.weights", "dataset");
+
+        _streamSender.PrepareTarget($"{targetUrl}/start", uri);
         _streamReceiver.ConnectStreamBySource(session.Source);
 
         _streamReceiver.OnConnectionEstablished += () =>

@@ -78,6 +78,11 @@ public static class ServiceCollectionSetupExtensions
     {
         services.AddSingleton<IQueue, Queue>();
     }
+    
+    public static void AddBlobServices(this IServiceCollection services)
+    {
+        services.AddSingleton<IBlob, Blob.Blob>();
+    }
 
     public static void ConfigureJson(this IServiceCollection services)
     {
