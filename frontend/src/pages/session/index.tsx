@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from 'react'
 import axios, {AxiosResponse} from 'axios'
 import { useParams } from 'react-router-dom'
-import {Negotiate} from "../../common/types";
+import { Negotiate } from '../../common/types'
 
 function SessionPage() {
   const { id } = useParams();

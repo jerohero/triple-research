@@ -1,9 +1,9 @@
 import React, {useEffect, useState} from 'react'
 import axios from 'axios'
-import {useParams} from 'react-router-dom'
-import {Project, TrainedModel} from '../../common/types'
+import { useParams } from 'react-router-dom'
+import { Project, TrainedModel } from '../../common/types'
 import ModelUploader from '../../components/model-uploader'
-import Model from "../../components/model";
+import VisionSetsList from '../../components/vision-sets-list'
 
 function ProjectPage() {
   const { id } = useParams();
@@ -34,9 +34,12 @@ function ProjectPage() {
         <>
           <p>{ project?.Name }</p>
           <ModelUploader projectId={ +id } />
-          { trainedModels?.map(model => {
-            return <Model key={ model.Id } model={ model } />
-          }) }
+
+          {/*{ trainedModels?.map(model => {*/}
+          {/*  return <ModelItem key={ model.Id } model={ model } />*/}
+          {/*}) }*/}
+
+          <VisionSetsList projectId={ +id } />
         </>
       ) }
     </div>

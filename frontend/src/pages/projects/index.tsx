@@ -1,7 +1,7 @@
 import React, {useEffect, useState} from 'react'
-import axios from "axios";
-import {Link} from "react-router-dom";
-import {Project} from "../../common/types";
+import axios from 'axios'
+import { Link } from 'react-router-dom'
+import { Project } from '../../common/types'
 
 function ProjectsPage() {
   const [projects, setProjects] = useState<Project[]>([])

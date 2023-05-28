@@ -5,6 +5,13 @@ export interface Project {
   TrainedModels: object[],
 }
 
+export interface VisionSet {
+  Id: number,
+  ProjectId: number,
+  Name: string,
+  Sources: string[]
+}
+
 export interface Session {
   Id: number,
   VisionSetId: number,

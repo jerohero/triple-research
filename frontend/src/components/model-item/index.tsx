@@ -1,7 +1,7 @@
 import React, { useState } from 'react'
 import {TrainedModel} from "../../common/types";
 
-function Model(props: { model: TrainedModel }) {
+function ModelItem(props: { model: TrainedModel }) {
   return (
     <div className='p-2'>
       <div>
@@ -11,4 +11,4 @@ function Model(props: { model: TrainedModel }) {
   )
 }
 
-export default Model
+export default ModelItem
