@@ -1,22 +1,14 @@
-﻿using System;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using System.IO;
 using System.Linq;
-using System.Text;
 using System.Threading;
 using System.Threading.Tasks;
 using Ardalis.Result;
 using Ardalis.Result.FluentValidation;
 using AutoMapper;
-using Azure.Storage;
-using Azure.Storage.Blobs;
-using Azure.Storage.Blobs.Specialized;
-using Azure.Storage.Sas;
-using Grpc.Core;
 using Newtonsoft.Json;
 using RealtimeCv.Core.Entities;
 using RealtimeCv.Core.Interfaces;
-using RealtimeCv.Core.Models;
 using RealtimeCv.Core.Specifications;
 using RealtimeCv.Functions.Interfaces;
 using RealtimeCv.Functions.Models;
@@ -157,7 +149,7 @@ public class ProjectService : IProjectService
             }
             if (result.Status != ResultStatus.Ok)
             {
-                return Result.Error();
+                return Result.Error(result.Errors.First());
             }
 
             trainedModel = result.Value;
@@ -177,6 +169,21 @@ public class ProjectService : IProjectService
 
         return Result.Success();
     }
+    
+    public async Task<Result<List<TrainedModelsDto>>> GetTrainedModels(int projectId)
+    {
+        var project = await _projectRepository.GetByIdAsync(projectId);
+            
+        if (project is null)
+        {
+            return Result.NotFound();
+        }
+        
+        var spec = new TrainedModelsByProject(projectId);
+        var trainedModels = await _trainedModelRepository.ListAsync(spec, CancellationToken.None);
+
+        return new Result<List<TrainedModelsDto>>(_mapper.Map<List<TrainedModelsDto>>(trainedModels));
+    }
 
     private async Task<Result<TrainedModel>> CreateTrainedModel(int projectId, string blobName)
     {
@@ -185,6 +192,15 @@ public class ProjectService : IProjectService
         if (project is null)
         {
             return Result.NotFound();
+        }
+        
+        TrainedModelByNameSpec trainedModelSpec = new(blobName);
+
+        var existingTrainedModel = await _trainedModelRepository.FirstOrDefaultAsync(trainedModelSpec, CancellationToken.None);
+        
+        if (existingTrainedModel is not null)
+        {
+            return Result.Error("A model already exists under this name"); // TODO: Replace with Result.Conflict when the package gets updated
         }
 
         var trainedModel = await _trainedModelRepository.AddAsync(new TrainedModel

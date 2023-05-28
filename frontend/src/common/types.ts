@@ -16,6 +16,13 @@ export interface Session {
   StoppedAt: Date
 }
 
+export interface TrainedModel {
+  Id: number,
+  ProjectId: number,
+  Name: string,
+  IsUploadFinished: boolean
+}
+
 export interface Negotiate {
   Url: string
 }

@@ -104,4 +104,13 @@ public class ProjectController : BaseController
         
         return await ResultToResponse(result, req);
     }
+    
+    [Function("getTrainedModels")]
+    public async Task<HttpResponseData> GetTrainedModels(
+        [HttpTrigger(AuthorizationLevel.Anonymous, "get", Route = "project/{projectId}/trained-model")] HttpRequestData req, int projectId)
+    {
+        var result = await _projectService.GetTrainedModels(projectId);
+        
+        return await ResultToResponse(result, req);
+    }
 }

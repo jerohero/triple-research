@@ -20,5 +20,7 @@ public class AutomapperMaps : Profile
         CreateMap<SessionDto, Session>();
         CreateMap<Session, SessionDto>();
         CreateMap<SessionCreateDto, Session>();
+        
+        CreateMap<TrainedModel, TrainedModelsDto>();
     }
 }

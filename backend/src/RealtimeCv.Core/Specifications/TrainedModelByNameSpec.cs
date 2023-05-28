@@ -8,7 +8,7 @@ namespace RealtimeCv.Core.Specifications
   {
     public TrainedModelByNameSpec(string name)
     {
-        Query.Where(p => p.Name == name)
+        Query.Where(tm => tm.Name == name)
             .Take(1)
             .EnableCache(nameof(TrainedModelByNameSpec), name);
     }
