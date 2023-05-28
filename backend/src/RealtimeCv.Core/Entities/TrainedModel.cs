@@ -5,6 +5,8 @@ public class TrainedModel : BaseEntity
     public Project Project { get; set; }
     
     public string Name { get; set; }
+    
+    public bool IsUploadFinished { get; set; }
 
     public int ProjectId { get; set; }
 }

@@ -12,7 +12,7 @@ using RealtimeCv.Infrastructure.Data;
 namespace RealtimeCv.Infrastructure.Data.Migrations
 {
     [DbContext(typeof(AppDbContext))]
-    [Migration("20230527215603_InitialModel")]
+    [Migration("20230528173435_InitialModel")]
     partial class InitialModel
     {
         /// <inheritdoc />
@@ -86,6 +86,9 @@ namespace RealtimeCv.Infrastructure.Data.Migrations
                         .HasColumnType("int");
 
                     SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
+
+                    b.Property<bool>("IsUploadFinished")
+                        .HasColumnType("bit");
 
                     b.Property<string>("Name")
                         .IsRequired()

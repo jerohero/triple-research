@@ -10,12 +10,14 @@ public class TrainedModelConfiguration : IEntityTypeConfiguration<TrainedModel>
     {
         builder.ToTable(nameof(TrainedModel));
 
-        builder.Property(vs => vs.Id)
+        builder.Property(tm => tm.Id)
             .IsRequired();
-        builder.Property(vs => vs.Name)
+        builder.Property(tm => tm.Name)
             .IsRequired()
             .HasMaxLength(Constants.DefaultMaxStringLength);
-        builder.Property(vs => vs.ProjectId)
+        builder.Property(tm => tm.IsUploadFinished)
+            .IsRequired();
+        builder.Property(tm => tm.ProjectId)
             .IsRequired();
     }
 }

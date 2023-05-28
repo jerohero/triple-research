@@ -2,10 +2,12 @@
 
 public class TrainedModelChunkMetadata
 {
-    public string FileName { get; }
+    public string Name { get; }
+    public int Size { get; }
     
-    public TrainedModelChunkMetadata(string fileName)
+    public TrainedModelChunkMetadata(string name, int size)
     {
-        FileName = fileName;
+        Name = name;
+        Size = size;
     }
 }

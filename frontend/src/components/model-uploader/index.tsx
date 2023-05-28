@@ -1,5 +1,5 @@
 import React, { useState } from 'react'
-import axios from 'axios'
+import axios, {AxiosError} from 'axios'
 
 function ModelUploader(props: { projectId: number }) {
   const [selectedFile, setSelectedFile] = useState<any>(null)
@@ -12,21 +12,16 @@ function ModelUploader(props: { projectId: number }) {
       await axios.post(`http://localhost:7071/api/project/${props.projectId}/trained-model`, chunk, {
         headers: {
           "Content-Type": "application/octet-stream",
-          "x-chunk-metadata": JSON.stringify({ fileName: selectedFile.name })
-        },
-        onUploadProgress: () => {
-          const nextChunkStart = start + chunk.byteLength
-          setUploadProgress(Math.min(Math.floor((nextChunkStart / selectedFile.size) * 100), 100))
-        },
+          "x-chunk-metadata": JSON.stringify({ name: selectedFile.name, size: selectedFile.size })
+        }
       })
-
+      const nextChunkStart = start + chunk.byteLength
+      setUploadProgress(Math.min(Math.floor((nextChunkStart / selectedFile.size) * 100), 100))
       return end
-    } catch (error) {
-      if (retries > 0) {
+    } catch (error: any) {
+      if (retries > 0 && error.response.status === 500) {
         console.error("File upload failed, retrying...", error)
-
         await new Promise(r => setTimeout(r, 1000))
-
         return uploadChunk(chunk, start, end, retries - 1)
       } else {
         throw error

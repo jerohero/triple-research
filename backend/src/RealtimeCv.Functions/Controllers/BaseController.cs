@@ -1,4 +1,5 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using System.Net;
@@ -14,7 +15,7 @@ namespace RealtimeCv.Functions.Controllers;
 /// </summary>
 public abstract class BaseController
 {
-    private readonly IDictionary<ResultStatus, HttpStatusCode> _statusCodeDict = new Dictionary<ResultStatus, HttpStatusCode>
+    private readonly IDictionary<Enum, HttpStatusCode> _statusCodeDict = new Dictionary<Enum, HttpStatusCode>
   {
     { ResultStatus.Ok, HttpStatusCode.OK },
     { ResultStatus.Forbidden, HttpStatusCode.Forbidden },

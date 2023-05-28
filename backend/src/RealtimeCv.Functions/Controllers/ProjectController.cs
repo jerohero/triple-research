@@ -101,10 +101,11 @@ public class ProjectController : BaseController
 
         req.Headers.TryGetValues("x-chunk-metadata", out var metadataHeader);
         var metadata = JsonConvert.DeserializeObject<TrainedModelChunkMetadata>(metadataHeader!.First());
-        var fileName = metadata?.FileName;
+        var fileName = metadata?.Name;
+        var size = metadata?.Size;
 
-        var result = await _projectService.UploadTrainedModelChunk(stream, fileName, projectId);
-
+        var result = await _projectService.UploadTrainedModelChunk(stream, fileName, size, projectId);
+        
         return await ResultToResponse(result, req);
     }
 }

@@ -12,8 +12,11 @@ using Azure.Storage;
 using Azure.Storage.Blobs;
 using Azure.Storage.Blobs.Specialized;
 using Azure.Storage.Sas;
+using Grpc.Core;
+using Newtonsoft.Json;
 using RealtimeCv.Core.Entities;
 using RealtimeCv.Core.Interfaces;
+using RealtimeCv.Core.Models;
 using RealtimeCv.Core.Specifications;
 using RealtimeCv.Functions.Interfaces;
 using RealtimeCv.Functions.Models;
@@ -114,29 +117,46 @@ public class ProjectService : IProjectService
         return Result.Success();
     }
 
-    public async Task<Result> UploadTrainedModelChunk(Stream chunk, string? chunkName, int projectId)
+    public async Task<Result> UploadTrainedModelChunk(Stream chunk, string? fileName, int? size, int projectId)
     {
-        if (chunkName is null)
+        if (fileName is null)
         {
             return Result.Error("Chunk name is required");
         }
         
         var connString = Environment.GetEnvironmentVariable("AzureWebJobsStorage");
         
-        var blobName = $"{projectId}/{chunkName}";
+        var blobName = $"{projectId}/{fileName}";
         
         var blobServiceClient = new BlobServiceClient(connString);
         var blobContainerClient = blobServiceClient.GetBlobContainerClient("trained-model");
         var blockBlobClient = blobContainerClient.GetBlockBlobClient(blobName);
 
-        // Handle first chunk
-        if (!await blockBlobClient.ExistsAsync())
-        {
-            var result = await CreateTrainedModel(projectId, blobName);
+        var exists = await blockBlobClient.ExistsAsync();
+
+        switch (exists.Value) {
+            // Handle duplicate blob name
+            case true: {
+                var trainedModelSpec = new TrainedModelByNameSpec(blobName);
+                var trainedModel = await _trainedModelRepository.SingleOrDefaultAsync(trainedModelSpec, CancellationToken.None);
+
+                if (trainedModel is not null && trainedModel.IsUploadFinished)
+                {
+                    return Result.Error("A model already exists under this name"); // TODO: Replace with Result.Conflict when package gets updated
+                }
+
+                break;
+            }
+            // Handle first chunk
+            case false: {
+                var result = await CreateTrainedModel(projectId, blobName);
             
-            if (result.Status != ResultStatus.Ok)
-            {
-                return result;
+                if (result.Status != ResultStatus.Ok)
+                {
+                    return result;
+                }
+
+                break;
             }
         }
 
@@ -164,6 +184,7 @@ public class ProjectService : IProjectService
         await _trainedModelRepository.AddAsync(new TrainedModel
         {
             ProjectId = projectId,
+            IsUploadFinished = false,
             Name = blobName,
         });
 
