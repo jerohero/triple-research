@@ -1,12 +1,9 @@
 import React, { useEffect, useState } from 'react'
 import axios, {AxiosResponse} from 'axios'
 import { useParams } from 'react-router-dom'
+import {Negotiate} from "../../common/types";
 
-interface Negotiate {
-  Url: string
-}
-
-function Session() {
+function SessionPage() {
   const { id } = useParams();
   const [events, setEvents]: any = useState([])
 
@@ -45,4 +42,4 @@ function Session() {
   )
 }
 
-export default Session
+export default SessionPage
