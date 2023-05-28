@@ -33,7 +33,8 @@ internal class Program
             services.AddDbContext(hostContext.Configuration.GetValue<string>("SqlConnectionString"));
             services.AddRepositories();
             services.AddKubernetes();
-            services.AddSingleton<IPubSub, PubSub>();
+            services.AddBlobServices();
+            services.AddAsynchronousMessagingServices();
 
             services.AddScoped<IProjectService, ProjectService>();
             services.AddScoped<IVisionSetService, VisionSetService>();

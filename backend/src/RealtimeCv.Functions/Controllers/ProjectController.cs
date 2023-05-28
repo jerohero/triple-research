@@ -98,13 +98,9 @@ public class ProjectController : BaseController
         [HttpTrigger(AuthorizationLevel.Anonymous, "post", Route = "project/{projectId}/trained-model")] HttpRequestData req, int projectId)
     {
         var stream = req.Body;
+        var metadata = ExtractMetadata<TrainedModelChunkMetadata>(req, "x-chunk-metadata");
 
-        req.Headers.TryGetValues("x-chunk-metadata", out var metadataHeader);
-        var metadata = JsonConvert.DeserializeObject<TrainedModelChunkMetadata>(metadataHeader!.First());
-        var fileName = metadata?.Name;
-        var size = metadata?.Size;
-
-        var result = await _projectService.UploadTrainedModelChunk(stream, fileName, size, projectId);
+        var result = await _projectService.UploadTrainedModelChunk(stream, metadata?.Name, metadata?.Size, projectId);
         
         return await ResultToResponse(result, req);
     }

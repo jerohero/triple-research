@@ -1,7 +1,11 @@
 ﻿using System;
+using System.IO;
+using System.Linq;
+using System.Text;
 using System.Threading.Tasks;
 using Azure.Storage;
 using Azure.Storage.Blobs;
+using Azure.Storage.Blobs.Specialized;
 using Azure.Storage.Sas;
 using Microsoft.Extensions.Configuration;
 using RealtimeCv.Core.Interfaces;
@@ -48,4 +52,34 @@ public class Blob : IBlob
 
         return blobUri;
     }
+
+    public BlockBlobClient GetBlockBlobClient(string blobName, string containerName)
+    {
+        var connString = Environment.GetEnvironmentVariable("AzureWebJobsStorage");
+        var blobServiceClient = new BlobServiceClient(connString);
+        var blobContainerClient = blobServiceClient.GetBlobContainerClient(containerName);
+        
+        return blobContainerClient.GetBlockBlobClient(blobName);
+    }
+
+    public async Task UploadBlockBlob(BlockBlobClient blockBlobClient, Stream chunk)
+    {
+        var blockId = Convert.ToBase64String(Encoding.UTF8.GetBytes(Guid.NewGuid().ToString()));
+        await blockBlobClient.StageBlockAsync(blockId, chunk);
+
+        var blockList = await blockBlobClient.GetBlockListAsync();
+        var blockIds = blockList.Value.CommittedBlocks.Select(x => x.Name).ToList();
+        blockIds.Add(blockId);
+
+        await blockBlobClient.CommitBlockListAsync(blockIds);
+    }
+    
+    public async Task<bool> IsBlockBlobUploadFinished(BlockBlobClient blockBlobClient, int expectedSize)
+    {
+        var length = (await blockBlobClient.GetPropertiesAsync()).Value.ContentLength;
+        
+        return length >= expectedSize;
+    }
+    
+    
 }

@@ -41,6 +41,13 @@ public abstract class BaseController
     {
         return SerializeJson<T>(new StreamReader(body).ReadToEnd());
     }
+    
+    protected T? ExtractMetadata<T>(HttpRequestData req, string headerName)
+    {
+        req.Headers.TryGetValues(headerName, out var metadataHeader);
+
+        return JsonConvert.DeserializeObject<T>(metadataHeader!.First());
+    }
 
     private async Task<HttpResponseData> CreateJsonResponse(HttpRequestData requestData, HttpStatusCode statusCode, object? jsonObject)
     {

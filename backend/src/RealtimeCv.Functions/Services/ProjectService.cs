@@ -33,18 +33,21 @@ public class ProjectService : IProjectService
     private readonly ILoggerAdapter<ProjectService> _logger;
     private readonly IProjectRepository _projectRepository;
     private readonly ITrainedModelRepository _trainedModelRepository;
+    private readonly IBlob _blob;
 
     public ProjectService(
       ILoggerAdapter<ProjectService> logger,
       IMapper mapper,
       IProjectRepository projectRepository,
-      ITrainedModelRepository trainedModelRepository
+      ITrainedModelRepository trainedModelRepository,
+      IBlob blob
     )
     {
         _mapper = mapper;
         _logger = logger;
         _projectRepository = projectRepository;
         _trainedModelRepository = trainedModelRepository;
+        _blob = blob;
     }
 
     public async Task<Result<ProjectDto>> GetProjectById(int projectId)
@@ -119,60 +122,63 @@ public class ProjectService : IProjectService
 
     public async Task<Result> UploadTrainedModelChunk(Stream chunk, string? fileName, int? size, int projectId)
     {
-        if (fileName is null)
+        if (string.IsNullOrWhiteSpace(fileName))
         {
             return Result.Error("Chunk name is required");
         }
-        
-        var connString = Environment.GetEnvironmentVariable("AzureWebJobsStorage");
+        if (size is null)
+        {
+            return Result.Error("Chunk size is required");
+        }
         
         var blobName = $"{projectId}/{fileName}";
-        
-        var blobServiceClient = new BlobServiceClient(connString);
-        var blobContainerClient = blobServiceClient.GetBlobContainerClient("trained-model");
-        var blockBlobClient = blobContainerClient.GetBlockBlobClient(blobName);
+        var blockBlobClient = _blob.GetBlockBlobClient(blobName, "trained-model");
 
-        var exists = await blockBlobClient.ExistsAsync();
+        var blobExists = await blockBlobClient.ExistsAsync();
+        TrainedModel? trainedModel;
 
-        switch (exists.Value) {
-            // Handle duplicate blob name
-            case true: {
-                var trainedModelSpec = new TrainedModelByNameSpec(blobName);
-                var trainedModel = await _trainedModelRepository.SingleOrDefaultAsync(trainedModelSpec, CancellationToken.None);
+        if (blobExists.Value)
+        {
+            var trainedModelSpec = new TrainedModelByNameSpec(blobName);
+            trainedModel = await _trainedModelRepository.SingleOrDefaultAsync(trainedModelSpec, CancellationToken.None);
 
-                if (trainedModel is not null && trainedModel.IsUploadFinished)
-                {
-                    return Result.Error("A model already exists under this name"); // TODO: Replace with Result.Conflict when package gets updated
-                }
-
-                break;
-            }
-            // Handle first chunk
-            case false: {
-                var result = await CreateTrainedModel(projectId, blobName);
-            
-                if (result.Status != ResultStatus.Ok)
-                {
-                    return result;
-                }
-
-                break;
+            if (trainedModel is not null && trainedModel.IsUploadFinished)
+            {
+                return Result.Error("A model already exists under this name"); // TODO: Replace with Result.Conflict when the package gets updated
             }
         }
+        else
+        {
+            var result = await CreateTrainedModel(projectId, blobName);
+            
+            if (result.Status == ResultStatus.NotFound)
+            {
+                return Result.NotFound();
+            }
+            if (result.Status != ResultStatus.Ok)
+            {
+                return Result.Error();
+            }
 
-        var blockId = Convert.ToBase64String(Encoding.UTF8.GetBytes(Guid.NewGuid().ToString()));
-        await blockBlobClient.StageBlockAsync(blockId, chunk);
+            trainedModel = result.Value;
+        }
 
-        var blockList = await blockBlobClient.GetBlockListAsync();
-        var blockIds = blockList.Value.CommittedBlocks.Select(x => x.Name).ToList();
-        blockIds.Add(blockId);
+        await _blob.UploadBlockBlob(blockBlobClient, chunk);
 
-        await blockBlobClient.CommitBlockListAsync(blockIds);
+        var isFinished = await _blob.IsBlockBlobUploadFinished(blockBlobClient, (int) size);
+
+        if (!isFinished)
+        {
+            return Result.Success();
+        }
+
+        trainedModel!.IsUploadFinished = true;
+        await _trainedModelRepository.UpdateAsync(trainedModel);
 
         return Result.Success();
     }
 
-    private async Task<Result> CreateTrainedModel(int projectId, string blobName)
+    private async Task<Result<TrainedModel>> CreateTrainedModel(int projectId, string blobName)
     {
         var project = await _projectRepository.GetByIdAsync(projectId);
             
@@ -181,13 +187,13 @@ public class ProjectService : IProjectService
             return Result.NotFound();
         }
 
-        await _trainedModelRepository.AddAsync(new TrainedModel
+        var trainedModel = await _trainedModelRepository.AddAsync(new TrainedModel
         {
             ProjectId = projectId,
             IsUploadFinished = false,
             Name = blobName,
         });
 
-        return Result.Success();
+        return new Result<TrainedModel>(trainedModel);
     }
 }
