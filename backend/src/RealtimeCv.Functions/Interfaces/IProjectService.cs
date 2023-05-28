@@ -1,4 +1,5 @@
 ﻿using System.Collections.Generic;
+using System.IO;
 using System.Threading.Tasks;
 using Ardalis.Result;
 using RealtimeCv.Functions.Models;
@@ -12,4 +13,5 @@ public interface IProjectService
     Task<Result<ProjectDto>> CreateProject(ProjectCreateDto? createDto);
     Task<Result<ProjectDto>> UpdateProject(ProjectUpdateDto? updateDto);
     Task<Result> DeleteProject(int projectId);
+    Task<Result> UploadTrainedModelChunk(Stream chunk, string? chunkName, int projectId);
 }

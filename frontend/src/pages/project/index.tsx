@@ -18,8 +18,12 @@ function ProjectPage() {
 
   return (
     <div>
-      <p>{ project?.Name }</p>
-      <ModelUploader/>
+      { id && +id && (
+        <>
+          <p>{ project?.Name }</p>
+          <ModelUploader projectId={ +id } />
+        </>
+      ) }
     </div>
   )
 }

@@ -29,6 +29,7 @@ public static class ServiceCollectionSetupExtensions
         services.AddScoped<IProjectRepository, ProjectRepository>();
         services.AddScoped<IVisionSetRepository, VisionSetRepository>();
         services.AddScoped<ISessionRepository, SessionRepository>();
+        services.AddScoped<ITrainedModelRepository, TrainedModelRepository>();
     }
 
     public static void AddStreamHandlers(this IServiceCollection services)

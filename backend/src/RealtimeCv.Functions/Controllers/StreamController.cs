@@ -28,20 +28,20 @@ public class StreamController : BaseController
         _streamDetectionService = streamDetectionService;
     }
 
-    [Function("PollStreams")]
-    public async Task PollStreams(
-      [TimerTrigger("*/20 * * * * *")] TimerInfo timerInfo, FunctionContext context)
-    {
-        var sources = Enumerable.Repeat("rtmp://live.restream.io/live/re_6435068_fake", 19).ToList();
-        sources.Add("rtmp://live.restream.io/live/re_6435068_ac960121c66cd1e6a9f5");
-
-        var sourcesChunks = sources.Chunk(Constants.StreamPollChunkSize);
-
-        foreach (var chunk in sourcesChunks)
-        {
-            await _streamDetectionService.SendStreamPollChunkToQueue(chunk.ToList());
-        }
-    }
+    // [Function("PollStreams")]
+    // public async Task PollStreams(
+    //   [TimerTrigger("*/20 * * * * *")] TimerInfo timerInfo, FunctionContext context)
+    // {
+    //     var sources = Enumerable.Repeat("rtmp://live.restream.io/live/re_6435068_fake", 19).ToList();
+    //     sources.Add("rtmp://live.restream.io/live/re_6435068_ac960121c66cd1e6a9f5");
+    //
+    //     var sourcesChunks = sources.Chunk(Constants.StreamPollChunkSize);
+    //
+    //     foreach (var chunk in sourcesChunks)
+    //     {
+    //         await _streamDetectionService.SendStreamPollChunkToQueue(chunk.ToList());
+    //     }
+    // }
 
     [Function("DetectStreamsFromChunk")]
     public void DetectStreamsFromChunk([QueueTrigger("stream-poll-chunk")] StreamPollChunkMessage message)

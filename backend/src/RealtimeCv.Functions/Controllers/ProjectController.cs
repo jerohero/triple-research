@@ -1,8 +1,19 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
+using System.IO;
 using System.Linq;
+using System.Net.Http;
+using System.Net.Http.Headers;
 using System.Security.Cryptography.X509Certificates;
+using System.Text;
 using System.Threading.Tasks;
+using System.Web;
 using Ardalis.Result;
+using Azure.Storage;
+using Azure.Storage.Blobs;
+using Azure.Storage.Blobs.Models;
+using Azure.Storage.Blobs.Specialized;
+using Azure.Storage.Sas;
 using k8s;
 using k8s.Models;
 using Microsoft.Azure.Functions.Worker;
@@ -78,6 +89,32 @@ public class ProjectController : BaseController
       [HttpTrigger(AuthorizationLevel.Anonymous, "delete", Route = "project/{projectId}")] HttpRequestData req, int projectId)
     {
         Result<ProjectDto> result = await _projectService.DeleteProject(projectId);
+
+        return await ResultToResponse(result, req);
+    }
+    
+    // [Function("negotiateTrainedModel")]
+    // public async Task<HttpResponseData> NegotiateTrainedModel(
+    //     [HttpTrigger(AuthorizationLevel.Anonymous, "post", Route = "project/{projectId}/trained-model/negotiate")] HttpRequestData req, int projectId)
+    // {
+    //     var negotiateDto = DeserializeJson<TrainedModelNegotiateInDto>(req.Body);
+    //     
+    //     var result = _projectService.NegotiateTrainedModel(negotiateDto, projectId);
+    //
+    //     return await ResultToResponse(result, req);
+    // }
+    
+    [Function("uploadTrainedModelChunk")]
+    public async Task<HttpResponseData> UploadTrainedModelChunk(
+        [HttpTrigger(AuthorizationLevel.Anonymous, "post", Route = "project/{projectId}/trained-model")] HttpRequestData req, int projectId)
+    {
+        var stream = req.Body;
+
+        req.Headers.TryGetValues("x-chunk-metadata", out var metadataHeader);
+        var metadata = JsonConvert.DeserializeObject<TrainedModelChunkMetadata>(metadataHeader!.First());
+        var fileName = metadata?.FileName;
+
+        var result = await _projectService.UploadTrainedModelChunk(stream, fileName, projectId);
 
         return await ResultToResponse(result, req);
     }

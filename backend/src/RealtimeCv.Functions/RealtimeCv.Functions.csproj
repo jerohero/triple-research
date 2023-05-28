@@ -13,6 +13,7 @@
     <PackageReference Include="Microsoft.Azure.Functions.Worker.Extensions.Http" />
     <PackageReference Include="Microsoft.Azure.Functions.Worker.Extensions.Timer" />
     <PackageReference Include="Microsoft.Azure.Functions.Worker.Core" />
+    <PackageReference Include="Azure.Storage.Blobs" />
     <PackageReference Include="Ardalis.Specification" />
     <PackageReference Include="Ardalis.Specification.EntityFrameworkCore" />
     <PackageReference Include="Ardalis.Result.FluentValidation" />
