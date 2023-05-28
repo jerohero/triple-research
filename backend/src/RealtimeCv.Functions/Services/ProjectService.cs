@@ -151,52 +151,6 @@ public class ProjectService : IProjectService
 
         return Result.Success();
     }
-    
-    // public Result<TrainedModelNegotiateOutDto> NegotiateTrainedModel(TrainedModelNegotiateInDto? negotiateDto, int projectId)
-    // {
-    //     var containerName = "dataset";
-    //     var blobName = $"{projectId}/{negotiateDto?.Name}";
-    //     
-    //     if (string.IsNullOrEmpty(containerName) || string.IsNullOrEmpty(blobName))
-    //     {
-    //         return Result.NotFound("Please pass a container and blob on the query string.");
-    //     }
-    //     
-    //     var storageConnectionString = Environment.GetEnvironmentVariable("AzureWebJobsStorage");
-    //     var accountName = Environment.GetEnvironmentVariable("StorageAccountName");
-    //     var accountKey = Environment.GetEnvironmentVariable("StorageAccountKey");
-    //     
-    //     _logger.LogInformation("EE: " + storageConnectionString);
-    //     
-    //     var blobServiceClient = new BlobServiceClient(storageConnectionString);
-    //     
-    //     var container = blobServiceClient.GetBlobContainerClient(containerName);
-    //     var blob = container.GetBlobClient(blobName);
-    //
-    //     var sasBuilder = new BlobSasBuilder
-    //     {
-    //         BlobContainerName = container.Name,
-    //         BlobName = blob.Name,
-    //         Resource = "b",
-    //         StartsOn = DateTimeOffset.UtcNow,
-    //         ExpiresOn = DateTimeOffset.UtcNow.AddHours(1)
-    //     };
-    //     sasBuilder.SetPermissions(BlobSasPermissions.Read | BlobSasPermissions.Write);
-    //
-    //     var credential = new StorageSharedKeyCredential(accountName, accountKey);
-    //     var sasToken = sasBuilder.ToSasQueryParameters(credential).ToString();
-    //
-    //     var blobUri = $"{container.Uri}/{blobName}?{sasToken}";
-    //     
-    //     // var uriBuilder = new BlobUriBuilder(blobClient.Uri)
-    //     // {
-    //     //     Sas = sasBuilder.ToSasQueryParameters(new StorageSharedKeyCredential(accountName, accountKey))
-    //     // };
-    //     //
-    //     // var sasToken = uriBuilder.ToUri().ToString();
-    //
-    //     return new Result<TrainedModelNegotiateOutDto>(new TrainedModelNegotiateOutDto(blobUri));
-    // }
 
     private async Task<Result> CreateTrainedModel(int projectId, string blobName)
     {

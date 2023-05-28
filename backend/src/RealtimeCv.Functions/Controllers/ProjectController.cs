@@ -92,18 +92,7 @@ public class ProjectController : BaseController
 
         return await ResultToResponse(result, req);
     }
-    
-    // [Function("negotiateTrainedModel")]
-    // public async Task<HttpResponseData> NegotiateTrainedModel(
-    //     [HttpTrigger(AuthorizationLevel.Anonymous, "post", Route = "project/{projectId}/trained-model/negotiate")] HttpRequestData req, int projectId)
-    // {
-    //     var negotiateDto = DeserializeJson<TrainedModelNegotiateInDto>(req.Body);
-    //     
-    //     var result = _projectService.NegotiateTrainedModel(negotiateDto, projectId);
-    //
-    //     return await ResultToResponse(result, req);
-    // }
-    
+
     [Function("uploadTrainedModelChunk")]
     public async Task<HttpResponseData> UploadTrainedModelChunk(
         [HttpTrigger(AuthorizationLevel.Anonymous, "post", Route = "project/{projectId}/trained-model")] HttpRequestData req, int projectId)
