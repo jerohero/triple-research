@@ -11,7 +11,7 @@ namespace RealtimeCv.Core.Specifications
         Query.Where(vs => vs.Id == id)
             .Include(vs => vs.TrainedModel)
             .Take(1)
-            .EnableCache(nameof(SessionWithVisionSetSpec), id);
+            .EnableCache(nameof(VisionSetWithTrainedModelSpec), id);
     }
   }
 }

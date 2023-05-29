@@ -1,3 +1,4 @@
+using System;
 using System.Collections.Generic;
 using System.Threading.Tasks;
 using k8s;
@@ -63,7 +64,17 @@ public class KubernetesService : IKubernetesService
                             {
                                 Name = "SESSION_ID",
                                 Value = sessionId.ToString()
-                            }
+                            },
+                            new()
+                            {
+                                Name = "StorageAccountName",
+                                Value = Environment.GetEnvironmentVariable("StorageAccountName")
+                            },
+                            new()
+                            {
+                                Name = "StorageAccountKey",
+                                Value = Environment.GetEnvironmentVariable("StorageAccountKey")
+                            },
                         }
                     }
                 }

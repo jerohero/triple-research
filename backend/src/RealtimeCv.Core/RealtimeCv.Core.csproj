@@ -13,6 +13,7 @@
     <PackageReference Include="Ardalis.Specification.EntityFrameworkCore" />
     <PackageReference Include="KubernetesClient" />
     <PackageReference Include="Azure.Storage.Blobs" />
+    <PackageReference Include="Newtonsoft.Json" />
   </ItemGroup>
 
 </Project>

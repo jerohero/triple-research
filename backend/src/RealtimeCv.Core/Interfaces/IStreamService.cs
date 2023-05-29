@@ -8,7 +8,7 @@ public interface IStreamService
 {
     event Action OnStreamEnded;
     
-    void HandleStream(Session session, string targetUrl);
+    void HandleStream(Session session, string modelUri, string targetUrl);
     
     void Dispose();
 }

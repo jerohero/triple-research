@@ -1,7 +1,9 @@
 ﻿using System;
+using System.Text.Json.Serialization;
 using System.Threading;
 using System.Threading.Tasks;
 using Microsoft.Extensions.DependencyInjection;
+using Newtonsoft.Json;
 using RealtimeCv.Core.Interfaces;
 
 namespace RealtimeCv.Core.Services;
@@ -15,17 +17,20 @@ public class EntryPointService : IEntryPointService
     private readonly IStreamService _streamService;
     private readonly ISessionHandlerService _sessionHandlerService;
     private readonly IPubSub _pubSub;
+    private readonly IBlob _blob;
     private bool _isRunning;
 
     public EntryPointService(ILoggerAdapter<EntryPointService> logger,
         IStreamService streamService,
         ISessionHandlerService sessionHandlerService,
-        IPubSub pubSub)
+        IPubSub pubSub,
+        IBlob blob)
     {
         _logger = logger;
         _streamService = streamService;
         _sessionHandlerService = sessionHandlerService;
         _pubSub = pubSub;
+        _blob = blob;
     }
 
     public async Task Execute(int sessionId, CancellationToken stoppingToken)
@@ -38,14 +43,15 @@ public class EntryPointService : IEntryPointService
         _isRunning = true;
         
         _logger.LogInformation("{service} running at: {time}", nameof(EntryPointService), DateTimeOffset.Now);
-
-        // var source = "rtmp://live.restream.io/live/re_6435068_ac960121c66cd1e6a9f5";
         
         var targetUrl = "http://127.0.0.1:5000";
 
         var session = await _sessionHandlerService.SetSessionActive(sessionId);
 
-        _streamService.HandleStream(session, targetUrl);
+        var model = await _sessionHandlerService.GetSessionTrainedModel(sessionId);
+        var modelUri = _blob.GetBlobUri(model.Name, "trained-model");
+
+        _streamService.HandleStream(session, modelUri, targetUrl);
         
         _streamService.OnStreamEnded += () =>
         {

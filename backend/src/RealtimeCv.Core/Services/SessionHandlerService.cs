@@ -50,6 +50,19 @@ public class SessionHandlerHandlerService : ISessionHandlerService, IDisposable
 
         return session;
     }
+    
+    public async Task<TrainedModel> GetSessionTrainedModel(int sessionId)
+    {
+        using var scope = _serviceScopeFactoryLocator;
+        var repository = scope.Get<ITrainedModelRepository>();
+        
+        var spec = new TrainedModelBySessionSpec(sessionId);
+        var session = await repository.SingleOrDefaultAsync(spec, CancellationToken.None);
+
+        Guard.Against.Null(session, nameof(session));
+
+        return session;
+    }
 
     public async Task EndSession(int sessionId)
     {

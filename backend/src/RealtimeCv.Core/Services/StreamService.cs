@@ -28,14 +28,12 @@ public class StreamService : IStreamService, IDisposable
         _blob = blob;
     }
 
-    public void HandleStream(Session session, string targetUrl)
+    public void HandleStream(Session session, string modelUri, string targetUrl)
     {
         Guard.Against.NullOrWhiteSpace(session.Source, nameof(session.Source));
         Guard.Against.NullOrEmpty(targetUrl);
 
-        var uri = _blob.GetBlobUri("yolov3.weights", "dataset");
-
-        _streamSender.PrepareTarget($"{targetUrl}/start", uri);
+        _streamSender.PrepareTarget($"{targetUrl}/start", modelUri);
         _streamReceiver.ConnectStreamBySource(session.Source);
 
         _streamReceiver.OnConnectionEstablished += () =>
