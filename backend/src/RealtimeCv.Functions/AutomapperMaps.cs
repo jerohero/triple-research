@@ -16,11 +16,12 @@ public class AutomapperMaps : Profile
         CreateMap<VisionSetDto, VisionSet>();
         CreateMap<VisionSet, VisionSetDto>();
         CreateMap<VisionSetCreateDto, VisionSet>();
+        CreateMap<VisionSetUpdateDto, VisionSet>();
         
         CreateMap<SessionDto, Session>();
         CreateMap<Session, SessionDto>();
         CreateMap<SessionCreateDto, Session>();
         
-        CreateMap<TrainedModel, TrainedModelsDto>();
+        CreateMap<TrainedModel, TrainedModelDto>();
     }
 }

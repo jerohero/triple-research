@@ -53,6 +53,12 @@ public class AppDbContext : DbContext
             .OnDelete(DeleteBehavior.Cascade)
             .IsRequired();
 
+        builder.Entity<VisionSet>()
+            .HasOne(vs => vs.TrainedModel)
+            .WithMany(tm => tm.VisionSets)
+            .HasForeignKey(vs => vs.TrainedModelId)
+            .OnDelete(DeleteBehavior.NoAction);
+
         // Convert non-supported formats
         var valueComparer = new ValueComparer<ICollection<string>>(
           (c1, c2) => c2 != null && c1 != null && c1.SequenceEqual(c2),

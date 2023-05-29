@@ -2,7 +2,7 @@
 
 namespace RealtimeCv.Functions.Models;
 
-public class TrainedModelsDto
+public class TrainedModelDto
 {
     [JsonRequired]
     public int Id { get; set; }
@@ -16,7 +16,7 @@ public class TrainedModelsDto
     [JsonRequired]
     public int ProjectId { get; set; }
 
-    public TrainedModelsDto(string name, bool isUploadFinished, int projectId)
+    public TrainedModelDto(string name, bool isUploadFinished, int projectId)
     {
         Name = name;
         IsUploadFinished = isUploadFinished;

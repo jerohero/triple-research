@@ -53,6 +53,7 @@ namespace RealtimeCv.Infrastructure.Data.Migrations
                         .Annotation("SqlServer:Identity", "1, 1"),
                     Name = table.Column<string>(type: "nvarchar(100)", maxLength: 100, nullable: false),
                     ProjectId = table.Column<int>(type: "int", nullable: false),
+                    TrainedModelId = table.Column<int>(type: "int", nullable: true),
                     Sources = table.Column<string>(type: "nvarchar(max)", nullable: false)
                 },
                 constraints: table =>
@@ -64,6 +65,11 @@ namespace RealtimeCv.Infrastructure.Data.Migrations
                         principalTable: "Project",
                         principalColumn: "Id",
                         onDelete: ReferentialAction.Cascade);
+                    table.ForeignKey(
+                        name: "FK_VisionSet_TrainedModel_TrainedModelId",
+                        column: x => x.TrainedModelId,
+                        principalTable: "TrainedModel",
+                        principalColumn: "Id");
                 });
 
             migrationBuilder.CreateTable(
@@ -105,6 +111,11 @@ namespace RealtimeCv.Infrastructure.Data.Migrations
                 name: "IX_VisionSet_ProjectId",
                 table: "VisionSet",
                 column: "ProjectId");
+
+            migrationBuilder.CreateIndex(
+                name: "IX_VisionSet_TrainedModelId",
+                table: "VisionSet",
+                column: "TrainedModelId");
         }
 
         /// <inheritdoc />
@@ -114,10 +125,10 @@ namespace RealtimeCv.Infrastructure.Data.Migrations
                 name: "Session");
 
             migrationBuilder.DropTable(
-                name: "TrainedModel");
+                name: "VisionSet");
 
             migrationBuilder.DropTable(
-                name: "VisionSet");
+                name: "TrainedModel");
 
             migrationBuilder.DropTable(
                 name: "Project");

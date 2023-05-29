@@ -9,7 +9,8 @@ export interface VisionSet {
   Id: number,
   ProjectId: number,
   Name: string,
-  Sources: string[]
+  Sources: string[],
+  TrainedModel: TrainedModel
 }
 
 export interface Session {

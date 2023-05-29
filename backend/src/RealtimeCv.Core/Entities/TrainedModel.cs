@@ -1,4 +1,6 @@
-﻿namespace RealtimeCv.Core.Entities;
+﻿using System.Collections.Generic;
+
+namespace RealtimeCv.Core.Entities;
 
 public class TrainedModel : BaseEntity
 {
@@ -9,4 +11,6 @@ public class TrainedModel : BaseEntity
     public bool IsUploadFinished { get; set; }
 
     public int ProjectId { get; set; }
+    
+    public ICollection<VisionSet> VisionSets { get; set; }
 }

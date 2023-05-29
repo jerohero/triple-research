@@ -47,7 +47,7 @@ public class ProjectService : IProjectService
         var spec = new ProjectSpec(projectId);
         
         var project = await _projectRepository.SingleOrDefaultAsync(spec, CancellationToken.None);
-
+        
         return project is null
           ? Result<ProjectDto>.NotFound()
           : new Result<ProjectDto>(_mapper.Map<ProjectDto>(project));
@@ -91,7 +91,7 @@ public class ProjectService : IProjectService
             return Result<ProjectDto>.NotFound();
         }
 
-        project.UpdateName(updateDto.Name);
+        project = _mapper.Map(updateDto, project);
 
         await _projectRepository.UpdateAsync(project);
 
@@ -170,7 +170,7 @@ public class ProjectService : IProjectService
         return Result.Success();
     }
     
-    public async Task<Result<List<TrainedModelsDto>>> GetTrainedModels(int projectId)
+    public async Task<Result<List<TrainedModelDto>>> GetTrainedModels(int projectId)
     {
         var project = await _projectRepository.GetByIdAsync(projectId);
             
@@ -182,7 +182,7 @@ public class ProjectService : IProjectService
         var spec = new TrainedModelsByProject(projectId);
         var trainedModels = await _trainedModelRepository.ListAsync(spec, CancellationToken.None);
 
-        return new Result<List<TrainedModelsDto>>(_mapper.Map<List<TrainedModelsDto>>(trainedModels));
+        return new Result<List<TrainedModelDto>>(_mapper.Map<List<TrainedModelDto>>(trainedModels));
     }
 
     private async Task<Result<TrainedModel>> CreateTrainedModel(int projectId, string blobName)

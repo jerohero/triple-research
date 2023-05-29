@@ -5,9 +5,9 @@ using RealtimeCv.Infrastructure.Data.Config;
 
 namespace RealtimeCv.Functions.Validators;
 
-public class VisionSetDtoValidator : AbstractValidator<VisionSetDto>
+public class VisionSetUpdateDtoValidator : AbstractValidator<VisionSetUpdateDto>
 {
-    public VisionSetDtoValidator()
+    public VisionSetUpdateDtoValidator()
     {
         RuleFor(x => x.Id).GreaterThan(0);
 
@@ -16,7 +16,7 @@ public class VisionSetDtoValidator : AbstractValidator<VisionSetDto>
         RuleFor(x => x.Sources).NotEmpty().WithMessage("Sources cannot be empty");
     }
 
-    protected override bool PreValidate(ValidationContext<VisionSetDto> context, ValidationResult result)
+    protected override bool PreValidate(ValidationContext<VisionSetUpdateDto> context, ValidationResult result)
     {
         if (context.InstanceToValidate is not null)
         {

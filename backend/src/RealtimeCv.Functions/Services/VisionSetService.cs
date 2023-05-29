@@ -1,11 +1,14 @@
 ﻿using System.Collections.Generic;
 using System.Linq;
+using System.Threading;
 using System.Threading.Tasks;
 using Ardalis.Result;
 using Ardalis.Result.FluentValidation;
 using AutoMapper;
+using Newtonsoft.Json;
 using RealtimeCv.Core.Entities;
 using RealtimeCv.Core.Interfaces;
+using RealtimeCv.Core.Specifications;
 using RealtimeCv.Functions.Interfaces;
 using RealtimeCv.Functions.Models;
 using RealtimeCv.Functions.Validators;
@@ -37,7 +40,8 @@ public class VisionSetService : IVisionSetService
 
     public async Task<Result<VisionSetDto>> GetVisionSetById(int visionSetId)
     {
-        var visionSet = await _visionSetRepository.GetByIdAsync(visionSetId);
+        var spec = new VisionSetWithTrainedModelSpec(visionSetId);
+        var visionSet = await _visionSetRepository.SingleOrDefaultAsync(spec, CancellationToken.None);
 
         return visionSet is null
           ? Result<VisionSetDto>.NotFound()
@@ -74,9 +78,9 @@ public class VisionSetService : IVisionSetService
         return new Result<VisionSetDto>(_mapper.Map<VisionSetDto>(visionSet));
     }
 
-    public async Task<Result<VisionSetDto>> UpdateVisionSet(VisionSetDto? updateDto)
+    public async Task<Result<VisionSetDto>> UpdateVisionSet(VisionSetUpdateDto? updateDto)
     {
-        var validationResult = await new VisionSetDtoValidator().ValidateAsync(updateDto!);
+        var validationResult = await new VisionSetUpdateDtoValidator().ValidateAsync(updateDto!);
 
         if (updateDto is null || validationResult.Errors.Any())
         {
@@ -90,11 +94,11 @@ public class VisionSetService : IVisionSetService
             return Result<VisionSetDto>.NotFound();
         }
 
-        visionSet.UpdateName(updateDto.Name);
+        visionSet = _mapper.Map(updateDto, visionSet);
 
         await _visionSetRepository.UpdateAsync(visionSet);
 
-        return new Result<VisionSetDto>(updateDto);
+        return new Result<VisionSetDto>(_mapper.Map<VisionSetDto>(visionSet));
     }
 
     public async Task<Result> DeleteVisionSet(int visionSetId)

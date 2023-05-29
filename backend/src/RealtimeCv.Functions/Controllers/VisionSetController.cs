@@ -67,9 +67,9 @@ public class VisionSetController : BaseController
     public async Task<HttpResponseData> UpdateVisionSet(
       [HttpTrigger(AuthorizationLevel.Anonymous, "put", Route = "vision-set")] HttpRequestData req)
     {
-        var visionSetDto = DeserializeJson<VisionSetDto>(req.Body);
+        var visionSetUpdateDto = DeserializeJson<VisionSetUpdateDto>(req.Body);
 
-        var result = await _visionSetService.UpdateVisionSet(visionSetDto);
+        var result = await _visionSetService.UpdateVisionSet(visionSetUpdateDto);
 
         return await ResultToResponse(result, req);
     }
@@ -82,7 +82,7 @@ public class VisionSetController : BaseController
 
         return await ResultToResponse(result, req);
     }
-    
+
     [Function("startVisionSetSession")]
     public async Task<HttpResponseData> StartVisionSetSession(
         [HttpTrigger(AuthorizationLevel.Anonymous, "post", Route = "vision-set/{visionSetId}/start")] HttpRequestData req, int visionSetId)

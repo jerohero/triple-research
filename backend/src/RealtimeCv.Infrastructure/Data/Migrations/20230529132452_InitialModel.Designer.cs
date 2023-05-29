@@ -12,7 +12,7 @@ using RealtimeCv.Infrastructure.Data;
 namespace RealtimeCv.Infrastructure.Data.Migrations
 {
     [DbContext(typeof(AppDbContext))]
-    [Migration("20230528173435_InitialModel")]
+    [Migration("20230529132452_InitialModel")]
     partial class InitialModel
     {
         /// <inheritdoc />
@@ -125,9 +125,14 @@ namespace RealtimeCv.Infrastructure.Data.Migrations
                         .IsRequired()
                         .HasColumnType("nvarchar(max)");
 
+                    b.Property<int?>("TrainedModelId")
+                        .HasColumnType("int");
+
                     b.HasKey("Id");
 
                     b.HasIndex("ProjectId");
+
+                    b.HasIndex("TrainedModelId");
 
                     b.ToTable("VisionSet", (string)null);
                 });
@@ -162,13 +167,25 @@ namespace RealtimeCv.Infrastructure.Data.Migrations
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
+                    b.HasOne("RealtimeCv.Core.Entities.TrainedModel", "TrainedModel")
+                        .WithMany("VisionSets")
+                        .HasForeignKey("TrainedModelId")
+                        .OnDelete(DeleteBehavior.NoAction);
+
                     b.Navigation("Project");
+
+                    b.Navigation("TrainedModel");
                 });
 
             modelBuilder.Entity("RealtimeCv.Core.Entities.Project", b =>
                 {
                     b.Navigation("TrainedModels");
 
+                    b.Navigation("VisionSets");
+                });
+
+            modelBuilder.Entity("RealtimeCv.Core.Entities.TrainedModel", b =>
+                {
                     b.Navigation("VisionSets");
                 });
 

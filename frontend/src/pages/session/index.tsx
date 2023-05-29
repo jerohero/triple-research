@@ -25,7 +25,7 @@ function SessionPage() {
 
   return (
     <div>
-      { events.map((event: any, i: number)=>
+      { events.map((event: any, i: number) =>
         <div key={ i } className="border-y">
           <h3>Prediction { Date.now() }</h3>
           { event.predictions.map((prediction: any, i: number) =>
