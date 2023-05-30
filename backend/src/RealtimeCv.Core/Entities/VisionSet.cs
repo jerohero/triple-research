@@ -14,6 +14,8 @@ public class VisionSet : BaseEntity
     public TrainedModel TrainedModel { get; set; }
     
     public string Name { get; set; }
+    
+    public string ContainerImage { get; set; }
 
     public int ProjectId { get; set; }
     

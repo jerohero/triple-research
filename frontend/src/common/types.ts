@@ -10,6 +10,7 @@ export interface VisionSet {
   ProjectId: number,
   Name: string,
   Sources: string[],
+  ContainerImage: string,
   TrainedModel: TrainedModel
 }
 

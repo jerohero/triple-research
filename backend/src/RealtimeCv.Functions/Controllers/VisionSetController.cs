@@ -2,10 +2,13 @@
 using System.Security.Cryptography.X509Certificates;
 using System.Threading.Tasks;
 using Ardalis.Result;
+using AutoMapper;
 using k8s;
 using Microsoft.Azure.Functions.Worker;
 using Microsoft.Azure.Functions.Worker.Http;
+using RealtimeCv.Core.Entities;
 using RealtimeCv.Core.Interfaces;
+using RealtimeCv.Core.Specifications;
 using RealtimeCv.Functions.Interfaces;
 using RealtimeCv.Functions.Models;
 
@@ -20,18 +23,21 @@ public class VisionSetController : BaseController
     private readonly IVisionSetService _visionSetService;
     private readonly ISessionService _sessionService;
     private readonly IKubernetesService _kubernetesService;
+    private readonly IMapper _mapper;
 
     public VisionSetController(
       ILoggerAdapter<VisionSetController> logger,
       IVisionSetService visionSetService,
       ISessionService sessionService,
-      IKubernetesService kubernetesService
+      IKubernetesService kubernetesService,
+      IMapper mapper
     )
     {
         _logger = logger;
         _visionSetService = visionSetService;
         _sessionService = sessionService;
         _kubernetesService = kubernetesService;
+        _mapper = mapper;
     }
 
     [Function("getVisionSet")]
@@ -87,17 +93,14 @@ public class VisionSetController : BaseController
     public async Task<HttpResponseData> StartVisionSetSession(
         [HttpTrigger(AuthorizationLevel.Anonymous, "post", Route = "vision-set/{visionSetId}/start")] HttpRequestData req, int visionSetId)
     {
-        var createSessionDto = new SessionCreateDto(visionSetId, "rtmp://live.restream.io/live/re_6435068_ac960121c66cd1e6a9f5");
+        var startSessionDto = new SessionStartDto(visionSetId, "rtmp://live.restream.io/live/re_6435068_ac960121c66cd1e6a9f5"); // TODO replace with stream url
 
-        var result = await _sessionService.CreateSession(createSessionDto);
+        var result = await _sessionService.StartSession(startSessionDto);
         
         if (result.Errors.Any())
         {
             return await ResultToResponse(result, req);
         }
-
-        // When running locally, don't forget to enable Minikube proxy
-        await _kubernetesService.CreateCvPod(result.Value.Id, result.Value.Pod);
 
         return await ResultToResponse(result, req);
     }

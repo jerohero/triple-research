@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Threading.Tasks;
 using k8s;
 using k8s.Models;
+using Newtonsoft.Json;
 using RealtimeCv.Core.Entities;
 using RealtimeCv.Core.Interfaces;
 
@@ -19,15 +20,15 @@ public class KubernetesService : IKubernetesService
         _kubernetes = kubernetes;
     }
 
-    public async Task<V1Pod> CreateCvPod(int sessionId, string podName)
+    public async Task<V1Pod> CreateSessionPod(Session session)
     {
         var pod = new V1Pod
         {
             Metadata = new V1ObjectMeta
             {
-                Name = podName, Labels = new Dictionary<string, string>
+                Name = session.Pod, Labels = new Dictionary<string, string>
                 {
-                    { "app", podName }
+                    { "app", session.Pod }
                 }
             },
             Spec = new V1PodSpec
@@ -37,19 +38,19 @@ public class KubernetesService : IKubernetesService
                     new()
                     {
                         Name = "cv-inference",
-                        Image = "yeruhero/yolov3api:latest", // TODO VisionSet image
+                        Image = session.VisionSet.ContainerImage,
                         Ports = new List<V1ContainerPort>
                         {
                             new() {
                                 ContainerPort = 5000
                             }
                         },
-                        ImagePullPolicy = "Always" // TODO: IfNotPresent
+                        ImagePullPolicy = "Always" // TODO: Always
                     },
                     new()
                     {
                         Name = "cv-worker",
-                        Image = "yeruhero/cv-worker:latest", // TODO VisionSet image
+                        Image = "yeruhero/cv-worker:latest", // TODO Env
                         Ports = new List<V1ContainerPort>
                         {
                             new()
@@ -57,13 +58,13 @@ public class KubernetesService : IKubernetesService
                                 ContainerPort = 9300
                             }
                         },
-                        ImagePullPolicy = "Always", // TODO Always
+                        ImagePullPolicy = "Always", // TODO IfNotPresent
                         Env = new List<V1EnvVar>
                         {
                             new()
                             {
                                 Name = "SESSION_ID",
-                                Value = sessionId.ToString()
+                                Value = session.Id.ToString()
                             },
                             new()
                             {

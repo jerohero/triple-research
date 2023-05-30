@@ -52,6 +52,7 @@ namespace RealtimeCv.Infrastructure.Data.Migrations
                     Id = table.Column<int>(type: "int", nullable: false)
                         .Annotation("SqlServer:Identity", "1, 1"),
                     Name = table.Column<string>(type: "nvarchar(100)", maxLength: 100, nullable: false),
+                    ContainerImage = table.Column<string>(type: "nvarchar(max)", nullable: true),
                     ProjectId = table.Column<int>(type: "int", nullable: false),
                     TrainedModelId = table.Column<int>(type: "int", nullable: true),
                     Sources = table.Column<string>(type: "nvarchar(max)", nullable: false)

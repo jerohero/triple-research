@@ -5,7 +5,7 @@ using RealtimeCv.Infrastructure.Data.Config;
 
 namespace RealtimeCv.Functions.Validators;
 
-public class SessionCreateDtoValidator : AbstractValidator<SessionCreateDto>
+public class SessionCreateDtoValidator : AbstractValidator<SessionStartDto>
 {
     public SessionCreateDtoValidator()
     {
@@ -13,7 +13,7 @@ public class SessionCreateDtoValidator : AbstractValidator<SessionCreateDto>
         RuleFor(x => x.Source).MinimumLength(1).MaximumLength(Constants.DefaultMaxStringLength);
     }
 
-    protected override bool PreValidate(ValidationContext<SessionCreateDto> context, ValidationResult result)
+    protected override bool PreValidate(ValidationContext<SessionStartDto> context, ValidationResult result)
     {
         if (context.InstanceToValidate is not null)
         {

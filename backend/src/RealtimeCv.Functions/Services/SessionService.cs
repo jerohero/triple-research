@@ -62,31 +62,22 @@ public class SessionService : ISessionService
         return new Result<List<SessionDto>>(_mapper.Map<List<SessionDto>>(sessions));
     }
     
-    public async Task<Result<SessionDto>> CreateSession(SessionCreateDto? createDto)
+    public async Task<Result<SessionDto>> StartSession(SessionStartDto? createDto)
     {
-        var validationResult = await new SessionCreateDtoValidator().ValidateAsync(createDto!);
+        var result = await CreateSession(createDto);
 
-        if (createDto is null || validationResult.Errors.Any())
+        if (result.Errors.Any())
         {
-            return Result<SessionDto>.Invalid(validationResult.AsErrors());
+            return result;
         }
+
+        var spec = new SessionWithVisionSetSpec(result.Value.Id);
+        var session = await _sessionRepository.SingleOrDefaultAsync(spec, CancellationToken.None);
+
+        // TODO: When running locally, don't forget to enable Minikube proxy
+        await _kubernetesService.CreateSessionPod(session);
         
-        var session = _mapper.Map<Session>(createDto);
-        
-        session.CreatedAt = DateTime.Now;
-
-        var createdSession = await _sessionRepository.AddAsync(session);
-
-        var spec = new SessionWithVisionSetSpec(createdSession.Id);
-        session = await _sessionRepository.SingleOrDefaultAsync(spec, CancellationToken.None);
-        
-        Guard.Against.Null(session, nameof(session));
-
-        createdSession.Pod = $"cv-{createdSession.VisionSet.Name}-{session.Id}";
-
-        await _sessionRepository.UpdateAsync(createdSession);
-
-        return new Result<SessionDto>(_mapper.Map<SessionDto>(session));
+        return result;
     }
 
     public async Task<Result<SessionDto>> UpdateSession(SessionDto? updateDto)
@@ -156,5 +147,32 @@ public class SessionService : ISessionService
         var uri = await _pubSub.Negotiate("predictions", session.Pod);
         
         return new Result<SessionNegotiateDto>(new SessionNegotiateDto(uri.AbsoluteUri));
+    }
+    
+    private async Task<Result<SessionDto>> CreateSession(SessionStartDto? createDto)
+    {
+        var validationResult = await new SessionCreateDtoValidator().ValidateAsync(createDto!);
+
+        if (createDto is null || validationResult.Errors.Any())
+        {
+            return Result<SessionDto>.Invalid(validationResult.AsErrors());
+        }
+        
+        var session = _mapper.Map<Session>(createDto);
+        
+        session.CreatedAt = DateTime.Now;
+
+        var createdSession = await _sessionRepository.AddAsync(session);
+
+        var spec = new SessionWithVisionSetSpec(createdSession.Id);
+        session = await _sessionRepository.SingleOrDefaultAsync(spec, CancellationToken.None);
+        
+        Guard.Against.Null(session, nameof(session));
+
+        createdSession.Pod = $"cv-{createdSession.VisionSet.Name}-{session.Id}";
+
+        await _sessionRepository.UpdateAsync(createdSession);
+
+        return new Result<SessionDto>(_mapper.Map<SessionDto>(session));
     }
 }

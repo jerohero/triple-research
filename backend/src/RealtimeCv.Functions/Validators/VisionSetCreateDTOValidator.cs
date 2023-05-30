@@ -12,6 +12,10 @@ public class VisionSetCreateDtoValidator : AbstractValidator<VisionSetCreateDto>
         RuleFor(x => x.Name).MinimumLength(1).MaximumLength(Constants.DefaultMaxStringLength);
         
         RuleFor(x => x.Sources).NotEmpty().WithMessage("Sources cannot be empty");
+        
+        RuleFor(x => x.ContainerImage).MinimumLength(1).MaximumLength(Constants.DefaultMaxStringLength);
+
+        RuleFor(x => x.TrainedModelId).GreaterThan(0);
     }
 
     protected override bool PreValidate(ValidationContext<VisionSetCreateDto> context, ValidationResult result)

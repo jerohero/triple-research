@@ -2,7 +2,7 @@
 
 namespace RealtimeCv.Functions.Models;
 
-public class SessionCreateDto
+public class SessionStartDto
 {
     [JsonRequired]
     public int VisionSetId { get; set; }
@@ -10,7 +10,7 @@ public class SessionCreateDto
     [JsonRequired]
     public string Source { get; set; }
 
-    public SessionCreateDto(int visionSetId, string source)
+    public SessionStartDto(int visionSetId, string source)
     {
         VisionSetId = visionSetId;
         Source = source;

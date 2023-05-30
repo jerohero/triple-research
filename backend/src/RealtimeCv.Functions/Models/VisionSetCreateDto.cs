@@ -12,11 +12,19 @@ public class VisionSetCreateDto
     
     [JsonRequired]
     public string[] Sources { get; set; }
+    
+    [JsonRequired]
+    public string ContainerImage { get; set; }
+    
+    [JsonRequired]
+    public int TrainedModelId { get; set; }
 
-    public VisionSetCreateDto(int projectId, string name, string[] sources)
+    public VisionSetCreateDto(int projectId, string name, string[] sources, string containerImage, int trainedModelId)
     {
         ProjectId = projectId;
         Name = name;
         Sources = sources;
+        ContainerImage = containerImage;
+        TrainedModelId = trainedModelId;
     }
 }

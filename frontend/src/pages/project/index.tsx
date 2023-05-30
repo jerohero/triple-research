@@ -4,6 +4,7 @@ import { useParams } from 'react-router-dom'
 import { Project, TrainedModel } from '../../common/types'
 import ModelUploader from '../../components/model-uploader'
 import VisionSetsList from '../../components/vision-sets-list'
+import ModelItem from "../../components/model-item";
 
 function ProjectPage() {
   const { id } = useParams();
@@ -35,9 +36,9 @@ function ProjectPage() {
           <p>{ project?.Name }</p>
           <ModelUploader projectId={ +id } />
 
-          {/*{ trainedModels?.map(model => {*/}
-          {/*  return <ModelItem key={ model.Id } model={ model } />*/}
-          {/*}) }*/}
+          { trainedModels?.map(model => {
+            return <ModelItem key={ model.Id } model={ model } />
+          }) }
 
           <VisionSetsList projectId={ +id } />
         </>
