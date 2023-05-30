@@ -2,6 +2,7 @@
 using System.Drawing;
 using System.Net.Http;
 using System.Net.Http.Json;
+using System.Text.Json;
 using System.Threading;
 using System.Threading.Tasks;
 using Ardalis.GuardClauses;
@@ -100,9 +101,9 @@ public class StreamSender : IStreamSender, IDisposable
             {
                 var payload = await _httpService.ImageToHttpContent(_streamReceiver.Frame.ToBytes());
                 var res = await _httpService.Post(_targetUrl, payload);
-                
+
                 var results = await res.Content.ReadFromJsonAsync<object>();
-                
+
                 OnPredictionResult?.Invoke(results);
 
                 var time = (DateTime.UtcNow - now).TotalSeconds;
@@ -111,7 +112,12 @@ public class StreamSender : IStreamSender, IDisposable
             }
             catch (HttpRequestException)
             {
+                _logger.LogInformation("Something went wrong");
                 // TODO throw error, as this would mean the inference API crashed
+            }
+            catch (JsonException)
+            {
+                _logger.LogInformation("Result was not in JSON format.");
             }
         }
     }

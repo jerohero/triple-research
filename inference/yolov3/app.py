@@ -42,7 +42,7 @@ def inference():
     # image = cv2.cvtColor(res, cv2.COLOR_BGR2RGB)
     # np_img = Image.fromarray(image)
     # img_encoded = image_to_byte_array(np_img)
-    return Response(response=res, status=200, mimetype="image/jpeg")
+    return Response(response=res, status=200, mimetype="application/json")
 
     # start flask app
 
