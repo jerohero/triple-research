@@ -7,6 +7,7 @@ using Ardalis.GuardClauses;
 using Ardalis.Result;
 using Ardalis.Result.FluentValidation;
 using AutoMapper;
+using Newtonsoft.Json;
 using RealtimeCv.Core.Entities;
 using RealtimeCv.Core.Functions.Validators;
 using RealtimeCv.Core.Interfaces;
@@ -23,7 +24,6 @@ public class SessionService : ISessionService
     private readonly IMapper _mapper;
     private readonly ILoggerAdapter<SessionService> _logger;
     private readonly ISessionRepository _sessionRepository;
-    private readonly IVisionSetRepository _visionSetRepository;
     private readonly IKubernetesService _kubernetesService;
     private readonly IPubSub _pubSub;
 
@@ -31,7 +31,6 @@ public class SessionService : ISessionService
         ILoggerAdapter<SessionService> logger,
         IMapper mapper,
         ISessionRepository sessionRepository,
-        IVisionSetRepository visionSetRepository,
         IKubernetesService kubernetesService,
         IPubSub pubSub
     )
@@ -39,7 +38,6 @@ public class SessionService : ISessionService
         _mapper = mapper;
         _logger = logger;
         _sessionRepository = sessionRepository;
-        _visionSetRepository = visionSetRepository;
         _kubernetesService = kubernetesService;
         _pubSub = pubSub;
     }
@@ -55,7 +53,8 @@ public class SessionService : ISessionService
 
     public async Task<Result<List<SessionDto>>> GetSessionsByVisionSet(int visionSetId)
     {
-        var sessions = await _sessionRepository.ListAsync(); // TODO: By project
+        var spec = new SessionsByVisionSet(visionSetId);
+        var sessions = await _sessionRepository.ListAsync(spec, CancellationToken.None);
 
         return new Result<List<SessionDto>>(_mapper.Map<List<SessionDto>>(sessions));
     }

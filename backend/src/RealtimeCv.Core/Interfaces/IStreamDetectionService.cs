@@ -6,7 +6,7 @@ namespace RealtimeCv.Core.Interfaces;
 
 public interface IStreamDetectionService
 {
-    List<string> StartSessionsForActiveStreams(StreamPollChunkMessage message);
+    Task<List<string>> StartSessionsForActiveStreams(StreamPollChunkMessage message);
 
     Task StartPollStreams();
     

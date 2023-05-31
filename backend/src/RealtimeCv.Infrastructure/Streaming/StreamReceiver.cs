@@ -57,39 +57,23 @@ public class StreamReceiver : IStreamReceiver, IDisposable
 
     public bool CheckConnection(string source)
     {
-        // return CheckConnectionOpenCv(source);
-        return CheckConnectionFfmpeg(source);
-    }
-
-    // For research
-    private bool CheckConnectionOpenCv(string source)
-    {
-        // Due to its synchronous nature this tends to take very long (10+ seconds per URL in larger loops for some reason) and create false results
-        
         VideoCapture capture = new(source);
         var isOpened = capture.IsOpened();
         capture.Release();
 
-        return isOpened;
-    }
+        // var ffprobePath = "C:/ffmpeg/bin/ffprobe.exe";
+        // var process = new Process();
+        // process.StartInfo.FileName = ffprobePath;
+        // process.StartInfo.Arguments = $"-v quiet -show_streams {source}";
+        // process.StartInfo.UseShellExecute = false;
+        // process.StartInfo.RedirectStandardOutput = true;
+        //
+        // process.Start();
+        // var output = process.StandardOutput.ReadToEnd();
+        // process.Close();
+        // return !output.IsNullOrEmpty();
 
-    private bool CheckConnectionFfmpeg(string source)
-    {
-        // ~1 second per URL. I did find that ffprobe tends to return empty results at times, even though the stream is active
-        
-        var ffprobePath = "C:/ffmpeg/bin/ffprobe.exe";
-        
-        var process = new Process();
-        process.StartInfo.FileName = ffprobePath;
-        process.StartInfo.Arguments = $"-v quiet -show_streams {source}";
-        process.StartInfo.UseShellExecute = false;
-        process.StartInfo.RedirectStandardOutput = true;
-        
-        process.Start();
-        var output = process.StandardOutput.ReadToEnd();
-        process.Close();
-        
-        return !output.IsNullOrEmpty();
+        return isOpened;
     }
 
     private void PollStream()
