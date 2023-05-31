@@ -145,6 +145,14 @@ public class SessionService : ISessionService
         
         return new Result<SessionNegotiateDto>(new SessionNegotiateDto(uri.AbsoluteUri));
     }
+
+    public async Task<Result<List<Session>>> GetActiveVisionSetSessionsBySource(int visionSetId, string source)
+    {
+        ActiveVisionSetSessionsBySourceSpec spec = new(visionSetId, source);
+        var activeSessions = await _sessionRepository.ListAsync(spec, CancellationToken.None);
+
+        return activeSessions;
+    }
     
     private async Task<Result<SessionDto>> CreateSession(SessionStartDto? createDto)
     {

@@ -6,6 +6,7 @@ using Ardalis.GuardClauses;
 using RealtimeCv.Core.Interfaces;
 using RealtimeCv.Core.Models;
 using RealtimeCv.Core.Models.Dto;
+using RealtimeCv.Core.Specifications;
 
 namespace RealtimeCv.Core.Functions.Services;
 
@@ -62,6 +63,14 @@ public class StreamDetectionService : IStreamDetectionService, IDisposable
 
         foreach (var stream in activeStreams)
         {
+            var activeSessions = await _sessionService
+                .GetActiveVisionSetSessionsBySource(message.VisionSetId, stream);
+
+            if (activeSessions.Value.Count > 0)
+            {
+                continue;
+            }
+            
             await Task.Run(() => 
                 _sessionService.StartSession(new SessionStartDto(message.VisionSetId, stream))
             );
