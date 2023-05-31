@@ -3,7 +3,6 @@ using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
 using RealtimeCv.Core.Functions.Config;
-using RealtimeCv.Core.Functions.Interfaces;
 using RealtimeCv.Core.Functions.Services;
 using RealtimeCv.Core.Interfaces;
 using RealtimeCv.Infrastructure.Extensions;
@@ -36,13 +35,12 @@ internal class Program
             services.AddScoped<IProjectService, ProjectService>();
             services.AddScoped<IVisionSetService, VisionSetService>();
             services.AddScoped<ISessionService, SessionService>();
+            services.AddScoped<IStreamDetectionService, StreamDetectionService>();
             
             services.AddSingleton<IStreamReceiver, StreamReceiver>();
             
             services.AddConnectionServices();
             services.AddQueueMessagingServices();
-
-            services.AddStreamPollHandlers();
 
             services.AddAutoMapper(typeof(AutomapperMaps));
         });

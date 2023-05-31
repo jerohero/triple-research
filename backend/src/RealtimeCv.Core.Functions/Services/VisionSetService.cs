@@ -6,7 +6,6 @@ using Ardalis.Result;
 using Ardalis.Result.FluentValidation;
 using AutoMapper;
 using RealtimeCv.Core.Entities;
-using RealtimeCv.Core.Functions.Interfaces;
 using RealtimeCv.Core.Functions.Validators;
 using RealtimeCv.Core.Interfaces;
 using RealtimeCv.Core.Models.Dto;

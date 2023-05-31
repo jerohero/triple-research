@@ -1,16 +1,15 @@
-﻿using System;
-using Ardalis.GuardClauses;
+﻿using Ardalis.GuardClauses;
 using RealtimeCv.Core.Entities;
 using RealtimeCv.Core.Interfaces;
 
-namespace RealtimeCv.Core.Services;
+namespace RealtimeCv.Core.Worker.Services;
 
 /// <summary>
 /// Service that oversees the process of consuming the input, sending it to the inference API and publishing the results.
 /// </summary>
 public class StreamService : IStreamService, IDisposable
 {
-    public event Action OnStreamEnded;
+    public event Action? OnStreamEnded;
     private readonly IStreamReceiver _streamReceiver;
     private readonly IStreamSender _streamSender;
     private readonly IPubSub _pubSub;

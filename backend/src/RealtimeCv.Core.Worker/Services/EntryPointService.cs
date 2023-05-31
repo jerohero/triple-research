@@ -1,12 +1,6 @@
-﻿using System;
-using System.Text.Json.Serialization;
-using System.Threading;
-using System.Threading.Tasks;
-using Microsoft.Extensions.DependencyInjection;
-using Newtonsoft.Json;
-using RealtimeCv.Core.Interfaces;
+﻿using RealtimeCv.Core.Interfaces;
 
-namespace RealtimeCv.Core.Services;
+namespace RealtimeCv.Core.Worker.Services;
 
 /// <summary>
 /// Core business logic entrypoint service that manages the stream vision flow.

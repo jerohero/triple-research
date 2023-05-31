@@ -6,7 +6,7 @@ using Ardalis.GuardClauses;
 using RealtimeCv.Core.Interfaces;
 using RealtimeCv.Core.Models;
 
-namespace RealtimeCv.Core.Services;
+namespace RealtimeCv.Core.Functions.Services;
 
 /// <summary>
 /// Service that oversees the process of consuming the input, sending it to the inference API and publishing the results.

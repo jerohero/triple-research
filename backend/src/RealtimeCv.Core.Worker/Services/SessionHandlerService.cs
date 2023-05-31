@@ -1,14 +1,9 @@
-﻿using System;
-using System.Net.Http;
-using System.Threading;
-using System.Threading.Tasks;
-using Ardalis.GuardClauses;
-using Microsoft.Extensions.DependencyInjection;
+﻿using Ardalis.GuardClauses;
 using RealtimeCv.Core.Entities;
 using RealtimeCv.Core.Interfaces;
 using RealtimeCv.Core.Specifications;
 
-namespace RealtimeCv.Core.Services;
+namespace RealtimeCv.Core.Worker.Services;
 
 /// <summary>
 /// 

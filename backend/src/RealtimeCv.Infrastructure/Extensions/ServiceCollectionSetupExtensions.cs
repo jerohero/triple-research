@@ -34,15 +34,8 @@ public static class ServiceCollectionSetupExtensions
 
     public static void AddStreamHandlers(this IServiceCollection services)
     {
-        services.AddTransient<IStreamService, StreamService>();
         services.AddSingleton<IStreamReceiver, StreamReceiver>();
         services.AddSingleton<IStreamSender, StreamSender>();
-    }
-
-    public static void AddStreamPollHandlers(this IServiceCollection services)
-    {
-        services.AddTransient<IStreamDetectionService, StreamDetectionService>();
-        services.AddSingleton<IStreamReceiver, StreamReceiver>();
     }
 
     public static void AddKubernetes(this IServiceCollection services)

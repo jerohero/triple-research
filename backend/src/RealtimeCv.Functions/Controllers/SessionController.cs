@@ -2,7 +2,6 @@
 using Ardalis.Result;
 using Microsoft.Azure.Functions.Worker;
 using Microsoft.Azure.Functions.Worker.Http;
-using RealtimeCv.Core.Functions.Interfaces;
 using RealtimeCv.Core.Interfaces;
 using RealtimeCv.Core.Models.Dto;
 
