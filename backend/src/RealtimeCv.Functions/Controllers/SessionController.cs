@@ -1,12 +1,10 @@
-﻿using System.Security.Cryptography.X509Certificates;
-using System.Threading.Tasks;
+﻿using System.Threading.Tasks;
 using Ardalis.Result;
-using k8s;
 using Microsoft.Azure.Functions.Worker;
 using Microsoft.Azure.Functions.Worker.Http;
+using RealtimeCv.Core.Functions.Interfaces;
 using RealtimeCv.Core.Interfaces;
-using RealtimeCv.Functions.Interfaces;
-using RealtimeCv.Functions.Models;
+using RealtimeCv.Core.Models.Dto;
 
 namespace RealtimeCv.Functions.Controllers;
 
@@ -71,7 +69,7 @@ public class SessionController : BaseController
     public async Task<HttpResponseData> DeleteSession(
       [HttpTrigger(AuthorizationLevel.Anonymous, "delete", Route = "session/{sessionId}")] HttpRequestData req, int sessionId)
     {
-        Result<SessionDto> result = await _sessionService.DeleteSession(sessionId);
+        var result = await _sessionService.DeleteSession(sessionId);
 
         return await ResultToResponse(result, req);
     }
@@ -80,7 +78,7 @@ public class SessionController : BaseController
     public async Task<HttpResponseData> StopSession(
         [HttpTrigger(AuthorizationLevel.Anonymous, "post", Route = "session/{sessionId}/stop")] HttpRequestData req, int sessionId)
     {
-        Result<SessionDto> result = await _sessionService.StopSession(sessionId);
+        var result = await _sessionService.StopSession(sessionId);
 
         return await ResultToResponse(result, req);
     }

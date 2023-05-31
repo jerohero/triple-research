@@ -1,9 +1,8 @@
 ﻿using Newtonsoft.Json;
-using RealtimeCv.Core.Entities;
 
-namespace RealtimeCv.Functions.Models;
+namespace RealtimeCv.Core.Models.Dto;
 
-public class VisionSetDto
+public class VisionSetUpdateDto
 {
     [JsonRequired]
     public int Id { get; set; }
@@ -18,18 +17,14 @@ public class VisionSetDto
     public string ContainerImage { get; set; }
     
     [JsonRequired]
-    public int ProjectId { get; set; }
-    
-    [JsonRequired]
-    public TrainedModelDto TrainedModel { get; set; }
+    public int TrainedModelId { get; set; }
 
-    public VisionSetDto(int id, string name, string[] sources, string containerImage, int projectId, TrainedModelDto trainedModel)
+    public VisionSetUpdateDto(int id, string name, string[] sources, string containerImage, int trainedModelId)
     {
         Id = id;
         Name = name;
         Sources = sources;
         ContainerImage = containerImage;
-        ProjectId = projectId;
-        TrainedModel = trainedModel;
+        TrainedModelId = trainedModelId;
     }
 }

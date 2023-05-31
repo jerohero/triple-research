@@ -5,9 +5,9 @@ using Microsoft.EntityFrameworkCore;
 using Moq.AutoMock;
 using NUnit.Framework;
 using RealtimeCv.Core.Entities;
+using RealtimeCv.Core.Functions.Config;
 using RealtimeCv.Core.Interfaces;
 using RealtimeCv.Functions;
-using RealtimeCv.Functions.Services;
 using RealtimeCv.Infrastructure.Data;
 using RealtimeCv.Infrastructure.Data.Repositories;
 

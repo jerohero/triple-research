@@ -6,15 +6,14 @@ using System.Threading.Tasks;
 using Ardalis.Result;
 using Ardalis.Result.FluentValidation;
 using AutoMapper;
-using Newtonsoft.Json;
 using RealtimeCv.Core.Entities;
+using RealtimeCv.Core.Functions.Interfaces;
+using RealtimeCv.Core.Functions.Validators;
 using RealtimeCv.Core.Interfaces;
+using RealtimeCv.Core.Models.Dto;
 using RealtimeCv.Core.Specifications;
-using RealtimeCv.Functions.Interfaces;
-using RealtimeCv.Functions.Models;
-using RealtimeCv.Functions.Validators;
 
-namespace RealtimeCv.Functions.Services;
+namespace RealtimeCv.Core.Functions.Services;
 
 /// <summary>
 /// Service for Project related endpoints.

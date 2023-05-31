@@ -1,15 +1,14 @@
 ﻿using FluentValidation;
 using FluentValidation.Results;
-using RealtimeCv.Functions.Models;
-using RealtimeCv.Infrastructure.Data.Config;
+using RealtimeCv.Core.Models.Dto;
 
-namespace RealtimeCv.Functions.Validators;
+namespace RealtimeCv.Core.Functions.Validators;
 
 public class ProjectCreateDtoValidator : AbstractValidator<ProjectCreateDto>
 {
     public ProjectCreateDtoValidator()
     {
-        RuleFor(x => x.Name).MinimumLength(1).MaximumLength(Constants.DefaultMaxStringLength);
+        RuleFor(x => x.Name).MinimumLength(1).MaximumLength(100);
     }
 
     protected override bool PreValidate(ValidationContext<ProjectCreateDto> context, ValidationResult result)

@@ -1,15 +1,12 @@
-﻿
-using System.Threading.Tasks;
-using k8s;
+﻿using System.Threading.Tasks;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
+using RealtimeCv.Core.Functions.Config;
+using RealtimeCv.Core.Functions.Interfaces;
+using RealtimeCv.Core.Functions.Services;
 using RealtimeCv.Core.Interfaces;
-using RealtimeCv.Core.Services;
-using RealtimeCv.Functions.Interfaces;
-using RealtimeCv.Functions.Services;
 using RealtimeCv.Infrastructure.Extensions;
-using RealtimeCv.Infrastructure.Messaging;
 using RealtimeCv.Infrastructure.Streaming;
 
 namespace RealtimeCv.Functions;

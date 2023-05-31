@@ -1,4 +1,4 @@
-﻿namespace RealtimeCv.Functions.Models;
+﻿namespace RealtimeCv.Core.Models.Dto;
 
 public class TrainedModelChunkMetadata
 {

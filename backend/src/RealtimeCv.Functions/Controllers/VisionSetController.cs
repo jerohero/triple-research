@@ -1,16 +1,12 @@
 ﻿using System.Linq;
-using System.Security.Cryptography.X509Certificates;
 using System.Threading.Tasks;
 using Ardalis.Result;
 using AutoMapper;
-using k8s;
 using Microsoft.Azure.Functions.Worker;
 using Microsoft.Azure.Functions.Worker.Http;
-using RealtimeCv.Core.Entities;
+using RealtimeCv.Core.Functions.Interfaces;
 using RealtimeCv.Core.Interfaces;
-using RealtimeCv.Core.Specifications;
-using RealtimeCv.Functions.Interfaces;
-using RealtimeCv.Functions.Models;
+using RealtimeCv.Core.Models.Dto;
 
 namespace RealtimeCv.Functions.Controllers;
 
@@ -22,22 +18,16 @@ public class VisionSetController : BaseController
     private readonly ILoggerAdapter<VisionSetController> _logger;
     private readonly IVisionSetService _visionSetService;
     private readonly ISessionService _sessionService;
-    private readonly IKubernetesService _kubernetesService;
-    private readonly IMapper _mapper;
 
     public VisionSetController(
       ILoggerAdapter<VisionSetController> logger,
       IVisionSetService visionSetService,
-      ISessionService sessionService,
-      IKubernetesService kubernetesService,
-      IMapper mapper
+      ISessionService sessionService
     )
     {
         _logger = logger;
         _visionSetService = visionSetService;
         _sessionService = sessionService;
-        _kubernetesService = kubernetesService;
-        _mapper = mapper;
     }
 
     [Function("getVisionSet")]
@@ -84,7 +74,7 @@ public class VisionSetController : BaseController
     public async Task<HttpResponseData> DeleteVisionSet(
       [HttpTrigger(AuthorizationLevel.Anonymous, "delete", Route = "vision-set/{visionSetId}")] HttpRequestData req, int visionSetId)
     {
-        Result<VisionSetDto> result = await _visionSetService.DeleteVisionSet(visionSetId);
+        var result = await _visionSetService.DeleteVisionSet(visionSetId);
 
         return await ResultToResponse(result, req);
     }

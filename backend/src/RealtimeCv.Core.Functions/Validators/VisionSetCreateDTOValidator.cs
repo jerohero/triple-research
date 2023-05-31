@@ -1,19 +1,18 @@
 ﻿using FluentValidation;
 using FluentValidation.Results;
-using RealtimeCv.Functions.Models;
-using RealtimeCv.Infrastructure.Data.Config;
+using RealtimeCv.Core.Models.Dto;
 
-namespace RealtimeCv.Functions.Validators;
+namespace RealtimeCv.Core.Functions.Validators;
 
 public class VisionSetCreateDtoValidator : AbstractValidator<VisionSetCreateDto>
 {
     public VisionSetCreateDtoValidator()
     {
-        RuleFor(x => x.Name).MinimumLength(1).MaximumLength(Constants.DefaultMaxStringLength);
+        RuleFor(x => x.Name).MinimumLength(1).MaximumLength(100);
         
         RuleFor(x => x.Sources).NotEmpty().WithMessage("Sources cannot be empty");
         
-        RuleFor(x => x.ContainerImage).MinimumLength(1).MaximumLength(Constants.DefaultMaxStringLength);
+        RuleFor(x => x.ContainerImage).MinimumLength(1).MaximumLength(100);
 
         RuleFor(x => x.TrainedModelId).GreaterThan(0);
     }

@@ -1,8 +1,7 @@
 ﻿using System.Collections.Generic;
 using Newtonsoft.Json;
-using RealtimeCv.Core.Entities;
 
-namespace RealtimeCv.Functions.Models;
+namespace RealtimeCv.Core.Models.Dto;
 
 public class ProjectDto
 {

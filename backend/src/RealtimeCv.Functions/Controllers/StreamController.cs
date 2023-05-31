@@ -1,14 +1,8 @@
 ﻿using System;
-using System.Diagnostics;
-using System.Linq;
 using System.Threading.Tasks;
-using FFMpegCore;
-using FFMpegCore.Enums;
 using Microsoft.Azure.Functions.Worker;
 using RealtimeCv.Core.Interfaces;
 using RealtimeCv.Core.Models;
-using RealtimeCv.Infrastructure.Data.Config;
-using RealtimeCv.Infrastructure.Extensions;
 
 namespace RealtimeCv.Functions.Controllers;
 
@@ -40,7 +34,7 @@ public class StreamController : BaseController
     {
         var now = DateTime.UtcNow;
 
-        var activeStreams = _streamDetectionService.DetectActiveStreams(message);
+        var activeStreams = _streamDetectionService.StartSessionsForActiveStreams(message);
 
         var duration = DateTime.UtcNow - now;
         

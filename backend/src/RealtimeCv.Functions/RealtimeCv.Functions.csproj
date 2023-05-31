@@ -24,6 +24,7 @@
   </ItemGroup>
   
   <ItemGroup>
+    <ProjectReference Include="..\RealtimeCv.Core.Functions\RealtimeCv.Core.Functions.csproj" />
     <ProjectReference Include="..\RealtimeCv.Core\RealtimeCv.Core.csproj" />
     <ProjectReference Include="..\RealtimeCv.Infrastructure\RealtimeCv.Infrastructure.csproj" />
   </ItemGroup>

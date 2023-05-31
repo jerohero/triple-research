@@ -1,9 +1,8 @@
 ﻿using FluentValidation;
 using FluentValidation.Results;
-using RealtimeCv.Functions.Models;
-using RealtimeCv.Infrastructure.Data.Config;
+using RealtimeCv.Core.Models.Dto;
 
-namespace RealtimeCv.Functions.Validators;
+namespace RealtimeCv.Core.Functions.Validators;
 
 public class SessionDtoValidator : AbstractValidator<SessionDto>
 {
@@ -11,9 +10,9 @@ public class SessionDtoValidator : AbstractValidator<SessionDto>
     {
         RuleFor(x => x.Id).GreaterThan(0);
 
-        RuleFor(x => x.Pod).MinimumLength(1).MaximumLength(Constants.DefaultMaxStringLength);
+        RuleFor(x => x.Pod).MinimumLength(1).MaximumLength(100);
         
-        RuleFor(x => x.Source).MinimumLength(1).MaximumLength(Constants.DefaultMaxStringLength);
+        RuleFor(x => x.Source).MinimumLength(1).MaximumLength(100);
         
         RuleFor(x => x.VisionSetId).GreaterThan(0);
     }

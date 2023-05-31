@@ -1,29 +1,10 @@
-﻿using System;
-using System.Collections.Generic;
-using System.IO;
-using System.Linq;
-using System.Net.Http;
-using System.Net.Http.Headers;
-using System.Security.Cryptography.X509Certificates;
-using System.Text;
-using System.Threading.Tasks;
-using System.Web;
+﻿using System.Threading.Tasks;
 using Ardalis.Result;
-using Azure.Storage;
-using Azure.Storage.Blobs;
-using Azure.Storage.Blobs.Models;
-using Azure.Storage.Blobs.Specialized;
-using Azure.Storage.Sas;
-using k8s;
-using k8s.Models;
 using Microsoft.Azure.Functions.Worker;
 using Microsoft.Azure.Functions.Worker.Http;
-using Microsoft.CodeAnalysis;
-using Newtonsoft.Json;
-using Newtonsoft.Json.Serialization;
+using RealtimeCv.Core.Functions.Interfaces;
 using RealtimeCv.Core.Interfaces;
-using RealtimeCv.Functions.Interfaces;
-using RealtimeCv.Functions.Models;
+using RealtimeCv.Core.Models.Dto;
 
 namespace RealtimeCv.Functions.Controllers;
 
@@ -88,7 +69,7 @@ public class ProjectController : BaseController
     public async Task<HttpResponseData> DeleteProject(
       [HttpTrigger(AuthorizationLevel.Anonymous, "delete", Route = "project/{projectId}")] HttpRequestData req, int projectId)
     {
-        Result<ProjectDto> result = await _projectService.DeleteProject(projectId);
+        var result = await _projectService.DeleteProject(projectId);
 
         return await ResultToResponse(result, req);
     }

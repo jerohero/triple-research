@@ -1,9 +1,9 @@
 ﻿using System.Collections.Generic;
 using System.Threading.Tasks;
 using Ardalis.Result;
-using RealtimeCv.Functions.Models;
+using RealtimeCv.Core.Models.Dto;
 
-namespace RealtimeCv.Functions.Interfaces;
+namespace RealtimeCv.Core.Functions.Interfaces;
 
 public interface IVisionSetService
 {

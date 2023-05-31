@@ -1,8 +1,8 @@
 ﻿using AutoMapper;
 using RealtimeCv.Core.Entities;
-using RealtimeCv.Functions.Models;
+using RealtimeCv.Core.Models.Dto;
 
-namespace RealtimeCv.Functions;
+namespace RealtimeCv.Core.Functions.Config;
 
 public class AutomapperMaps : Profile
 {

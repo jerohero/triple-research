@@ -4,7 +4,8 @@ using System.Linq;
 using Ardalis.Result;
 using Newtonsoft.Json;
 using NUnit.Framework;
-using RealtimeCv.Functions.Models;
+using RealtimeCv.Core.Models;
+using RealtimeCv.Core.Models.Dto;
 
 namespace CleanArchitecture.UnitTests.Functions.Services;
 
