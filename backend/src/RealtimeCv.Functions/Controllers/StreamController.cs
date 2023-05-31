@@ -20,7 +20,7 @@ public class StreamController : BaseController
     private readonly IStreamDetectionService _streamDetectionService;
 
     public StreamController(
-      ILoggerAdapter<StreamController> logger,
+        ILoggerAdapter<StreamController> logger,
         IStreamDetectionService streamDetectionService
     )
     {
@@ -28,27 +28,19 @@ public class StreamController : BaseController
         _streamDetectionService = streamDetectionService;
     }
 
-    // [Function("PollStreams")]
-    // public async Task PollStreams(
-    //   [TimerTrigger("*/20 * * * * *")] TimerInfo timerInfo, FunctionContext context)
-    // {
-    //     var sources = Enumerable.Repeat("rtmp://live.restream.io/live/re_6435068_fake", 19).ToList();
-    //     sources.Add("rtmp://live.restream.io/live/re_6435068_ac960121c66cd1e6a9f5");
-    //
-    //     var sourcesChunks = sources.Chunk(Constants.StreamPollChunkSize);
-    //
-    //     foreach (var chunk in sourcesChunks)
-    //     {
-    //         await _streamDetectionService.SendStreamPollChunkToQueue(chunk.ToList());
-    //     }
-    // }
+    [Function("PollStreams")]
+    public async Task PollStreams(
+      [TimerTrigger("*/20 * * * * *")] TimerInfo timerInfo, FunctionContext context)
+    {
+        await _streamDetectionService.StartPollStreams();
+    }
 
-    [Function("DetectStreamsFromChunk")]
-    public void DetectStreamsFromChunk([QueueTrigger("stream-poll-chunk")] StreamPollChunkMessage message)
+    [Function("StartSessionsForActiveStreams")]
+    public void StartSessionsForActiveStreams([QueueTrigger("stream-poll-chunk")] StreamPollChunkMessage message)
     {
         var now = DateTime.UtcNow;
 
-        var activeStreams = _streamDetectionService.DetectActiveStreams(message.Sources.ToList());
+        var activeStreams = _streamDetectionService.DetectActiveStreams(message);
 
         var duration = DateTime.UtcNow - now;
         
