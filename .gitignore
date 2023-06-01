@@ -1,9 +1,27 @@
-Worker/CvWorker/bin/
-Worker/CvWorker/obj/
-Worker/CvWorker/packages/
+backend/src/bin/
+backend/src/obj/
+backend/src/**/obj/
+backend/src/packages/
+backend/tests/RealtimeCv.UnitTests/obj/*
+backend/src/RealtimeCv.Functions/obj/*
+backend/src/RealtimeCv.Worker/obj/*
+backend/src/RealtimeCv.Infrastructure/obj/*
 riderModule.iml
 _ReSharper.Caches/
+**/obj
+
+node_modules
 
 
 .idea/
-Worker/CvWorker/Assets/
+.vs/*
+Worker/src/Assets/
+
+inference/yolov7/models
+inference/yolov7/runs
+inference/yolov7/utils/__pycache__
+inference/yolov7/__pycache__
+inference/yolov3/__pycache__
+inference/yolov7/yolov7.pt
+inference/yolov7/traced_model.pt
+inference/yolov3/yolo_v3/yolov3.weights
