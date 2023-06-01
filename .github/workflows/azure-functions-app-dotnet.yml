@@ -24,7 +24,7 @@ on:
 
 env:
   AZURE_FUNCTIONAPP_NAME: 'triplejbfunctionapp'
-  AZURE_FUNCTIONAPP_PACKAGE_PATH: './backend/src/RealtimeCv.Functions/RealtimeCv.Functions.csproj'
+  AZURE_FUNCTIONAPP_PACKAGE_PATH: 'backend/src/RealtimeCv.Functions/RealtimeCv.Functions.csproj'
   DOTNET_VERSION: '7.0.x'
 
 jobs:
