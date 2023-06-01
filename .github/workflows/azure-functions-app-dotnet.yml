@@ -58,7 +58,7 @@ jobs:
       shell: bash
       run: |
         pushd './${{ env.AZURE_FUNCTIONAPP_PACKAGE_PATH }}'
-        dotnet test --no-build --verbosity normal
+        dotnet test --verbosity normal
         popd
 
     - name: 'Run Azure Functions Action'
