@@ -6,12 +6,13 @@ using Moq.AutoMock;
 using NUnit.Framework;
 using RealtimeCv.Core.Entities;
 using RealtimeCv.Core.Functions.Config;
+using RealtimeCv.Core.Functions.Services;
 using RealtimeCv.Core.Interfaces;
-using RealtimeCv.Functions;
+using RealtimeCv.Infrastructure.Blob;
 using RealtimeCv.Infrastructure.Data;
 using RealtimeCv.Infrastructure.Data.Repositories;
 
-namespace CleanArchitecture.UnitTests.Functions.Services;
+namespace RealtimeCv.UnitTests.Functions.Services;
 
 public class ProjectServiceTestsBase
 {
@@ -29,13 +30,17 @@ public class ProjectServiceTestsBase
         _context.Database.EnsureCreated();
 
         var loggerMock = mocker.GetMock<ILoggerAdapter<ProjectService>>();
+        var blobMock = mocker.GetMock<IBlob>();
         
         var mapperConfig = new MapperConfiguration(cfg => 
             cfg.AddProfile(new AutomapperMaps())
         );
         var mapper = new Mapper(mapperConfig);
 
-        _service = new ProjectService(loggerMock.Object, mapper, new ProjectRepository(_context));
+        _service = new ProjectService(
+            loggerMock.Object, mapper, new ProjectRepository(_context),
+            new TrainedModelRepository(_context), blobMock.Object
+        );
         
         Trace.Listeners.Add(new ConsoleTraceListener());
     }

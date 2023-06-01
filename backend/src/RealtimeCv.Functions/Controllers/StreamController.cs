@@ -30,11 +30,11 @@ public class StreamController : BaseController
     }
 
     [Function("StartSessionsForActiveStreams")]
-    public void StartSessionsForActiveStreams([QueueTrigger("stream-poll-chunk")] StreamPollChunkMessage message)
+    public async Task StartSessionsForActiveStreams([QueueTrigger("stream-poll-chunk")] StreamPollChunkMessage message)
     {
         var now = DateTime.UtcNow;
 
-        var activeStreams = _streamDetectionService.StartSessionsForActiveStreams(message);
+        var activeStreams = await _streamDetectionService.StartSessionsForActiveStreams(message);
 
         var duration = DateTime.UtcNow - now;
         
