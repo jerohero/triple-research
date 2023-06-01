@@ -15,6 +15,7 @@
     <PackageReference Include="Moq.EntityFrameworkCore" />
     <PackageReference Include="Microsoft.EntityFrameworkCore.InMemory" />
     <PackageReference Include="NUnit" />
+    <PackageReference Include="NUnit3TestAdapter" />
     <PackageReference Include="AutoMapper" />
     <PackageReference Include="coverlet.collector">
       <PrivateAssets>all</PrivateAssets>
@@ -24,12 +25,15 @@
 
   <ItemGroup>
     <ProjectReference Include="..\..\src\RealtimeCv.Core\RealtimeCv.Core.csproj" />
+    <ProjectReference Include="..\..\src\RealtimeCv.Core.Functions\RealtimeCv.Core.Functions.csproj" />
+    <ProjectReference Include="..\..\src\RealtimeCv.Core.Worker\RealtimeCv.Core.Worker.csproj" />
     <ProjectReference Include="..\..\src\RealtimeCv.Functions\RealtimeCv.Functions.csproj" />
     <ProjectReference Include="..\..\src\RealtimeCv.Infrastructure\RealtimeCv.Infrastructure.csproj" />
   </ItemGroup>
 
   <ItemGroup>
-    <Folder Include="Functions\Controllers" />
+    <Folder Include="Core.Functions" />
+    <Folder Include="Functions" />
   </ItemGroup>
 
 </Project>

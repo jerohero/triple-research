@@ -1,15 +1,12 @@
 using System.Collections.Generic;
-using System.Diagnostics;
 using System.Linq;
 using Ardalis.Result;
-using Newtonsoft.Json;
 using NUnit.Framework;
-using RealtimeCv.Core.Models;
 using RealtimeCv.Core.Models.Dto;
-using RealtimeCv.UnitTests.Functions.Services;
 
-namespace CleanArchitecture.UnitTests.Functions.Services;
+namespace RealtimeCv.UnitTests.Core.Functions.Services;
 
+[TestFixture]
 public class ProjectServiceTests : ProjectServiceTestsBase
 {
     [Test]

@@ -8,11 +8,10 @@ using RealtimeCv.Core.Entities;
 using RealtimeCv.Core.Functions.Config;
 using RealtimeCv.Core.Functions.Services;
 using RealtimeCv.Core.Interfaces;
-using RealtimeCv.Infrastructure.Blob;
 using RealtimeCv.Infrastructure.Data;
 using RealtimeCv.Infrastructure.Data.Repositories;
 
-namespace RealtimeCv.UnitTests.Functions.Services;
+namespace RealtimeCv.UnitTests.Core.Functions.Services;
 
 public class ProjectServiceTestsBase
 {
