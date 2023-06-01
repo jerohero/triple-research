@@ -6,6 +6,7 @@ using Newtonsoft.Json;
 using NUnit.Framework;
 using RealtimeCv.Core.Models;
 using RealtimeCv.Core.Models.Dto;
+using RealtimeCv.UnitTests.Functions.Services;
 
 namespace CleanArchitecture.UnitTests.Functions.Services;
 
@@ -82,11 +83,11 @@ public class ProjectServiceTests : ProjectServiceTestsBase
     }
     
     [Test]
-    public void GetProjects_WhenProjectsFound_ItShouldReturnTypeOfProjectDtoList()
+    public void GetProjects_WhenProjectsFound_ItShouldReturnTypeOfProjectsDtoList()
     {
         // Arrange
         SetupProjects(2);
-        var expected = typeof(List<ProjectDto>);
+        var expected = typeof(List<ProjectsDto>);
 
         // Act
         var result = _service.GetProjects();
@@ -196,7 +197,7 @@ public class ProjectServiceTests : ProjectServiceTestsBase
     {
         // Arrange
         SetupProjects(2);
-        var dto = new ProjectDto(1, "UpdatedProject1");
+        var dto = new ProjectUpdateDto(1, "UpdatedProject1");
         const ResultStatus expected = ResultStatus.Ok;
         
         // Act
@@ -211,13 +212,13 @@ public class ProjectServiceTests : ProjectServiceTestsBase
     {
         // Arrange
         SetupProjects(2);
-        var expected = new ProjectDto(1, "UpdatedProject1");
+        var expected = new ProjectUpdateDto(1, "UpdatedProject1");
 
         // Act
         var result = _service.UpdateProject(expected);
 
         // Assert
-        Assert.That(result.Result.Value.Equals(expected));
+        Assert.That(result.Result.Value.Id == expected.Id);
     }
     
     [Test]
@@ -226,7 +227,7 @@ public class ProjectServiceTests : ProjectServiceTestsBase
         // Arrange
         SetupProjects(2);
         var expected = ResultStatus.Invalid;
-        var dto = new ProjectDto(1, "");
+        var dto = new ProjectUpdateDto(1, "");
     
         // Act
         var result = _service.UpdateProject(dto);
@@ -241,7 +242,7 @@ public class ProjectServiceTests : ProjectServiceTestsBase
         // Arrange
         SetupProjects(2);
         var expected = ResultStatus.Invalid;
-        var dto = new ProjectDto(1, new string('x', 101));
+        var dto = new ProjectUpdateDto(1, new string('x', 101));
     
         // Act
         var result = _service.UpdateProject(dto);
@@ -256,7 +257,7 @@ public class ProjectServiceTests : ProjectServiceTestsBase
         // Arrange
         SetupProjects(2);
         var expected = typeof(ProjectDto);
-        var dto = new ProjectDto(1, "UpdatedProject1");
+        var dto = new ProjectUpdateDto(1, "UpdatedProject1");
     
         // Act
         var result = _service.UpdateProject(dto);
