@@ -5,8 +5,8 @@ on:
     branches: ["master"]
 
 env:
-  AZURE_RESOURCE_GROUP: 'triplejb'
-  AZURE_FUNCTIONAPP_NAME: 'triplejbfunctionapp'
+  AZURE_RESOURCE_GROUP: 'JeroenBol'
+  AZURE_FUNCTIONAPP_NAME: 'jbfunctions'
   AZURE_FUNCTIONAPP_PACKAGE_PATH: 'backend/src/RealtimeCv.Functions'
   UNIT_TESTS_PACKAGE_PATH: 'backend/tests/RealtimeCv.UnitTests'
   BICEP_PATH: 'template.bicep'
@@ -20,33 +20,29 @@ jobs:
     - name: 'Checkout code'
       uses: actions/checkout@v3
 
-    - name: 'Login via Azure CLI'
-      uses: azure/login@v1
-      with:
-        creds: ${{ secrets.AZURE_CREDENTIALS }}
-        
-    - name: 'Build Bicep Template'
-      run: |
-        az bicep build --file ${{ env.BICEP_PATH }} --outfile arm/template.json      
-        
-    - name: Deploy Bicep Template
-      uses: azure/CLI@v1
-      with:
-        azcliversion: 2.30.0
-        inlineScript: |
-          az deployment group create \
-            --resource-group ${{ env.AZURE_RESOURCE_GROUP }} \
-            --template-file ${{ env.BICEP_PATH }} \
-            --parameters location=westeurope \
-                         storageAccountName=triplejbstorage \
-                         sqlServerName=triplejbdbserver \
-                         sqlDatabaseName=tripjedbdb \
-                         blobContainerNameModel=trained-model \
-                         queueNameStreamPollChunk=stream-poll-chunk \
-                         functionAppName=triplejbfunctions \
-                         webPubSubName=triplejbpubsub \
-                         sqlServerAdminLogin=admin \
-                         sqlServerAdminLoginPassword=${{ secrets.SQL_SERVER_ADMIN_PASSWORD }}
+#     - name: 'Login via Azure CLI'
+#       uses: azure/login@v1
+#       with:
+#         creds: ${{ secrets.AZURE_CREDENTIALS }}
+
+#     - name: Deploy Bicep Template
+#       uses: azure/CLI@v1
+#       with:
+#         azcliversion: 2.30.0
+#         inlineScript: |
+#           az deployment group create \
+#             --resource-group ${{ env.AZURE_RESOURCE_GROUP }} \
+#             --template-file ${{ env.BICEP_PATH }} \
+#             --parameters location=westeurope \
+#                          storageAccountName=triplejbstorage \
+#                          sqlServerName=triplejbdbserver \
+#                          sqlDatabaseName=tripjedbdb \
+#                          blobContainerNameModel=trained-model \
+#                          queueNameStreamPollChunk=stream-poll-chunk \
+#                          functionAppName=triplejbfunctions \
+#                          webPubSubName=triplejbpubsub \
+#                          sqlServerAdminLogin=admin \
+#                          sqlServerAdminLoginPassword=${{ secrets.SQL_SERVER_ADMIN_PASSWORD }}
 
     - name: 'Setup .NET ${{ env.DOTNET_VERSION }}'
       uses: actions/setup-dotnet@v3
@@ -72,5 +68,6 @@ jobs:
       with:
         app-name: ${{ env.AZURE_FUNCTIONAPP_NAME }}
         slot-name: 'production' 
+        publishProfile: '${{ secrets. }}'
         package: '${{ env.AZURE_FUNCTIONAPP_PACKAGE_PATH }}/output'
         
