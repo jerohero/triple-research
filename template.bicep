@@ -68,6 +68,15 @@ resource queueStreamPollChunk 'Microsoft.Storage/storageAccounts/queueServices/q
   name: '${storageAccount.name}/default/${queueNameStreamPollChunk}'
 }
 
+resource webPubSub 'Microsoft.SignalRService/WebPubSub@2020-10-01' = {
+  name: webPubSubName
+  location: location
+  sku: {
+    name: 'Free_F1'
+    capacity: 1
+  }
+}
+
 resource functionApp 'Microsoft.Web/sites@2022-03-01' = {
   name: functionAppName
   location: location
@@ -89,11 +98,11 @@ resource functionApp 'Microsoft.Web/sites@2022-03-01' = {
         }
         {
           name: 'AzureWebPubSub'
-          value: webPubSubConnectionString
+          value: 'Endpoint=https://${webPubSub.properties.host};AccessKey=${listKeys(webPubSub.id, webPubSub.apiVersion).primaryConnectionString};Version='
         }
         {
           name: 'SqlConnectionString'
-          value: sqlConnectionString
+          value: 'Server=tcp:${sqlServer.properties.fullyQualifiedDomainName},1433;Initial Catalog=${dbName};Persist Security Info=False;User ID=${sqlServerAdminLogin};Password=${sqlServerAdminLoginPassword};MultipleActiveResultSets=True;Encrypt=True;TrustServerCertificate=False;Connection Timeout=30;'
         }
       ]
       linuxFxVersion: 'DOTNET-ISOLATED|7.0'
@@ -102,14 +111,5 @@ resource functionApp 'Microsoft.Web/sites@2022-03-01' = {
   }
   identity: {
     type: 'SystemAssigned'
-  }
-}
-
-resource webPubSub 'Microsoft.SignalRService/WebPubSub@2020-10-01' = {
-  name: webPubSubName
-  location: location
-  sku: {
-    name: 'Free_F1'
-    capacity: 1
   }
 }
