@@ -6,7 +6,7 @@ on:
 
 env:
   AZURE_RESOURCE_GROUP: 'JeroenBol'
-  AZURE_FUNCTIONAPP_NAME: 'jbfunctions'
+  AZURE_FUNCTIONAPP_NAME: 'jbcvfunctions'
   AZURE_FUNCTIONAPP_PACKAGE_PATH: 'backend/src/RealtimeCv.Functions'
   UNIT_TESTS_PACKAGE_PATH: 'backend/tests/RealtimeCv.UnitTests'
   BICEP_PATH: 'template.bicep'
