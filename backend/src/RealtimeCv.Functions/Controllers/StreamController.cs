@@ -24,7 +24,7 @@ public class StreamController : BaseController
 
     [Function("PollStreams")]
     public async Task PollStreams(
-      [TimerTrigger("*/20 * * * * *")] TimerInfo timerInfo, FunctionContext context)
+      [TimerTrigger("*/60 * * * * *")] TimerInfo timerInfo, FunctionContext context)
     {
         await _streamDetectionService.StartPollStreams();
     }
