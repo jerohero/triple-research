@@ -19,28 +19,37 @@ jobs:
     steps:
     - name: 'Checkout code'
       uses: actions/checkout@v3
+      
+    - name: 'Set up Azure CLI'
+      uses: azure/setup-azure-cli@v1
 
     - name: 'Login via Azure CLI'
       uses: azure/login@v1
       with:
         creds: ${{ secrets.AZURE_CREDENTIALS }}
-
-    - name: 'Install Bicep CLI'
-      uses: azure/setup-bicep@v1
         
     - name: 'Build Bicep Template'
       run: |
         az bicep build --file ${{ env.BICEP_PATH }} --outfile arm/template.json      
         
-    - name: 'Deploy ARM Template'
-      uses: azure/arm-deploy@v1
+    - name: Deploy Bicep Template
+      uses: azure/CLI@v1
       with:
-        scope: resourcegroup
-        subscriptionId: ${{ secrets.AZURE_CREDENTIALS.subscriptionId }}
-        resourceGroupName: ${{ env.AZURE_RESOURCE_GROUP }}
-        deploymentName: 'triplejb-deployment'
-        template: 'arm/template.json'
-        mode: Incremental
+        azcliversion: 2.30.0
+        inlineScript: |
+          az deployment group create \
+            --resource-group ${{ env.AZURE_RESOURCE_GROUP }} \
+            --template-file ${{ env.BICEP_PATH }} \
+            --parameters location=westeurope \
+                         storageAccountName=triplejbstorage \
+                         sqlServerName=triplejbdbserver \
+                         sqlDatabaseName=tripjedbdb \
+                         blobContainerNameModel=trained-model \
+                         queueNameStreamPollChunk=stream-poll-chunk \
+                         functionAppName=triplejbfunctions \
+                         webPubSubName=triplejbpubsub \
+                         sqlServerAdminLogin=admin \
+                         sqlServerAdminLoginPassword=${{ secrets.SQL_SERVER_ADMIN_PASSWORD }}
 
     - name: 'Setup .NET ${{ env.DOTNET_VERSION }}'
       uses: actions/setup-dotnet@v3
@@ -62,10 +71,9 @@ jobs:
         popd
 
     - name: 'Deploy Functions'
-      uses: Azure/functions-action@v1
-      id: fa
+      uses: azure/webapps-deploy@v2
       with:
         app-name: ${{ env.AZURE_FUNCTIONAPP_NAME }}
+        slot-name: 'production' 
         package: '${{ env.AZURE_FUNCTIONAPP_PACKAGE_PATH }}/output'
-        publish-profile: ${{ secrets.AZURE_FUNCTIONAPP_PUBLISH_PROFILE }} # Remove publish-profile to use Azure RBAC
         
