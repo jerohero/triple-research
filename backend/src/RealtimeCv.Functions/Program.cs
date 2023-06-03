@@ -1,4 +1,5 @@
-﻿using System.IO;
+﻿using System;
+using System.IO;
 using System.Reflection;
 using System.Threading.Tasks;
 using Microsoft.Extensions.Configuration;
@@ -28,15 +29,20 @@ internal class Program
         {
             var isDevelopment = hostContext.HostingEnvironment.IsDevelopment();
             
+            Console.WriteLine("IsDevelopment: " + isDevelopment);
+
+            var location = Assembly.GetExecutingAssembly().Location;
             var rootPath = isDevelopment
-                ? Path.GetFullPath(Path.Combine(Assembly.GetExecutingAssembly().Location, "..", "..", "..", ".."))
-                : hostContext.Configuration.GetValue<string>("AzureWebJobsScriptRoot");
+                ? Path.GetFullPath(Path.Combine(location, "..", "..", "..", ".."))
+                : Path.GetDirectoryName(location);
+            
+            Console.WriteLine("RootPath: " + rootPath);
 
             services.AddSingleton(typeof(ILoggerAdapter<>), typeof(LoggerAdapter<>));
 
             services.AddDbContext(hostContext.Configuration.GetValue<string>("SqlConnectionString"));
             services.AddRepositories();
-            services.AddKubernetes(rootPath);
+            services.AddKubernetes(rootPath!);
             services.AddBlobServices();
             services.AddAsynchronousMessagingServices();
 

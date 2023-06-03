@@ -32,21 +32,17 @@ public class Queue : IQueue
     {
         var connString = Environment.GetEnvironmentVariable(ConnStringName);
         var messageString = JsonConvert.SerializeObject(message);
-        
-        _logger.LogInformation("Connstring: " + connString);
 
         var queueClient = new QueueClient(connString, queueName, new QueueClientOptions
         {
             MessageEncoding = QueueMessageEncoding.Base64
         });
-        
-        _logger.LogInformation("Accountname: " + queueClient.AccountName); 
 
-        if (!await queueClient.ExistsAsync())
+        await queueClient.CreateIfNotExistsAsync();
+
+        if (await queueClient.ExistsAsync())
         {
-            await queueClient.CreateAsync();
+            await queueClient.SendMessageAsync(messageString);
         }
-
-        await queueClient.SendMessageAsync(messageString);
     }
 }
