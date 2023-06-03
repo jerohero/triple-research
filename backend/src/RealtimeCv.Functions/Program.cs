@@ -1,4 +1,6 @@
-﻿using System.Threading.Tasks;
+﻿using System.IO;
+using System.Reflection;
+using System.Threading.Tasks;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
@@ -24,11 +26,17 @@ internal class Program
         .ConfigureFunctionsWorkerDefaults()
         .ConfigureServices((hostContext, services) =>
         {
+            var isDevelopment = hostContext.HostingEnvironment.IsDevelopment();
+            
+            var rootPath = isDevelopment
+                ? Path.GetFullPath(Path.Combine(Assembly.GetExecutingAssembly().Location, "..", "..", "..", ".."))
+                : hostContext.Configuration.GetValue<string>("AzureWebJobsScriptRoot");
+
             services.AddSingleton(typeof(ILoggerAdapter<>), typeof(LoggerAdapter<>));
 
             services.AddDbContext(hostContext.Configuration.GetValue<string>("SqlConnectionString"));
             services.AddRepositories();
-            services.AddKubernetes();
+            services.AddKubernetes(rootPath);
             services.AddBlobServices();
             services.AddAsynchronousMessagingServices();
 

@@ -1,4 +1,5 @@
-﻿using Microsoft.Extensions.Configuration;
+﻿using System;
+using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
 using RealtimeCv.Core.Interfaces;
@@ -25,7 +26,6 @@ public class Program
                 services.AddSingleton<IEntryPointService, EntryPointService>();
                 services.AddSingleton<IServiceLocator, ServiceScopeFactoryLocator>();
                 
-                services.AddKubernetes();
                 services.AddStreamHandlers();
                 services.AddAsynchronousMessagingServices();
                 services.AddBlobServices();
@@ -33,7 +33,7 @@ public class Program
                 services.AddTransient<IStreamService, StreamService>();
                 services.AddSingleton<ISessionHandlerService, SessionHandlerHandlerService>();
 
-                services.AddDbContext(hostContext.Configuration.GetConnectionString("DefaultConnection"));
+                services.AddDbContext(Environment.GetEnvironmentVariable("SqlConnectionString"));
                 services.AddRepositories();
                 services.AddConnectionServices();
 

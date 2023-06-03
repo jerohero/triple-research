@@ -15,21 +15,18 @@ namespace RealtimeCv.Infrastructure.Blob;
 public class Blob : IBlob
 {
     private const string ConnStringName = "AzureWebJobsStorage";
-    private readonly IConfiguration _configuration;
     private readonly ILoggerAdapter<Blob> _logger;
     
     public Blob(
-        IConfiguration configuration,
         ILoggerAdapter<Blob> logger
     )
     {
-        _configuration = configuration;
         _logger = logger;
     }
     
     public string GetBlobUri(string blobName, string containerName)
     {
-        var connString = _configuration.GetConnectionString(ConnStringName);
+        var connString = Environment.GetEnvironmentVariable(ConnStringName);
         var accountName = Environment.GetEnvironmentVariable("StorageAccountName");
         var accountKey = Environment.GetEnvironmentVariable("StorageAccountKey");
         

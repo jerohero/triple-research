@@ -76,6 +76,21 @@ public class KubernetesService : IKubernetesService
                                 Name = "StorageAccountKey",
                                 Value = Environment.GetEnvironmentVariable("StorageAccountKey")
                             },
+                            new()
+                            {
+                                Name = "AzureWebJobsStorage",
+                                Value = Environment.GetEnvironmentVariable("AzureWebJobsStorage")
+                            },
+                            new()
+                            {
+                                Name = "SqlConnectionString",
+                                Value = Environment.GetEnvironmentVariable("SqlConnectionString")
+                            },
+                            new()
+                            {
+                                Name = "AzureWebPubSub",
+                                Value = Environment.GetEnvironmentVariable("AzureWebPubSub")
+                            },
                         }
                     }
                 }

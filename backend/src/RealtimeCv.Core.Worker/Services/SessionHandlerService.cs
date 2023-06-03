@@ -11,19 +11,16 @@ namespace RealtimeCv.Core.Worker.Services;
 public class SessionHandlerHandlerService : ISessionHandlerService, IDisposable
 {
     private readonly ILoggerAdapter<SessionHandlerHandlerService> _logger;
-    private IKubernetesService _kubernetesService;
     private IServiceLocator _serviceScopeFactoryLocator;
     private IHttpService _httpService;
 
     public SessionHandlerHandlerService(
         ILoggerAdapter<SessionHandlerHandlerService> logger,
         IServiceLocator serviceScopeFactoryLocator,
-        IKubernetesService kubernetesService,
         IHttpService httpService
     )
     {
         _logger = logger;
-        _kubernetesService = kubernetesService;
         _serviceScopeFactoryLocator = serviceScopeFactoryLocator;
         _httpService = httpService;
     }

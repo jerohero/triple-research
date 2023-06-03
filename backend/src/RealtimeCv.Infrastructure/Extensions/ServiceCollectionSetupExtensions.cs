@@ -40,14 +40,14 @@ public static class ServiceCollectionSetupExtensions
         services.AddSingleton<IStreamSender, StreamSender>();
     }
 
-    public static void AddKubernetes(this IServiceCollection services)
+    public static void AddKubernetes(this IServiceCollection services, string path)
     {
         // Enable proxy with "kubectl proxy --port=8080 &"
         services.AddSingleton<IKubernetesService, KubernetesService>();
 
         services.AddTransient(typeof(k8s.Kubernetes), _ =>
             {
-                var kubeConfigPath = Path.Combine(Directory.GetCurrentDirectory(), "kubeconfig");
+                var kubeConfigPath = Path.Combine(path, "kubeconfig");
                 var config = KubernetesClientConfiguration.BuildConfigFromConfigFile(kubeConfigPath);
 
                 // return new k8s.Kubernetes(new KubernetesClientConfiguration { Host = "http://localhost:8080/" }); // For local testing

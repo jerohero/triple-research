@@ -14,16 +14,13 @@ namespace RealtimeCv.Infrastructure.Messaging;
 public class PubSub : IPubSub
 {
     private readonly ILoggerAdapter<PubSub> _logger;
-    private readonly IConfiguration _configuration;
     private const string ConnStringName = "AzureWebPubSub";
     private WebPubSubServiceClient? _serviceClient;
 
     public PubSub(
-      IConfiguration configuration,
       ILoggerAdapter<PubSub> logger
     )
     {
-        _configuration = configuration;
         _logger = logger;
     }
 
@@ -50,7 +47,7 @@ public class PubSub : IPubSub
     {
         if (_serviceClient?.Hub != hub)
         {
-            _serviceClient = new WebPubSubServiceClient(_configuration.GetConnectionString(ConnStringName), hub);
+            _serviceClient = new WebPubSubServiceClient(Environment.GetEnvironmentVariable(ConnStringName), hub);
         }
     }
 }

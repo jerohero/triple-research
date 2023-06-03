@@ -22,18 +22,21 @@ public class VisionSetService : IVisionSetService
     private readonly ILoggerAdapter<VisionSetService> _logger;
     private readonly IVisionSetRepository _visionSetRepository;
     private readonly IProjectRepository _projectRepository;
+    private readonly ITrainedModelRepository _trainedModelRepository;
 
     public VisionSetService(
         ILoggerAdapter<VisionSetService> logger,
         IMapper mapper,
         IVisionSetRepository visionSetRepository,
-        IProjectRepository projectRepository
+        IProjectRepository projectRepository,
+        ITrainedModelRepository trainedModelRepository
     )
     {
         _mapper = mapper;
         _logger = logger;
         _visionSetRepository = visionSetRepository;
         _projectRepository = projectRepository;
+        _trainedModelRepository = trainedModelRepository;
     }
 
     public async Task<Result<VisionSetDto>> GetVisionSetById(int visionSetId)
@@ -63,8 +66,9 @@ public class VisionSetService : IVisionSetService
         }
 
         var project = await _projectRepository.GetByIdAsync(createDto.ProjectId);
+        var trainedModel = await _trainedModelRepository.GetByIdAsync(createDto.TrainedModelId);
 
-        if (project is null)
+        if (project is null || trainedModel is null)
         {
             return Result<VisionSetDto>.NotFound();
         }
