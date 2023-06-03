@@ -40,7 +40,7 @@ public class Queue : IQueue
             MessageEncoding = QueueMessageEncoding.Base64
         });
         
-        _logger.LogInformation("Accountname: " + queueClient.AccountName);
+        _logger.LogInformation("Accountname: " + queueClient.AccountName); 
 
         if (!await queueClient.ExistsAsync())
         {
