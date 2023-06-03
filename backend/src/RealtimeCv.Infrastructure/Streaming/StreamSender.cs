@@ -134,26 +134,40 @@ public class StreamSender : IStreamSender, IDisposable
             try
             {
                 var content = _httpService.StringToHttpContent(datasetUri);
-                await _httpService.Post(_prepareUrl, content);
+                var res = await _httpService.Post(_prepareUrl, content);
                 
                 _logger.LogInformation("Prepared target.");
-
+                
+                if (!res.IsSuccessStatusCode)
+                {
+                    didPrepare = false;
+                    failedAttempts = HandleFailedPrepare(failedAttempts);
+                    
+                    continue;
+                }
+                
                 didPrepare = true;
             }
             catch (HttpRequestException)
             {
                 didPrepare = false;
-                
-                _logger.LogInformation("Failed to prepare target. Retrying in 5 seconds.");
-                
-                HandleTimeout(failedAttempts);
-                failedAttempts++;
-                
-                Thread.Sleep(Constants.DefaultActionDelayMs);
+                failedAttempts = HandleFailedPrepare(failedAttempts);
             }
         }
 
         _isPrepared = didPrepare;
+    }
+    
+    private int HandleFailedPrepare(int failedAttempts)
+    {
+        _logger.LogInformation("Failed to prepare target. Retrying in 5 seconds.");
+                
+        HandleTimeout(failedAttempts);
+        failedAttempts++;
+        
+        Thread.Sleep(Constants.DefaultActionDelayMs);
+
+        return failedAttempts;
     }
     
     private void HandleTimeout(int failedAttempts)
