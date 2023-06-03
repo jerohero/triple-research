@@ -30,7 +30,7 @@ public class Queue : IQueue
 
     public async Task SendMessage(string queueName, object message)
     {
-        var connString = Environment.GetEnvironmentVariable(ConnStringName); // TODO need to call this in a way that it would work in both the worker and function app
+        var connString = Environment.GetEnvironmentVariable(ConnStringName);
         var messageString = JsonConvert.SerializeObject(message);
 
         var queueClient = new QueueClient(connString, queueName, new QueueClientOptions

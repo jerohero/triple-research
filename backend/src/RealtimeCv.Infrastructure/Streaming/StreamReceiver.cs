@@ -57,7 +57,7 @@ public class StreamReceiver : IStreamReceiver, IDisposable
 
     public bool CheckConnection(string source)
     {
-        VideoCapture capture = new(source);
+        VideoCapture capture = new(source, VideoCaptureAPIs.FFMPEG);
         var isOpened = capture.IsOpened();
         capture.Release();
 
@@ -80,7 +80,7 @@ public class StreamReceiver : IStreamReceiver, IDisposable
     {
         Guard.Against.Null(_source);
 
-        VideoCapture capture = new(_source);
+        VideoCapture capture = new(_source, VideoCaptureAPIs.FFMPEG);
 
         var failedAttempts = 0;
 
