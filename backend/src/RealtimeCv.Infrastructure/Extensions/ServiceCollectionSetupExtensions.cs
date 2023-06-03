@@ -1,5 +1,7 @@
 ﻿using System;
+using System.IO;
 using k8s;
+using k8s.KubeConfigModels;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.DependencyInjection;
 using Newtonsoft.Json;
@@ -40,15 +42,17 @@ public static class ServiceCollectionSetupExtensions
 
     public static void AddKubernetes(this IServiceCollection services)
     {
-        // TODO: replace with AKS API access
         // Enable proxy with "kubectl proxy --port=8080 &"
         services.AddSingleton<IKubernetesService, KubernetesService>();
-        
-        services.AddTransient(typeof(k8s.Kubernetes), _ => 
-            new k8s.Kubernetes(new KubernetesClientConfiguration
+
+        services.AddTransient(typeof(k8s.Kubernetes), _ =>
             {
-                Host = "http://localhost:8080/"
-            })
+                var kubeConfigPath = Path.Combine(Directory.GetCurrentDirectory(), "kubeconfig");
+                var config = KubernetesClientConfiguration.BuildConfigFromConfigFile(kubeConfigPath);
+
+                // return new k8s.Kubernetes(new KubernetesClientConfiguration { Host = "http://localhost:8080/" }); // For local testing
+                return new k8s.Kubernetes(config);
+            }
         );
     }
 
