@@ -63,7 +63,7 @@ public class KubernetesService : IKubernetesService
                         {
                             new()
                             {
-                                Name = "SESSION_ID",
+                                Name = "SessionId",
                                 Value = session.Id.ToString()
                             },
                             new()
@@ -90,6 +90,11 @@ public class KubernetesService : IKubernetesService
                             {
                                 Name = "AzureWebPubSub",
                                 Value = Environment.GetEnvironmentVariable("AzureWebPubSub")
+                            },
+                            new()
+                            {
+                                Name = "ApiUrl",
+                                Value = Environment.GetEnvironmentVariable("ApiUrl")
                             },
                         }
                     }

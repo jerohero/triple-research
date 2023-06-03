@@ -11,8 +11,8 @@ namespace RealtimeCv.Core.Worker.Services;
 public class SessionHandlerHandlerService : ISessionHandlerService, IDisposable
 {
     private readonly ILoggerAdapter<SessionHandlerHandlerService> _logger;
-    private IServiceLocator _serviceScopeFactoryLocator;
-    private IHttpService _httpService;
+    private readonly IServiceLocator _serviceScopeFactoryLocator;
+    private readonly IHttpService _httpService;
 
     public SessionHandlerHandlerService(
         ILoggerAdapter<SessionHandlerHandlerService> logger,
@@ -59,7 +59,7 @@ public class SessionHandlerHandlerService : ISessionHandlerService, IDisposable
     public async Task EndSession(int sessionId)
     {
         _logger.LogInformation("CLOSING SESSION {sessionId}", sessionId);
-        await _httpService.Post($"http://localhost:7071/api/session/{sessionId}/stop");
+        await _httpService.Post($"{Environment.GetEnvironmentVariable("ApiUrl")}/session/{sessionId}/stop");
     }
     
     // private async Task<Session> SetIsActive(Session session, bool isActive)
