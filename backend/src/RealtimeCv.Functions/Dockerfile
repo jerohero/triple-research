@@ -1,18 +1,33 @@
-FROM mcr.microsoft.com/dotnet/sdk:7.0 AS installer-env
+# Stage 0: Setup OpenCV
+FROM mcr.microsoft.com/dotnet/aspnet:7.0-jammy as opencv-builder
 
-RUN dotnet_sdk_version=7.0.100 && curl -SL --output dotnet.tar.gz https://dotnetcli.azureedge.net/dotnet/Sdk/$dotnet_sdk_version/dotnet-sdk-$dotnet_sdk_version-linux-x64.tar.gz && mkdir -p /usr/share/dotnet && tar -ozxf dotnet.tar.gz -C /usr/share/dotnet && rm dotnet.tar.gz
+ENV OPENCV=4.7.0 DEBIAN_FRONTEND=noninteractive
 
-COPY . /src/dotnet-function-app/
+WORKDIR /
 
-RUN mkdir -p /home/site/wwwroot
+# BUILD
+FROM  mcr.microsoft.com/azure-functions/dotnet-isolated:4-dotnet-isolated7.0 AS base
+WORKDIR /home/site/wwwroot
 
-WORKDIR /src/dotnet-function-app
+FROM mcr.microsoft.com/dotnet/sdk:7.0-jammy AS build
+WORKDIR /src
+COPY ["src/RealtimeCv.Functions/RealtimeCv.Functions.csproj", "src/RealtimeCv.Functions/"]
+RUN dotnet restore "src/RealtimeCv.Functions/RealtimeCv.Functions.csproj"
+COPY . .
+WORKDIR "/src/src/RealtimeCv.Functions"
+RUN dotnet build "RealtimeCv.Functions.csproj" -c Release -o /app/build
 
-RUN dotnet publish --output /home/site/wwwroot
+FROM build AS publish
+RUN dotnet publish "RealtimeCv.Functions.csproj" -c Release -o /app/publish
 
-FROM mcr.microsoft.com/azure-functions/dotnet-isolated:4-dotnet-isolated7.0
+# RUN
+FROM base AS final
+WORKDIR /home/site/wwwroot
+
+COPY --from=publish /app/publish .
+COPY --from=opencv-builder /usr/lib /usr/lib
 
 ENV AzureWebJobsScriptRoot=/home/site/wwwroot \
   AzureFunctionsJobHost__Logging__Console__IsEnabled=true
-
-COPY --from=installer-env ["/home/site/wwwroot", "/home/site/wwwroot"]
+  
+ENTRYPOINT ["dotnet", "RealtimeCv.Functions.dll"]
