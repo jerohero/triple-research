@@ -70,8 +70,8 @@ jobs:
       uses: azure/docker-login@v1
       with:
         login-server: ${{ env.DOCKER_REGISTRY }}
-        username: azure-cli-2023-06-04-00-17-45
-        password: 0vO8Q~lX5DAkwoO3kcKy42BhyMhgo9lDpGxttaXy
+        username: rcvacr
+        password: At/n/+KBT2z5fWq779aI4pvoyPuYXrRWSm/KqfibzO+ACRBE0CJd
 
     - name: 'Build and push Docker image'
       uses: docker/build-push-action@v2
