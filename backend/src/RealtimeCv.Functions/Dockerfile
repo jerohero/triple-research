@@ -1,5 +1,5 @@
 # Stage 0: Setup OpenCV
-FROM mcr.microsoft.com/dotnet/aspnet:7.0-jammy as opencv-builder
+FROM mcr.microsoft.com/dotnet/aspnet:7.0-jammy as builder
 
 ENV OPENCV=4.7.0 DEBIAN_FRONTEND=noninteractive
 
@@ -10,11 +10,11 @@ FROM  mcr.microsoft.com/azure-functions/dotnet-isolated:4-dotnet-isolated7.0 AS 
 WORKDIR /home/site/wwwroot
 
 FROM mcr.microsoft.com/dotnet/sdk:7.0-jammy AS build
-WORKDIR /backend/src
-COPY ["backend/src/RealtimeCv.Functions/RealtimeCv.Functions.csproj", "backend/src/RealtimeCv.Functions/"]
-RUN dotnet restore "backend/src/RealtimeCv.Functions/RealtimeCv.Functions.csproj"
+WORKDIR /src
+COPY ["src/RealtimeCv.Functions/RealtimeCv.Functions.csproj", "src/RealtimeCv.Functions/"]
+RUN dotnet restore "src/RealtimeCv.Functions/RealtimeCv.Functions.csproj"
 COPY . .
-WORKDIR "backend/src/RealtimeCv.Functions"
+WORKDIR "/src/src/RealtimeCv.Functions"
 RUN dotnet build "RealtimeCv.Functions.csproj" -c Release -o /app/build
 
 FROM build AS publish
@@ -25,7 +25,7 @@ FROM base AS final
 WORKDIR /home/site/wwwroot
 
 COPY --from=publish /app/publish .
-COPY --from=opencv-builder /usr/lib /usr/lib
+COPY --from=builder /usr/lib /usr/lib
 
 ENV AzureWebJobsScriptRoot=/home/site/wwwroot \
   AzureFunctionsJobHost__Logging__Console__IsEnabled=true
