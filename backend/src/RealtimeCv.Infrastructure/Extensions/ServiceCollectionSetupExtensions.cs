@@ -14,6 +14,8 @@ using RealtimeCv.Infrastructure.Http;
 using RealtimeCv.Infrastructure.Kubernetes;
 using RealtimeCv.Infrastructure.Messaging;
 using RealtimeCv.Infrastructure.Streaming;
+using YamlDotNet.Serialization;
+using YamlDotNet.Serialization.NamingConventions;
 
 namespace RealtimeCv.Infrastructure.Extensions;
 
@@ -40,18 +42,19 @@ public static class ServiceCollectionSetupExtensions
         services.AddSingleton<IStreamSender, StreamSender>();
     }
 
-    public static void AddKubernetes(this IServiceCollection services, string path)
+    public static void AddKubernetes(this IServiceCollection services)
     {
         // Enable proxy with "kubectl proxy --port=8080 &"
         services.AddSingleton<IKubernetesService, KubernetesService>();
 
         services.AddTransient(typeof(k8s.Kubernetes), _ =>
             {
-                var kubeConfigPath = Path.Combine(path, "kubeconfig");
-                var config = KubernetesClientConfiguration.BuildConfigFromConfigFile(kubeConfigPath);
-
                 // return new k8s.Kubernetes(new KubernetesClientConfiguration { Host = "http://localhost:8080/" }); // For local testing
-                return new k8s.Kubernetes(config);
+                return new k8s.Kubernetes(new KubernetesClientConfiguration
+                {
+                    Host = "https://rcvaks-dns-4v6287a7.hcp.westeurope.azmk8s.io:8080/",
+                    SkipTlsVerify = true
+                });
             }
         );
     }

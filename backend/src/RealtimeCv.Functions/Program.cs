@@ -2,6 +2,7 @@
 using System.IO;
 using System.Reflection;
 using System.Threading.Tasks;
+using Azure.Identity;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
@@ -31,18 +32,11 @@ internal class Program
             
             Console.WriteLine("IsDevelopment: " + isDevelopment);
 
-            var location = Assembly.GetExecutingAssembly().Location;
-            var rootPath = isDevelopment
-                ? Path.GetFullPath(Path.Combine(location, "..", "..", "..", ".."))
-                : Path.GetDirectoryName(location);
-            
-            Console.WriteLine("RootPath: " + rootPath);
-
             services.AddSingleton(typeof(ILoggerAdapter<>), typeof(LoggerAdapter<>));
 
             services.AddDbContext(hostContext.Configuration.GetValue<string>("SqlConnectionString"));
             services.AddRepositories();
-            services.AddKubernetes(rootPath!);
+            services.AddKubernetes();
             services.AddBlobServices();
             services.AddAsynchronousMessagingServices();
 

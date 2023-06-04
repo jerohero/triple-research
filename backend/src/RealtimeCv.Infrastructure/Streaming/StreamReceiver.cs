@@ -8,8 +8,6 @@ using Newtonsoft.Json;
 using OpenCvSharp;
 using RealtimeCv.Core.Interfaces;
 using RealtimeCv.Infrastructure.Data.Config;
-using FFMpegCore;
-using FFMpegCore.Pipes;
 namespace RealtimeCv.Infrastructure.Streaming;
 
 /// <summary>
