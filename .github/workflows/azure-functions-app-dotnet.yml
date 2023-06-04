@@ -62,7 +62,7 @@ jobs:
 #         creds: ${{ secrets.AZURE_CREDENTIALS }}
 
     - name: 'Login to Azure Container Registry'
-      uses: azure/container-actions/login@v1
+      uses: azure/docker-login@v1
       with:
         login-server: ${{ env.DOCKER_REGISTRY }}
         username: rcvacr
