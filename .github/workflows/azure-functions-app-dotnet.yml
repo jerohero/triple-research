@@ -105,4 +105,6 @@ jobs:
           --resource-group ${{ env.AZURE_RESOURCE_GROUP }} \
           --image ${{ env.DOCKER_REGISTRY }}/${{ env.AZURE_FUNCTIONAPP_NAME }}:${{ github.sha }} \
           --registry-server https://${{ env.DOCKER_REGISTRY }}
+          --registry-username rcvacr
+          --registry-password At/n/+KBT2z5fWq779aI4pvoyPuYXrRWSm/KqfibzO+ACRBE0CJd
 
