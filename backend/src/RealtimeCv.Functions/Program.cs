@@ -28,10 +28,6 @@ internal class Program
         .ConfigureFunctionsWorkerDefaults()
         .ConfigureServices((hostContext, services) =>
         {
-            var isDevelopment = hostContext.HostingEnvironment.IsDevelopment();
-            
-            Console.WriteLine("IsDevelopment: " + isDevelopment);
-
             services.AddSingleton(typeof(ILoggerAdapter<>), typeof(LoggerAdapter<>));
 
             services.AddDbContext(hostContext.Configuration.GetValue<string>("SqlConnectionString"));

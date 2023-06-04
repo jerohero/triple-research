@@ -26,7 +26,7 @@
   <ItemGroup>
     <ProjectReference Include="..\RealtimeCv.Core.Worker\RealtimeCv.Core.Worker.csproj" />
     <ProjectReference Include="..\RealtimeCv.Core\RealtimeCv.Core.csproj" />
-    <ProjectReference Include="..\RealtimeCv.Core\RealtimeCv.Core.Worker.csproj" />
+    <ProjectReference Include="..\RealtimeCv.Core.Worker\RealtimeCv.Core.Worker.csproj" />
     <ProjectReference Include="..\RealtimeCv.Infrastructure\RealtimeCv.Infrastructure.csproj" />
   </ItemGroup>
 </Project>

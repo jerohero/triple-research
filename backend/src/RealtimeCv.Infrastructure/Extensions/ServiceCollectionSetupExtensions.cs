@@ -1,5 +1,6 @@
 ﻿using System;
-using System.IO;
+using Azure.Identity;
+using Azure.Security.KeyVault.Secrets;
 using k8s;
 using k8s.KubeConfigModels;
 using Microsoft.EntityFrameworkCore;
@@ -7,7 +8,6 @@ using Microsoft.Extensions.DependencyInjection;
 using Newtonsoft.Json;
 using Polly;
 using RealtimeCv.Core.Interfaces;
-using RealtimeCv.Core.Services;
 using RealtimeCv.Infrastructure.Data;
 using RealtimeCv.Infrastructure.Data.Repositories;
 using RealtimeCv.Infrastructure.Http;
@@ -49,12 +49,21 @@ public static class ServiceCollectionSetupExtensions
 
         services.AddTransient(typeof(k8s.Kubernetes), _ =>
             {
+                var keyVaultUri = new Uri("https://rcvkeyvault.vault.azure.net/");
+                var credential = new DefaultAzureCredential();
+                var secretClient = new SecretClient(keyVaultUri, credential);
+                var secretBundle = secretClient.GetSecret("KUBECONFIG");
+                var kubeConfigYaml = secretBundle.Value.Value;
+                
+                var deserializer = new DeserializerBuilder()
+                    .WithNamingConvention(CamelCaseNamingConvention.Instance)
+                    .Build();
+                var kubeConfigObject = deserializer.Deserialize<K8SConfiguration>(kubeConfigYaml);
+
+                var kubeConfig = KubernetesClientConfiguration.BuildConfigFromConfigObject(kubeConfigObject);
+
                 // return new k8s.Kubernetes(new KubernetesClientConfiguration { Host = "http://localhost:8080/" }); // For local testing
-                return new k8s.Kubernetes(new KubernetesClientConfiguration
-                {
-                    Host = "https://rcvaks-dns-4v6287a7.hcp.westeurope.azmk8s.io:8080/",
-                    SkipTlsVerify = true
-                });
+                return new k8s.Kubernetes(kubeConfig);
             }
         );
     }
