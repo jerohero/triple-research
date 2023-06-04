@@ -7,7 +7,7 @@ on:
 env:
   AZURE_RESOURCE_GROUP: 'realtimecv'
   AZURE_FUNCTIONAPP_NAME: 'rcvfunctions'
-  AZURE_FUNCTIONAPP_PACKAGE_PATH: './backend/src/RealtimeCv.Functions'
+  AZURE_FUNCTIONAPP_PACKAGE_PATH: 'backend/src/RealtimeCv.Functions'
   UNIT_TESTS_PACKAGE_PATH: 'backend/tests/RealtimeCv.UnitTests'
   BICEP_PATH: 'template.bicep'
   DOCKER_REGISTRY: 'rcvacr.azurecr.io' 
@@ -60,7 +60,7 @@ jobs:
     - name: 'Build and push Docker image'
       uses: docker/build-push-action@v2
       with:
-        context: ${{ env.AZURE_FUNCTIONAPP_PACKAGE_PATH }}
+        dockerfile: ${{ env.AZURE_FUNCTIONAPP_PACKAGE_PATH }}/Dockerfile
         push: true
         tags: ${{ env.DOCKER_REGISTRY }}/${{ env.AZURE_FUNCTIONAPP_NAME }}:${{ github.sha }}
         
