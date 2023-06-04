@@ -10,11 +10,11 @@ FROM  mcr.microsoft.com/azure-functions/dotnet-isolated:4-dotnet-isolated7.0 AS 
 WORKDIR /home/site/wwwroot
 
 FROM mcr.microsoft.com/dotnet/sdk:7.0-jammy AS build
-WORKDIR /src
-COPY ["src/RealtimeCv.Functions/RealtimeCv.Functions.csproj", "src/RealtimeCv.Functions/"]
-RUN dotnet restore "src/RealtimeCv.Functions/RealtimeCv.Functions.csproj"
+WORKDIR /backend/src
+COPY ["backend/src/RealtimeCv.Functions/RealtimeCv.Functions.csproj", "backend/src/RealtimeCv.Functions/"]
+RUN dotnet restore "backend/src/RealtimeCv.Functions/RealtimeCv.Functions.csproj"
 COPY . .
-WORKDIR "/src/src/RealtimeCv.Functions"
+WORKDIR "backend/src/RealtimeCv.Functions"
 RUN dotnet build "RealtimeCv.Functions.csproj" -c Release -o /app/build
 
 FROM build AS publish
