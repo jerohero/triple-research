@@ -62,7 +62,7 @@ jobs:
 #         creds: ${{ secrets.AZURE_CREDENTIALS }}
 
     - name: 'Login to Azure Container Registry'
-      uses: azure/docker-login@v1
+      uses: azure/container-actions/login@v1
       with:
         login-server: ${{ env.DOCKER_REGISTRY }}
         username: rcvacr
@@ -103,6 +103,6 @@ jobs:
         az functionapp config container set \
           --name ${{ env.AZURE_FUNCTIONAPP_NAME }} \
           --resource-group ${{ env.AZURE_RESOURCE_GROUP }} \
-          --docker-custom-image-name ${{ env.DOCKER_REGISTRY }}/${{ env.AZURE_FUNCTIONAPP_NAME }}:${{ github.sha }} \
-          --docker-registry-server-url https://${{ env.DOCKER_REGISTRY }}
+          --image ${{ env.DOCKER_REGISTRY }}/${{ env.AZURE_FUNCTIONAPP_NAME }}:${{ github.sha }} \
+          --registry-server https://${{ env.DOCKER_REGISTRY }}
 
