@@ -61,6 +61,11 @@ jobs:
 #       with:
 #         creds: ${{ secrets.AZURE_CREDENTIALS }}
 
+    - name: 'Login via Azure CLI'
+      uses: azure/login@v1
+      with:
+        creds: ${{ secrets.AZURE_CREDENTIALS }}
+
     - name: 'Login to Azure Container Registry'
       uses: azure/docker-login@v1
       with:
@@ -75,14 +80,17 @@ jobs:
         file: ./backend/src/RealtimeCv.Functions/Dockerfile
         push: true
         tags: ${{ env.DOCKER_REGISTRY }}/${{ env.AZURE_FUNCTIONAPP_NAME }}:${{ github.sha }}
-        build-args: |
-          BASE_IMAGE=mcr.microsoft.com/azure-functions/dotnet-isolated:4-dotnet-isolated7.0
-          PUBLISH_FOLDER=/app/publish
           
-    - name: 'Login via Azure CLI'
-      uses: azure/login@v1
+    - name: 'Run Azure Functions Container Action'
+      uses: Azure/functions-container-action@v1
+      id: fa
       with:
-        creds: ${{ secrets.AZURE_CREDENTIALS }}
+        app-name: rcvfunctions
+        image: ${{ env.DOCKER_REGISTRY }}/${{ env.AZURE_FUNCTIONAPP_NAME }}:${{ github.sha }}
+        
+    - name: Azure logout
+      run: |
+        az logout
         
 #     - name: 'Test .NET'
 #       shell: bash
@@ -98,13 +106,14 @@ jobs:
 #         publish-profile: ${{ secrets.AZURE_FUNCTIONAPP_PUBLISH_PROFILE }}
 #         package: '${{ env.AZURE_FUNCTIONAPP_PACKAGE_PATH }}/publish'
 
-    - name: 'Deploy Functions'
-      run: |
-        az functionapp config container set \
-          --name ${{ env.AZURE_FUNCTIONAPP_NAME }} \
-          --resource-group ${{ env.AZURE_RESOURCE_GROUP }} \
-          --image ${{ env.DOCKER_REGISTRY }}/${{ env.AZURE_FUNCTIONAPP_NAME }}:${{ github.sha }} \
-          --registry-server https://${{ env.DOCKER_REGISTRY }}
-          --registry-username rcvacr
-          --registry-password At/n/+KBT2z5fWq779aI4pvoyPuYXrRWSm/KqfibzO+ACRBE0CJd
+#     - name: 'Deploy Functions'
+#       run: |
+#         az functionapp config container set \
+#           --name ${{ env.AZURE_FUNCTIONAPP_NAME }} \
+#           --resource-group ${{ env.AZURE_RESOURCE_GROUP }} \
+#           --image ${{ env.DOCKER_REGISTRY }}/${{ env.AZURE_FUNCTIONAPP_NAME }}:${{ github.sha }} \
+#           --registry-server https://${{ env.DOCKER_REGISTRY }}
+#           --registry-username rcvacr
+#           --registry-password At/n/+KBT2z5fWq779aI4pvoyPuYXrRWSm/KqfibzO+ACRBE0CJd
+      
 
