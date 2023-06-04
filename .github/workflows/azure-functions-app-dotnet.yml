@@ -21,11 +21,6 @@ jobs:
     - name: 'Checkout code'
       uses: actions/checkout@v3
 
-#     - name: 'Login via Azure CLI'
-#       uses: azure/login@v1
-#       with:
-#         creds: ${{ secrets.AZURE_CREDENTIALS }}
-
 #     - name: Deploy Bicep Template
 #       uses: azure/CLI@v1
 #       with:
@@ -83,6 +78,11 @@ jobs:
         build-args: |
           BASE_IMAGE=mcr.microsoft.com/azure-functions/dotnet-isolated:4-dotnet-isolated7.0
           PUBLISH_FOLDER=/app/publish
+          
+    - name: 'Login via Azure CLI'
+      uses: azure/login@v1
+      with:
+        creds: ${{ secrets.AZURE_CREDENTIALS }}
         
 #     - name: 'Test .NET'
 #       shell: bash
