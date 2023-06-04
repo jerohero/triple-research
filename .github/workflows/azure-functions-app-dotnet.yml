@@ -56,14 +56,22 @@ jobs:
 #         pushd './${{ env.AZURE_FUNCTIONAPP_PACKAGE_PATH }}'
 #         dotnet publish --configuration Release --output ./publish
 #         popd
-    - name: Install Azure CLI
-      run: |
-        curl -sL https://aka.ms/InstallAzureCLIDeb | sudo bash
 
-    - name: 'Login via Azure CLI'
-      uses: azure/login@v1
+#     - name: Install Azure CLI
+#       run: |
+#         curl -sL https://aka.ms/InstallAzureCLIDeb | sudo bash
+
+#     - name: 'Login via Azure CLI'
+#       uses: azure/login@v1
+#       with:
+#         creds: ${{ secrets.AZURE_CREDENTIALS }}
+
+    - name: 'Login to Azure Container Registry'
+      uses: azure/docker-login@v1
       with:
-        creds: ${{ secrets.AZURE_CREDENTIALS }}
+        login-server: ${{ env.DOCKER_REGISTRY }}
+        username: azure-cli-2023-06-04-00-17-45
+        password: 0vO8Q~lX5DAkwoO3kcKy42BhyMhgo9lDpGxttaXy
 
     - name: 'Build and push Docker image'
       uses: docker/build-push-action@v2
