@@ -43,7 +43,7 @@
     <PackageVersion Include="Microsoft.Azure.Functions.Worker.Sdk" Version="1.10.0" />
     <PackageVersion Include="Microsoft.Azure.Functions.Worker.Extensions.Http" Version="3.0.13" />
     <PackageVersion Include="Microsoft.Azure.Functions.Worker.Extensions.Timer" Version="4.2.0" />
-    <PackageVersion Include="Microsoft.Azure.Functions.Worker.Extensions.Storage.Queues" Version="12.14.0" />
+    <PackageVersion Include="Microsoft.Azure.Functions.Worker.Extensions.Storage.Queues" Version="5.1.2" />
     <PackageVersion Include="Microsoft.Azure.Functions.Worker.Core" Version="1.12.1" />
     <PackageVersion Include="Azure.Core" Version="1.31.0" />
     <PackageVersion Include="Azure.Identity" Version="1.8.2" />
