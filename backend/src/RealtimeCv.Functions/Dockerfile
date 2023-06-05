@@ -1,8 +1,8 @@
+# Start with the .NET 7 SDK image as installer-env
 FROM mcr.microsoft.com/dotnet/sdk:7.0 AS installer-env
 
-ENV OPENCV=4.7.0
-
-WORKDIR /
+# Set environment variables
+ENV OPENCV=4.7.0 DEBIAN_FRONTEND=noninteractive
 
 # Install opencv dependencies
 RUN apt-get update && apt-get -y install --no-install-recommends \
@@ -68,7 +68,7 @@ RUN cd opencv && mkdir build && cd build && \
     .. && make -j$(nproc) && make install && ldconfig
 
 # Download OpenCvSharp
-RUN git clone https://github.com/shimat/opencvsharp.git && cd opencvsharp
+RUN git clone https://github.com/shimat/opencvsharp.git
 
 # Install the Extern lib.
 RUN mkdir /opencvsharp/make && cd /opencvsharp/make && \
@@ -78,7 +78,6 @@ RUN mkdir /opencvsharp/make && cd /opencvsharp/make && \
     rm -rf /opencv_contrib && \
     cp /opencvsharp/make/OpenCvSharpExtern/libOpenCvSharpExtern.so /usr/lib/
 
-# Function App
 COPY . /src
 RUN cd /src && \
     mkdir -p /home/site/wwwroot && \
@@ -88,4 +87,6 @@ FROM mcr.microsoft.com/azure-functions/dotnet-isolated:4-dotnet-isolated7.0
 ENV AzureWebJobsScriptRoot=/home/site/wwwroot \
     AzureFunctionsJobHost__Logging__Console__IsEnabled=true
 
+# Copy build output and OpenCV dependencies
 COPY --from=installer-env ["/home/site/wwwroot", "/home/site/wwwroot"]
+COPY --from=installer-env /usr/lib /usr/lib
