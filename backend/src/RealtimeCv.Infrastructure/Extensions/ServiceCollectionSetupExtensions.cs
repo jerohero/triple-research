@@ -49,11 +49,14 @@ public static class ServiceCollectionSetupExtensions
 
         services.AddTransient(typeof(k8s.Kubernetes), _ =>
             {
-                var keyVaultUri = new Uri("https://rcvkeyvault.vault.azure.net/");
-                var credential = new DefaultAzureCredential();
+                var clientId = Environment.GetEnvironmentVariable("ClientId");
+                var clientSecret = Environment.GetEnvironmentVariable("ClientSecret");
+                var tenantId = Environment.GetEnvironmentVariable("TenantId");
+                var keyVaultUri = new Uri(Environment.GetEnvironmentVariable("KeyVaultUri")!);
+                
+                var credential = new ClientSecretCredential(tenantId, clientId, clientSecret);
                 var secretClient = new SecretClient(keyVaultUri, credential);
-                var secretBundle = secretClient.GetSecret("KUBECONFIG");
-                var kubeConfigYaml = secretBundle.Value.Value;
+                var kubeConfigYaml = secretClient.GetSecret("KUBECONFIG").Value.Value;
                 
                 var deserializer = new DeserializerBuilder()
                     .WithNamingConvention(CamelCaseNamingConvention.Instance)
