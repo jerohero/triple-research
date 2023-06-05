@@ -1,27 +1,39 @@
 using System;
 using System.Collections.Generic;
+using System.IO;
 using System.Threading.Tasks;
+using Azure;
+using Azure.Storage.Files.Shares;
+using Azure.Storage.Files.Shares.Models;
 using k8s;
+using k8s.KubeConfigModels;
 using k8s.Models;
-using Newtonsoft.Json;
 using RealtimeCv.Core.Entities;
 using RealtimeCv.Core.Interfaces;
+using YamlDotNet.Serialization;
+using YamlDotNet.Serialization.NamingConventions;
 
 namespace RealtimeCv.Infrastructure.Kubernetes;
 
 public class KubernetesService : IKubernetesService
 {
-    private k8s.Kubernetes _kubernetes;
-    
+    private readonly ILoggerAdapter<KubernetesService> _logger;
+    private k8s.Kubernetes? _kubernetes;
+
     public KubernetesService(
-        k8s.Kubernetes kubernetes
+        ILoggerAdapter<KubernetesService> logger
     )
     {
-        _kubernetes = kubernetes;
+        _logger = logger;
     }
 
     public async Task<V1Pod> CreateSessionPod(Session session)
     {
+        if (_kubernetes is null)
+        {
+            await InitKubernetes();
+        }
+
         var pod = new V1Pod
         {
             Metadata = new V1ObjectMeta
@@ -107,6 +119,37 @@ public class KubernetesService : IKubernetesService
 
     public async Task<V1Pod> DeletePod(string podName)
     {
+        if (_kubernetes is null)
+        {
+            await InitKubernetes();
+        }
+
         return await _kubernetes.DeleteNamespacedPodAsync(podName, "default");
+    }
+
+    private async Task InitKubernetes()
+    {
+        var connectionString = Environment.GetEnvironmentVariable("AzureWebJobsStorage");
+        var shareName = "config";
+        var fileName = "kubeconfig";
+
+        var shareClient = new ShareClient(connectionString, shareName);
+
+        var fileClient = shareClient.GetRootDirectoryClient().GetFileClient(fileName);
+
+        Response<ShareFileDownloadInfo> fileDownloadInfo = await fileClient.DownloadAsync();
+
+        using var reader = new StreamReader(fileDownloadInfo.Value.Content);
+        var kubeConfigYaml = await reader.ReadToEndAsync();
+
+        var deserializer = new DeserializerBuilder()
+            .WithNamingConvention(CamelCaseNamingConvention.Instance)
+            .Build();
+        var kubeConfigObject = deserializer.Deserialize<K8SConfiguration>(kubeConfigYaml);
+
+        var kubeConfig = KubernetesClientConfiguration.BuildConfigFromConfigObject(kubeConfigObject);
+
+        // new k8s.Kubernetes(new KubernetesClientConfiguration { Host = "http://localhost:8080/" }); // For local testing
+        _kubernetes = new k8s.Kubernetes(kubeConfig);
     }
 }

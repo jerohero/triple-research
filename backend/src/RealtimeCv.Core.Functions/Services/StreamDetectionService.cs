@@ -15,6 +15,7 @@ namespace RealtimeCv.Core.Functions.Services;
 /// </summary>
 public class StreamDetectionService : IStreamDetectionService, IDisposable
 {
+    private readonly ILoggerAdapter<StreamDetectionService> _logger;
     private readonly IStreamReceiver _streamReceiver;
     private readonly IVisionSetRepository _visionSetRepository;
     private readonly ISessionService _sessionService;
@@ -22,11 +23,13 @@ public class StreamDetectionService : IStreamDetectionService, IDisposable
     private const int SourceChunkSize = 10;
 
     public StreamDetectionService(
+        ILoggerAdapter<StreamDetectionService> logger,
         IStreamReceiver streamReceiver,
         IVisionSetRepository visionSetRepository,
         ISessionService sessionService,
         IQueue queue)
     {
+        _logger = logger;
         _streamReceiver = streamReceiver;
         _visionSetRepository = visionSetRepository;
         _sessionService = sessionService;

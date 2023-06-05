@@ -1,8 +1,4 @@
 ﻿using System;
-using Azure.Identity;
-using Azure.Security.KeyVault.Secrets;
-using k8s;
-using k8s.KubeConfigModels;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.DependencyInjection;
 using Newtonsoft.Json;
@@ -14,8 +10,6 @@ using RealtimeCv.Infrastructure.Http;
 using RealtimeCv.Infrastructure.Kubernetes;
 using RealtimeCv.Infrastructure.Messaging;
 using RealtimeCv.Infrastructure.Streaming;
-using YamlDotNet.Serialization;
-using YamlDotNet.Serialization.NamingConventions;
 
 namespace RealtimeCv.Infrastructure.Extensions;
 
@@ -46,29 +40,6 @@ public static class ServiceCollectionSetupExtensions
     {
         // Enable proxy with "kubectl proxy --port=8080 &"
         services.AddSingleton<IKubernetesService, KubernetesService>();
-
-        services.AddTransient(typeof(k8s.Kubernetes), _ =>
-            {
-                var clientId = Environment.GetEnvironmentVariable("ClientId");
-                var clientSecret = Environment.GetEnvironmentVariable("ClientSecret");
-                var tenantId = Environment.GetEnvironmentVariable("TenantId");
-                var keyVaultUri = new Uri(Environment.GetEnvironmentVariable("KeyVaultUri")!);
-                
-                var credential = new ClientSecretCredential(tenantId, clientId, clientSecret);
-                var secretClient = new SecretClient(keyVaultUri, credential);
-                var kubeConfigYaml = secretClient.GetSecret("KUBECONFIG").Value.Value;
-                
-                var deserializer = new DeserializerBuilder()
-                    .WithNamingConvention(CamelCaseNamingConvention.Instance)
-                    .Build();
-                var kubeConfigObject = deserializer.Deserialize<K8SConfiguration>(kubeConfigYaml);
-
-                var kubeConfig = KubernetesClientConfiguration.BuildConfigFromConfigObject(kubeConfigObject);
-
-                // return new k8s.Kubernetes(new KubernetesClientConfiguration { Host = "http://localhost:8080/" }); // For local testing
-                return new k8s.Kubernetes(kubeConfig);
-            }
-        );
     }
 
     public static void AddConnectionServices(this IServiceCollection services)

@@ -70,8 +70,7 @@ public class SessionService : ISessionService
 
         var spec = new SessionWithVisionSetSpec(result.Value.Id);
         var session = await _sessionRepository.SingleOrDefaultAsync(spec, CancellationToken.None);
-
-        // TODO: When running locally, don't forget to enable Minikube proxy
+        
         await _kubernetesService.CreateSessionPod(session);
         
         return result;
