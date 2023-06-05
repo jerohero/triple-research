@@ -1,7 +1,6 @@
-# Stage 0: Setup OpenCV
-FROM mcr.microsoft.com/dotnet/aspnet:7.0-jammy as builder
+FROM mcr.microsoft.com/dotnet/sdk:7.0 AS installer-env
 
-ENV OPENCV=4.7.0 DEBIAN_FRONTEND=noninteractive
+ENV OPENCV=4.7.0
 
 WORKDIR /
 
@@ -79,29 +78,14 @@ RUN mkdir /opencvsharp/make && cd /opencvsharp/make && \
     rm -rf /opencv_contrib && \
     cp /opencvsharp/make/OpenCvSharpExtern/libOpenCvSharpExtern.so /usr/lib/
 
-# BUILD
-FROM  mcr.microsoft.com/azure-functions/dotnet-isolated:4-dotnet-isolated7.0 AS base
-WORKDIR /home/site/wwwroot
+# Function App
+COPY . /src
+RUN cd /src && \
+    mkdir -p /home/site/wwwroot && \
+    dotnet publish src/RealtimeCv.Functions/RealtimeCv.Functions.csproj --output /home/site/wwwroot
 
-FROM mcr.microsoft.com/dotnet/sdk:7.0-jammy AS build
-WORKDIR /src
-COPY ["src/RealtimeCv.Functions/RealtimeCv.Functions.csproj", "src/RealtimeCv.Functions/"]
-RUN dotnet restore "src/RealtimeCv.Functions/RealtimeCv.Functions.csproj"
-COPY . .
-WORKDIR "/src/src/RealtimeCv.Functions"
-RUN dotnet build "RealtimeCv.Functions.csproj" -c Release -o /app/build
-
-FROM build AS publish
-RUN dotnet publish "RealtimeCv.Functions.csproj" -c Release -o /app/publish
-
-# RUN
-FROM base AS final
-WORKDIR /home/site/wwwroot
-
-COPY --from=publish /app/publish .
-COPY --from=builder /usr/lib /usr/lib
-
+FROM mcr.microsoft.com/azure-functions/dotnet-isolated:4-dotnet-isolated7.0
 ENV AzureWebJobsScriptRoot=/home/site/wwwroot \
-  AzureFunctionsJobHost__Logging__Console__IsEnabled=true
-  
-ENTRYPOINT ["dotnet", "RealtimeCv.Functions.dll"]
+    AzureFunctionsJobHost__Logging__Console__IsEnabled=true
+
+COPY --from=installer-env ["/home/site/wwwroot", "/home/site/wwwroot"]
