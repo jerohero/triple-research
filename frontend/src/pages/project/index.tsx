@@ -1,10 +1,10 @@
 import React, {useEffect, useState} from 'react'
-import axios from 'axios'
 import { useParams } from 'react-router-dom'
 import { Project, TrainedModel } from '../../common/types'
 import ModelUploader from '../../components/model-uploader'
 import VisionSetsList from '../../components/vision-sets-list'
-import ModelItem from "../../components/model-item";
+import ModelItem from '../../components/model-item'
+import axios from "../../shared/axios";
 
 function ProjectPage() {
   const { id } = useParams();
@@ -12,7 +12,7 @@ function ProjectPage() {
   const [trainedModels, setTrainedModels] = useState<TrainedModel[]>()
 
   useEffect(() => {
-    axios.get(`http://localhost:7071/api/project/${ id }`)
+    axios().get(`project/${ id }`)
       .then((res) => {
         setProject(res.data)
       })
@@ -20,7 +20,7 @@ function ProjectPage() {
 
       })
 
-    axios.get(`http://localhost:7071/api/project/${ id }/trained-model`)
+    axios().get(`project/${ id }/trained-model`)
       .then((res) => {
         setTrainedModels(res.data)
       })

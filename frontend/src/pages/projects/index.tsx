@@ -1,13 +1,13 @@
 import React, {useEffect, useState} from 'react'
-import axios from 'axios'
 import { Link } from 'react-router-dom'
 import { Project } from '../../common/types'
+import axios from "../../shared/axios";
 
 function ProjectsPage() {
   const [projects, setProjects] = useState<Project[]>([])
 
   useEffect(() => {
-    axios.get('http://localhost:7071/api/project/').then((res) => {
+    axios().get('project').then((res) => {
       setProjects(res.data)
     }).catch((err) => {
 

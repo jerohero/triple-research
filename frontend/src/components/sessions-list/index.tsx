@@ -1,13 +1,13 @@
 import React, { useEffect, useState } from "react"
-import {Session} from '../../common/types'
-import axios from 'axios'
+import { Session } from '../../common/types'
 import { Link } from 'react-router-dom'
+import axios from "../../shared/axios";
 
 function SessionsList(props: { visionSetId: number }) {
   const [sessions, setSessions] = useState<Session[]>([])
 
   useEffect(() => {
-    axios.get(`http://localhost:7071/api/vision-set/${ props.visionSetId }/session`).then((res) => {
+    axios().get(`vision-set/${ props.visionSetId }/session`).then((res) => {
       setSessions(res.data)
     }).catch((err) => {
 

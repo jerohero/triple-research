@@ -1,13 +1,13 @@
-import React, {useEffect, useState} from "react";
-import {VisionSet} from "../../common/types";
-import axios from "axios";
-import {Link} from "react-router-dom";
+import React, {useEffect, useState} from "react"
+import {VisionSet} from '../../common/types'
+import {Link} from 'react-router-dom'
+import axios from "../../shared/axios";
 
 function VisionSetsList(props: { projectId: number }) {
   const [visionSets, setVisionSets] = useState<VisionSet[]>([])
 
   useEffect(() => {
-    axios.get(`http://localhost:7071/api/project/${ props.projectId }/vision-set`).then((res) => {
+    axios().get(`project/${ props.projectId }/vision-set`).then((res) => {
       setVisionSets(res.data)
     }).catch((err) => {
 

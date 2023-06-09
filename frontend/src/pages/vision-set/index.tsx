@@ -1,16 +1,16 @@
 import React, { useEffect, useState } from 'react'
-import axios from 'axios'
 import { useParams } from 'react-router-dom'
 import {Session, TrainedModel, VisionSet} from '../../common/types'
 import SessionsList from '../../components/sessions-list'
 import Combobox from "../../components/combobox";
+import axios from "../../shared/axios";
 
 function VisionSetPage() {
   const { id } = useParams();
   const [visionSet, setVisionSet] = useState<VisionSet>()
 
   useEffect(() => {
-    axios.get(`http://localhost:7071/api/vision-set/${ id }`)
+    axios().get(`vision-set/${ id }`)
       .then((res) => {
         console.log(res.data)
         setVisionSet(res.data)
@@ -21,7 +21,7 @@ function VisionSetPage() {
   }, [])
 
   const getModelsFetchUrl = (): string => {
-    return `http://localhost:7071/api/project/${ visionSet?.ProjectId }/trained-model`
+    return `https://rcvfunctions.azurewebsites.net/api/project/${ visionSet?.ProjectId }/trained-model`
   }
 
   const onModelChanged = (newModel: TrainedModel) => {
@@ -38,7 +38,7 @@ function VisionSetPage() {
 
     console.log(visionSet)
 
-    axios.put(`http://localhost:7071/api/vision-set`, {
+    axios().put(`vision-set`, {
       id: visionSet.Id,
       name: visionSet.Name,
       sources: visionSet.Sources,

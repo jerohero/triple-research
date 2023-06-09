@@ -1,14 +1,15 @@
 import React, { useEffect, useState } from 'react'
-import axios, {AxiosResponse} from 'axios'
 import { useParams } from 'react-router-dom'
 import { Negotiate } from '../../common/types'
+import axios from '../../shared/axios'
+import { AxiosResponse } from 'axios'
 
 function SessionPage() {
   const { id } = useParams();
   const [events, setEvents]: any = useState([])
 
   useEffect(() => {
-    axios.post(`http://localhost:7071/api/session/${ id }/negotiate`).then((res: AxiosResponse<Negotiate>) => {
+    axios().post(`session/${ id }/negotiate`).then((res: AxiosResponse<Negotiate>) => {
       console.log(res.data.Url)
       const ws = new WebSocket(res.data.Url)
 
@@ -25,19 +26,26 @@ function SessionPage() {
 
   return (
     <div>
-      { events.map((event: any, i: number) =>
-        <div key={ i } className="border-y">
-          <h3>Prediction { Date.now() }</h3>
-          { event.predictions.map((prediction: any, i: number) =>
-            <div key={ i } className="my-2">
-              <p className="text-green-600">{ prediction.label }</p>
-              <p>{ prediction.probability }</p>
-              <p>{ JSON.stringify(prediction.boundingBox) }</p>
+      { !!events && events.length > 0 && (
+        <div>
+          { events.map((event: any, i: number) =>
+            <div key={ i } className="border-y">
+              <h3>Prediction { Date.now() }</h3>
+              { event.map((prediction: any, i: number) =>
+                <div key={ i } className="my-2">
+                  <p className="text-green-600">{ prediction.class_name }</p>
+                  <p>confidence: { prediction.confidence }</p>
+                  <p>x1: { JSON.stringify(prediction.x1) }</p>
+                  <p>x2: { JSON.stringify(prediction.x2) }</p>
+                  <p>y1: { JSON.stringify(prediction.y1) }</p>
+                  <p>y2: { JSON.stringify(prediction.y2) }</p>
+                </div>
+              )}
+              <br/>
             </div>
           )}
-          <br/>
         </div>
-      )}
+      ) }
     </div>
   )
 }

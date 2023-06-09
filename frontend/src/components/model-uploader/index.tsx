@@ -1,5 +1,5 @@
 import React, { useState } from 'react'
-import axios from 'axios'
+import axios from '../../shared/axios'
 
 function ModelUploader(props: { projectId: number }) {
   const [selectedFile, setSelectedFile] = useState<any>(null)
@@ -9,7 +9,7 @@ function ModelUploader(props: { projectId: number }) {
 
   const uploadChunk: any = async (chunk: any, start: number, end: number, retries = 3) => {
     try {
-      await axios.post(`http://localhost:7071/api/project/${props.projectId}/trained-model`, chunk, {
+      await axios().post(`project/${props.projectId}/trained-model`, chunk, {
         headers: {
           "Content-Type": "application/octet-stream",
           "x-chunk-metadata": JSON.stringify({ name: selectedFile.name, size: selectedFile.size })
