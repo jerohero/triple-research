@@ -45,14 +45,13 @@ def inference():
 def start():
     global model
 
-    model_uri = request.data
+    # model_uri = request.data
     wpath = "model.pt"
 
-    response = requests.get(model_uri, stream=True)
-
-    with open(wpath, "wb") as f:
-        for chunk in response.iter_content(chunk_size=8192):
-            f.write(chunk)
+    # response = requests.get(model_uri, stream=True)
+    # with open(wpath, "wb") as f:
+    #     for chunk in response.iter_content(chunk_size=8192):
+    #         f.write(chunk)
 
     model = YOLO(wpath)
 

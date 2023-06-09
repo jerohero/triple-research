@@ -38,7 +38,6 @@ public static class ServiceCollectionSetupExtensions
 
     public static void AddKubernetes(this IServiceCollection services)
     {
-        // Enable proxy with "kubectl proxy --port=8080 &"
         services.AddSingleton<IKubernetesService, KubernetesService>();
     }
 
