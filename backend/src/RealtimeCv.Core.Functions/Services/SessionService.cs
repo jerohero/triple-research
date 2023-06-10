@@ -155,7 +155,7 @@ public class SessionService : ISessionService
     
     private async Task<Result<SessionDto>> CreateSession(SessionStartDto? createDto)
     {
-        var validationResult = await new SessionCreateDtoValidator().ValidateAsync(createDto!);
+        var validationResult = await new SessionStartDtoValidator().ValidateAsync(createDto!);
 
         if (createDto is null || validationResult.Errors.Any())
         {

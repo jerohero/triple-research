@@ -4,9 +4,9 @@ using RealtimeCv.Core.Models.Dto;
 
 namespace RealtimeCv.Core.Functions.Validators;
 
-public class SessionCreateDtoValidator : AbstractValidator<SessionStartDto>
+public class SessionStartDtoValidator : AbstractValidator<SessionStartDto>
 {
-    public SessionCreateDtoValidator()
+    public SessionStartDtoValidator()
     {
         RuleFor(x => x.VisionSetId).GreaterThan(0);
         RuleFor(x => x.Source).MinimumLength(1).MaximumLength(100);
