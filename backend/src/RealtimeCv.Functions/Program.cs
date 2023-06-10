@@ -39,7 +39,7 @@ internal class Program
             services.AddScoped<IProjectService, ProjectService>();
             services.AddScoped<IVisionSetService, VisionSetService>();
             services.AddScoped<ISessionService, SessionService>();
-            services.AddScoped<IStreamDetectionService, StreamDetectionService>();
+            services.AddScoped<IStreamPollService, StreamPollService>();
             
             services.AddSingleton<IStreamReceiver, StreamReceiver>();
             

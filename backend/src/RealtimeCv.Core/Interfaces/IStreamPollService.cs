@@ -4,7 +4,7 @@ using RealtimeCv.Core.Models;
 
 namespace RealtimeCv.Core.Interfaces;
 
-public interface IStreamDetectionService
+public interface IStreamPollService
 {
     Task<List<string>> StartSessionsForActiveStreams(StreamPollChunkMessage message);
 

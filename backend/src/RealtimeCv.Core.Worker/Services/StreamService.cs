@@ -13,18 +13,15 @@ public class StreamService : IStreamService, IDisposable
     private readonly IStreamReceiver _streamReceiver;
     private readonly IStreamSender _streamSender;
     private readonly IPubSub _pubSub;
-    private readonly IBlob _blob;
 
     public StreamService(
-      IStreamReceiver streamReceiver,
-      IStreamSender streamSender,
-      IPubSub pubSub,
-      IBlob blob)
+        IStreamReceiver streamReceiver,
+        IStreamSender streamSender,
+        IPubSub pubSub)
     {
         _streamReceiver = streamReceiver;
         _streamSender = streamSender;
         _pubSub = pubSub;
-        _blob = blob;
     }
 
     public void HandleStream(Session session, string modelUri, string targetUrl)

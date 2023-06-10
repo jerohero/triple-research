@@ -11,22 +11,22 @@ namespace RealtimeCv.Functions.Controllers;
 public class StreamController : BaseController
 {
     private readonly ILoggerAdapter<StreamController> _logger;
-    private readonly IStreamDetectionService _streamDetectionService;
+    private readonly IStreamPollService _streamPollService;
 
     public StreamController(
         ILoggerAdapter<StreamController> logger,
-        IStreamDetectionService streamDetectionService
+        IStreamPollService streamPollService
     )
     {
         _logger = logger;
-        _streamDetectionService = streamDetectionService;
+        _streamPollService = streamPollService;
     }
 
     [Function("PollStreams")]
     public async Task PollStreams(
       [TimerTrigger("*/60 * * * * *")] TimerInfo timerInfo, FunctionContext context)
     {
-        await _streamDetectionService.StartPollStreams();
+        await _streamPollService.StartPollStreams();
     }
 
     [Function("StartSessionsForActiveStreams")]
@@ -34,7 +34,7 @@ public class StreamController : BaseController
     {
         var now = DateTime.UtcNow;
 
-        var activeStreams = await _streamDetectionService.StartSessionsForActiveStreams(message);
+        var activeStreams = await _streamPollService.StartSessionsForActiveStreams(message);
 
         var duration = DateTime.UtcNow - now;
         

@@ -13,17 +13,17 @@ namespace RealtimeCv.Core.Functions.Services;
 /// <summary>
 /// Service that oversees the process of consuming the input, sending it to the inference API and publishing the results.
 /// </summary>
-public class StreamDetectionService : IStreamDetectionService, IDisposable
+public class StreamPollService : IStreamPollService, IDisposable
 {
-    private readonly ILoggerAdapter<StreamDetectionService> _logger;
+    private readonly ILoggerAdapter<StreamPollService> _logger;
     private readonly IStreamReceiver _streamReceiver;
     private readonly IVisionSetRepository _visionSetRepository;
     private readonly ISessionService _sessionService;
     private readonly IQueue _queue;
     private const int SourceChunkSize = 10;
 
-    public StreamDetectionService(
-        ILoggerAdapter<StreamDetectionService> logger,
+    public StreamPollService(
+        ILoggerAdapter<StreamPollService> logger,
         IStreamReceiver streamReceiver,
         IVisionSetRepository visionSetRepository,
         ISessionService sessionService,

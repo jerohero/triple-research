@@ -12,7 +12,6 @@ using RealtimeCv.Core.Functions.Services;
 using RealtimeCv.Core.Interfaces;
 using RealtimeCv.Infrastructure.Data;
 using RealtimeCv.Infrastructure.Data.Repositories;
-using RealtimeCv.Infrastructure.Kubernetes;
 
 namespace RealtimeCv.UnitTests.Core.Functions.Services;
 
