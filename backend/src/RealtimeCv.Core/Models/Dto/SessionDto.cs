@@ -1,4 +1,5 @@
 ﻿using System;
+using JetBrains.Annotations;
 using Newtonsoft.Json;
 
 namespace RealtimeCv.Core.Models.Dto;
@@ -23,15 +24,15 @@ public class SessionDto
     [JsonRequired]
     public DateTime CreatedAt { get; set; }
     
-    [JsonRequired]
-    public DateTime StartedAt { get; set; }
+    [CanBeNull]
+    public DateTime? StartedAt { get; set; }
     
-    [JsonRequired]
-    public DateTime StoppedAt { get; set; }
+    [CanBeNull]
+    public DateTime? StoppedAt { get; set; }
 
     public SessionDto(
         int id, int visionSetId, string source, string pod, bool isActive,
-        DateTime createdAt, DateTime startedAt, DateTime stoppedAt
+        DateTime createdAt, DateTime? startedAt = null, DateTime? stoppedAt = null
     )
     {
         Id = id;

@@ -84,8 +84,8 @@ namespace RealtimeCv.Infrastructure.Data.Migrations
                     Pod = table.Column<string>(type: "nvarchar(max)", nullable: true),
                     IsActive = table.Column<bool>(type: "bit", nullable: false),
                     CreatedAt = table.Column<DateTime>(type: "datetime2", nullable: false),
-                    StartedAt = table.Column<DateTime>(type: "datetime2", nullable: false),
-                    StoppedAt = table.Column<DateTime>(type: "datetime2", nullable: false)
+                    StartedAt = table.Column<DateTime>(type: "datetime2", nullable: true),
+                    StoppedAt = table.Column<DateTime>(type: "datetime2", nullable: true)
                 },
                 constraints: table =>
                 {
