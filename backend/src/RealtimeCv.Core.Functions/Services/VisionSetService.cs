@@ -90,8 +90,9 @@ public class VisionSetService : IVisionSetService
         }
 
         var visionSet = await _visionSetRepository.GetByIdAsync(updateDto.Id);
+        var trainedModel = await _trainedModelRepository.GetByIdAsync(updateDto.TrainedModelId);
 
-        if (visionSet is null)
+        if (visionSet is null || trainedModel is null)
         {
             return Result<VisionSetDto>.NotFound();
         }

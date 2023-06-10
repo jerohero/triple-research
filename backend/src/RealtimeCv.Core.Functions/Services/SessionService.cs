@@ -24,6 +24,7 @@ public class SessionService : ISessionService
     private readonly IMapper _mapper;
     private readonly ILoggerAdapter<SessionService> _logger;
     private readonly ISessionRepository _sessionRepository;
+    private readonly IVisionSetRepository _visionSetRepository;
     private readonly IKubernetesService _kubernetesService;
     private readonly IPubSub _pubSub;
 
@@ -31,6 +32,7 @@ public class SessionService : ISessionService
         ILoggerAdapter<SessionService> logger,
         IMapper mapper,
         ISessionRepository sessionRepository,
+        IVisionSetRepository visionSetRepository,
         IKubernetesService kubernetesService,
         IPubSub pubSub
     )
@@ -38,6 +40,7 @@ public class SessionService : ISessionService
         _mapper = mapper;
         _logger = logger;
         _sessionRepository = sessionRepository;
+        _visionSetRepository = visionSetRepository;
         _kubernetesService = kubernetesService;
         _pubSub = pubSub;
     }
@@ -86,8 +89,9 @@ public class SessionService : ISessionService
         }
     
         var session = await _sessionRepository.GetByIdAsync(updateDto.Id);
+        var visionSet = await _visionSetRepository.GetByIdAsync(updateDto.VisionSetId);
     
-        if (session is null)
+        if (session is null || visionSet is null)
         {
             return Result<SessionDto>.NotFound();
         }

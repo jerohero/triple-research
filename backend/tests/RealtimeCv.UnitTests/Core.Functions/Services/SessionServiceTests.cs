@@ -1,8 +1,10 @@
 using System;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.Linq;
 using Ardalis.Result;
 using Moq;
+using Newtonsoft.Json;
 using NUnit.Framework;
 using RealtimeCv.Core.Entities;
 using RealtimeCv.Core.Interfaces;
@@ -393,7 +395,7 @@ public class SessionServiceTests : SessionServiceTestsBase
     }
 
     [Test]
-    public void NegotiateSession_WhenSessionDoesNotExist_ItShouldReturnResultStatusNotFound()
+    public void NegotiateSession_WhenSessionDoesNotFound_ItShouldReturnResultStatusNotFound()
     {
         // Arrange
         const int sessionId = 1;

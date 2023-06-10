@@ -1,9 +1,7 @@
-using System;
 using System.Collections.Generic;
 using System.Diagnostics;
 using AutoMapper;
 using Microsoft.EntityFrameworkCore;
-using Moq;
 using Moq.AutoMock;
 using NUnit.Framework;
 using RealtimeCv.Core.Entities;
@@ -12,15 +10,13 @@ using RealtimeCv.Core.Functions.Services;
 using RealtimeCv.Core.Interfaces;
 using RealtimeCv.Infrastructure.Data;
 using RealtimeCv.Infrastructure.Data.Repositories;
-using RealtimeCv.Infrastructure.Kubernetes;
 
 namespace RealtimeCv.UnitTests.Core.Functions.Services;
 
-public class SessionServiceTestsBase
+public class VisionSetServiceTestsBase
 {
-    protected SessionService _service;
+    protected VisionSetService _service;
     protected AppDbContext _context;
-    protected Mock<IPubSub> _pubSubMock;
 
     [SetUp]
     public void Setup()
@@ -32,52 +28,57 @@ public class SessionServiceTestsBase
         _context = new AppDbContext(options);
         _context.Database.EnsureCreated();
 
-        var loggerMock = mocker.GetMock<ILoggerAdapter<SessionService>>();
-        var kubernetesMock = mocker.GetMock<IKubernetesService>();
-        _pubSubMock = mocker.GetMock<IPubSub>();
+        var loggerMock = mocker.GetMock<ILoggerAdapter<VisionSetService>>();
+        var blobMock = mocker.GetMock<IBlob>();
         
         var mapperConfig = new MapperConfiguration(cfg => 
             cfg.AddProfile(new AutomapperMaps())
         );
         var mapper = new Mapper(mapperConfig);
 
-        _service = new SessionService(
-            loggerMock.Object, mapper,
-            new SessionRepository(_context), new VisionSetRepository(_context),
-            kubernetesMock.Object, _pubSubMock.Object
+        _service = new VisionSetService(
+            loggerMock.Object, mapper, new VisionSetRepository(_context),
+            new ProjectRepository(_context), new TrainedModelRepository(_context)
         );
         
         Trace.Listeners.Add(new ConsoleTraceListener());
     }
 
-    protected void SetupSessions(int count)
+    protected void SetupVisionSets(int count)
     {
-        var fakeSessions = new List<Session>();
-        var fakeVisionSet = new VisionSet
+        var fakeVisionSets = new List<VisionSet>();
+        
+        var fakeProject = new Project
         {
-            Name = "test",
-            ContainerImage = "test/image:latest",
-            Sources = new List<string> { "rtsp://test.com" },
-            ProjectId = 1,
-            TrainedModelId = 1,
+            Name = "project"
         };
         
-        _context.VisionSet.Add(fakeVisionSet);
+        _context.Project.Add(fakeProject);
+        _context.SaveChanges();
+
+        var fakeTrainedModel = new TrainedModel
+        {
+            Name = "test.pt",
+            IsUploadFinished = true,
+            ProjectId = fakeProject.Id
+        };
+        
+        _context.TrainedModel.Add(fakeTrainedModel);
         _context.SaveChanges();
 
         for (var i = 0; i < count; i++)
         {
-            fakeSessions.Add(new Session
+            fakeVisionSets.Add(new VisionSet
             {
-                VisionSetId = fakeVisionSet.Id,
-                Source = "rtsp://test.com",
-                Pod = "cv-test-1",
-                IsActive = false,
-                CreatedAt = DateTime.UtcNow
+                Name = $"test{i}",
+                ContainerImage = "test/image:latest",
+                Sources = new List<string> { "rtsp://test.com" },
+                ProjectId = fakeProject.Id,
+                TrainedModelId = fakeTrainedModel.Id
             });
         }
-        
-        _context.Session.AddRange(fakeSessions);
+
+        _context.VisionSet.AddRange(fakeVisionSets);
         _context.SaveChanges();
     }
 }
