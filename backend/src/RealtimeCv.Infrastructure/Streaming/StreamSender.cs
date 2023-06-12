@@ -1,12 +1,9 @@
 ﻿using System;
-using System.Drawing;
 using System.Net.Http;
 using System.Net.Http.Json;
 using System.Text.Json;
 using System.Threading;
-using System.Threading.Tasks;
 using Ardalis.GuardClauses;
-using OpenCvSharp.Extensions;
 using RealtimeCv.Core.Interfaces;
 using RealtimeCv.Infrastructure.Data.Config;
 
@@ -113,7 +110,6 @@ public class StreamSender : IStreamSender, IDisposable
             catch (HttpRequestException)
             {
                 _logger.LogInformation("Something went wrong");
-                // TODO throw error, as this would mean the inference API crashed
             }
             catch (JsonException)
             {

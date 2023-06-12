@@ -77,20 +77,4 @@ public class VisionSetController : BaseController
 
         return await ResultToResponse(result, req);
     }
-
-    [Function("startVisionSetSession")]
-    public async Task<HttpResponseData> StartVisionSetSession(
-        [HttpTrigger(AuthorizationLevel.Anonymous, "post", Route = "vision-set/{visionSetId}/start")] HttpRequestData req, int visionSetId)
-    {
-        var startSessionDto = new SessionStartDto(visionSetId, "rtmp://live.restream.io/live/re_6435068_ac960121c66cd1e6a9f5"); // TODO replace with stream url
-
-        var result = await _sessionService.StartSession(startSessionDto);
-        
-        if (result.Errors.Any())
-        {
-            return await ResultToResponse(result, req);
-        }
-
-        return await ResultToResponse(result, req);
-    }
 }

@@ -57,12 +57,12 @@ public class KubernetesService : IKubernetesService
                                 ContainerPort = 5000
                             }
                         },
-                        ImagePullPolicy = "Always" // TODO: Always
+                        ImagePullPolicy = "Always"
                     },
                     new()
                     {
                         Name = "cv-worker",
-                        Image = "yeruhero/cv-worker:latest", // TODO Env
+                        Image = "yeruhero/cv-worker:latest",
                         Ports = new List<V1ContainerPort>
                         {
                             new()
@@ -70,7 +70,7 @@ public class KubernetesService : IKubernetesService
                                 ContainerPort = 9300
                             }
                         },
-                        ImagePullPolicy = "Always", // TODO IfNotPresent
+                        ImagePullPolicy = "Always",
                         Env = new List<V1EnvVar>
                         {
                             new()

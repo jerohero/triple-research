@@ -30,15 +30,12 @@ function SessionPage() {
         <div>
           { events.map((event: any, i: number) =>
             <div key={ i } className="border-y">
-              <h3>Prediction { Date.now() }</h3>
+              <h3 className="text-green-600">
+                Prediction { Date.now() }
+              </h3>
               { event.map((prediction: any, i: number) =>
                 <div key={ i } className="my-2">
-                  <p className="text-green-600">{ prediction.class_name }</p>
-                  <p>confidence: { prediction.confidence }</p>
-                  <p>x1: { JSON.stringify(prediction.x1) }</p>
-                  <p>x2: { JSON.stringify(prediction.x2) }</p>
-                  <p>y1: { JSON.stringify(prediction.y1) }</p>
-                  <p>y2: { JSON.stringify(prediction.y2) }</p>
+                  <p>{ JSON.stringify(prediction) }</p>
                 </div>
               )}
               <br/>

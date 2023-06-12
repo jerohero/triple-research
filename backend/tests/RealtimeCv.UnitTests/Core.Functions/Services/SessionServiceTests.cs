@@ -307,7 +307,7 @@ public class SessionServiceTests : SessionServiceTestsBase
         var expected = typeof(SessionDto);
         const int visionSetId = 1;
         const string source = "https://stream.com";
-        var dto = new SessionDto(1, visionSetId, source, "cv-test-1", true, DateTime.UtcNow);
+        var dto = new SessionDto(1, visionSetId, source, "cv-test-1", true, DateTime.UtcNow, DateTime.MinValue, DateTime.MinValue);
         
         // Act
         var result = _service.UpdateSession(dto);

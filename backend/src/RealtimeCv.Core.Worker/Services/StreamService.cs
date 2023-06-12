@@ -42,7 +42,6 @@ public class StreamService : IStreamService, IDisposable
             OnStreamEnded?.Invoke();
             _streamReceiver.Dispose();
             _streamSender.Dispose();
-            // TODO terminate pod
         };
 
         _streamSender.OnPredictionResult += async result =>
@@ -56,7 +55,6 @@ public class StreamService : IStreamService, IDisposable
         {
             _streamReceiver.Dispose();
             _streamSender.Dispose();
-            // TODO terminate pod
         };
     }
     

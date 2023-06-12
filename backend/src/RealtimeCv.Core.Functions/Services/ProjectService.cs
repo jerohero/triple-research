@@ -134,7 +134,7 @@ public class ProjectService : IProjectService
 
             if (trainedModel is not null && trainedModel.IsUploadFinished)
             {
-                return Result.Error("A model already exists under this name"); // TODO: Replace with Result.Conflict when the package gets updated
+                return Result.Conflict("A model already exists under this name");
             }
         }
         else
@@ -198,7 +198,7 @@ public class ProjectService : IProjectService
         
         if (existingTrainedModel is not null)
         {
-            return Result.Error("A model already exists under this name"); // TODO: Replace with Result.Conflict when the package gets updated
+            return Result.Conflict("A model already exists under this name");
         }
 
         var trainedModel = await _trainedModelRepository.AddAsync(new TrainedModel

@@ -27,7 +27,6 @@ public class SessionHandlerHandlerService : ISessionHandlerService, IDisposable
 
     public async Task<Session> SetSessionActive(int sessionId)
     {
-        // TODO: Is this the right approach?
         using var scope = _serviceScopeFactoryLocator;
         var repository = scope.Get<ISessionRepository>();
         
@@ -61,16 +60,7 @@ public class SessionHandlerHandlerService : ISessionHandlerService, IDisposable
         _logger.LogInformation("CLOSING SESSION {sessionId}", sessionId);
         await _httpService.Post($"{Environment.GetEnvironmentVariable("ApiUrl")}/session/{sessionId}/stop");
     }
-    
-    // private async Task<Session> SetIsActive(Session session, bool isActive)
-    // {
-    //     session.IsActive = true;
-    //     
-    //     await _sessionRepository.UpdateAsync(session);
-    //
-    //     return session;
-    // }
-    
+
     public void Dispose()
     {
     }

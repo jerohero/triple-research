@@ -10,20 +10,17 @@ public class EntryPointService : IEntryPointService
     private readonly ILoggerAdapter<EntryPointService> _logger;
     private readonly IStreamService _streamService;
     private readonly ISessionHandlerService _sessionHandlerService;
-    private readonly IPubSub _pubSub;
     private readonly IBlob _blob;
     private bool _isRunning;
 
     public EntryPointService(ILoggerAdapter<EntryPointService> logger,
         IStreamService streamService,
         ISessionHandlerService sessionHandlerService,
-        IPubSub pubSub,
         IBlob blob)
     {
         _logger = logger;
         _streamService = streamService;
         _sessionHandlerService = sessionHandlerService;
-        _pubSub = pubSub;
         _blob = blob;
     }
 
@@ -50,7 +47,7 @@ public class EntryPointService : IEntryPointService
         _streamService.OnStreamEnded += () =>
         {
             _sessionHandlerService.EndSession(session.Id);
-            // _isRunning = false;
+            _isRunning = false;
         };
     }
     
