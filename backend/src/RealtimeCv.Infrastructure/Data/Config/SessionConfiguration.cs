@@ -19,9 +19,9 @@ public class SessionConfiguration : IEntityTypeConfiguration<Session>
         builder.Property(s => s.CreatedAt)
             .IsRequired();
         builder.Property(s => s.StartedAt)
-            .IsRequired(false);
+            .IsRequired();
         builder.Property(s => s.StoppedAt)
-            .IsRequired(false);
+            .IsRequired();
         builder.Property(s => s.VisionSetId)
             .IsRequired();
     }

@@ -24,15 +24,13 @@ public class SessionDto
     [JsonRequired]
     public DateTime CreatedAt { get; set; }
     
-    [CanBeNull]
-    public DateTime? StartedAt { get; set; }
+    public DateTime StartedAt { get; set; }
     
-    [CanBeNull]
-    public DateTime? StoppedAt { get; set; }
+    public DateTime StoppedAt { get; set; }
 
     public SessionDto(
         int id, int visionSetId, string source, string pod, bool isActive,
-        DateTime createdAt, DateTime? startedAt = null, DateTime? stoppedAt = null
+        DateTime createdAt, DateTime startedAt, DateTime stoppedAt
     )
     {
         Id = id;

@@ -273,7 +273,7 @@ public class SessionServiceTests : SessionServiceTestsBase
         SetupSessions(2);
         const int visionSetId = 1;
         const string source = "https://stream.com";
-        var dto = new SessionDto(1, visionSetId, source, "cv-test-1", true, DateTime.UtcNow);
+        var dto = new SessionDto(1, visionSetId, source, "cv-test-1", true, DateTime.UtcNow, DateTime.MinValue, DateTime.MinValue);
         const ResultStatus expected = ResultStatus.Ok;
         
         // Act
@@ -290,7 +290,7 @@ public class SessionServiceTests : SessionServiceTestsBase
         SetupSessions(2);
         const int visionSetId = 1;
         const string source = "https://stream.com";
-        var expected = new SessionDto(1, visionSetId, source, "cv-test-1", true, DateTime.UtcNow);
+        var expected = new SessionDto(1, visionSetId, source, "cv-test-1", true, DateTime.UtcNow, DateTime.MinValue, DateTime.MinValue);
 
         // Act
         var result = _service.UpdateSession(expected);

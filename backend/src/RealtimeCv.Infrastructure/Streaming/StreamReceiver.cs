@@ -59,18 +59,6 @@ public class StreamReceiver : IStreamReceiver, IDisposable
         var isOpened = capture.IsOpened();
         capture.Release();
 
-        // var ffprobePath = "C:/ffmpeg/bin/ffprobe.exe";
-        // var process = new Process();
-        // process.StartInfo.FileName = ffprobePath;
-        // process.StartInfo.Arguments = $"-v quiet -show_streams {source}";
-        // process.StartInfo.UseShellExecute = false;
-        // process.StartInfo.RedirectStandardOutput = true;
-        //
-        // process.Start();
-        // var output = process.StandardOutput.ReadToEnd();
-        // process.Close();
-        // return !output.IsNullOrEmpty();
-
         return isOpened;
     }
 

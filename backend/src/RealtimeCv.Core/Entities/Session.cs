@@ -16,7 +16,7 @@ public class Session : BaseEntity
     
     public DateTime CreatedAt { get; set; }
     
-    public DateTime? StartedAt { get; set; }
+    public DateTime StartedAt { get; set; }
     
-    public DateTime? StoppedAt { get; set; }
+    public DateTime StoppedAt { get; set; }
 }

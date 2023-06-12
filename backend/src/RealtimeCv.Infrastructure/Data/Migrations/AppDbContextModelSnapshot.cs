@@ -60,10 +60,10 @@ namespace RealtimeCv.Infrastructure.Data.Migrations
                     b.Property<string>("Source")
                         .HasColumnType("nvarchar(max)");
 
-                    b.Property<DateTime?>("StartedAt")
+                    b.Property<DateTime>("StartedAt")
                         .HasColumnType("datetime2");
 
-                    b.Property<DateTime?>("StoppedAt")
+                    b.Property<DateTime>("StoppedAt")
                         .HasColumnType("datetime2");
 
                     b.Property<int>("VisionSetId")
