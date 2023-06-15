@@ -1,0 +1,10 @@
+Flask
+pybase64
+jsonpickle
+pillow
+numpy
+opencv-python
+pywin32
+fastapi
+python-multipart
+uvicorn
