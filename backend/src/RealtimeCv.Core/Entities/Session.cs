@@ -12,8 +12,6 @@ public class Session : BaseEntity
     
     public string Pod { get; set; }
     
-    public bool IsActive { get; set; }
-    
     public DateTime CreatedAt { get; set; }
     
     public DateTime StartedAt { get; set; }

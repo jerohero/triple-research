@@ -13,9 +13,6 @@ public class SessionDto
     public int VisionSetId { get; set; }
 
     [JsonRequired]
-    public bool IsActive { get; set; }
-    
-    [JsonRequired]
     public string Source { get; set; }
     
     [JsonRequired]
@@ -29,7 +26,7 @@ public class SessionDto
     public DateTime StoppedAt { get; set; }
 
     public SessionDto(
-        int id, int visionSetId, string source, string pod, bool isActive,
+        int id, int visionSetId, string source, string pod,
         DateTime createdAt, DateTime startedAt, DateTime stoppedAt
     )
     {
@@ -37,7 +34,6 @@ public class SessionDto
         VisionSetId = visionSetId;
         Source = source;
         Pod = pod;
-        IsActive = isActive;
         CreatedAt = createdAt;
         StartedAt = startedAt;
         StoppedAt = stoppedAt;

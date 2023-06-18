@@ -131,7 +131,6 @@ public class SessionService : ISessionService
             return Result.NotFound();
         }
         
-        session.IsActive = false;
         session.StoppedAt = DateTime.Now;
         await _sessionRepository.UpdateAsync(session);
         

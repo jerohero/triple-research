@@ -34,8 +34,7 @@ public class SessionHandlerHandlerService : ISessionHandlerService, IDisposable
         var session = await repository.SingleOrDefaultAsync(spec, CancellationToken.None);
         
         Guard.Against.Null(session, nameof(session));
-
-        session.IsActive = true;
+        
         session.StartedAt = DateTime.Now;
         await repository.UpdateAsync(session);
 
