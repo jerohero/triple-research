@@ -38,9 +38,10 @@ public class KubernetesService : IKubernetesService
         {
             Metadata = new V1ObjectMeta
             {
-                Name = session.Pod, Labels = new Dictionary<string, string>
+                Name = session.Pod,
+                Labels = new Dictionary<string, string>
                 {
-                    { "app", session.Pod }
+                    { "app", session.VisionSet.Name }
                 }
             },
             Spec = new V1PodSpec
@@ -127,6 +128,33 @@ public class KubernetesService : IKubernetesService
         return await _kubernetes.DeleteNamespacedPodAsync(podName, "default");
     }
 
+    public async Task<string> GetPodStatus(string podName)
+    {
+        if (_kubernetes is null)
+        {
+            await InitKubernetes();
+        }
+        
+        var pod = await _kubernetes.ReadNamespacedPodAsync(podName, "default");
+        
+        return pod.Status.Phase;
+    }
+    
+    public async Task<V1PodList> GetVisionSetPods(string projectName, string visionSetName)
+    {
+        if (_kubernetes is null)
+        {
+            await InitKubernetes();
+        }
+
+        var pods = await _kubernetes.ListNamespacedPodAsync(
+            "default", // TODO replace with projectName
+            labelSelector: $"app={visionSetName}"
+        );
+
+        return pods;
+    }
+    
     private async Task InitKubernetes()
     {
         var connectionString = Environment.GetEnvironmentVariable("AzureWebJobsStorage");
@@ -149,7 +177,5 @@ public class KubernetesService : IKubernetesService
 
         var kubeConfig = KubernetesClientConfiguration.BuildConfigFromConfigObject(kubeConfigObject);
 
-        // new k8s.Kubernetes(new KubernetesClientConfiguration { Host = "http://localhost:8080/" }); // For local testing
-        _kubernetes = new k8s.Kubernetes(kubeConfig);
     }
 }

@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Threading;
 using System.Threading.Tasks;
 using Ardalis.GuardClauses;
 using RealtimeCv.Core.Interfaces;
@@ -64,10 +65,13 @@ public class StreamPollService : IStreamPollService, IDisposable
             select source
         ).ToList();
 
+        var spec = new VisionSetWithProjectSpec(message.VisionSetId);
+        var visionSet = await _visionSetRepository.SingleOrDefaultAsync(spec, CancellationToken.None);
+        
         foreach (var stream in activeStreams)
         {
             var activeSessions = await _sessionService
-                .GetActiveVisionSetSessionsBySource(message.VisionSetId, stream);
+                .GetActiveVisionSetSessionsBySource(visionSet, stream);
 
             if (activeSessions.Value.Count > 0)
             {

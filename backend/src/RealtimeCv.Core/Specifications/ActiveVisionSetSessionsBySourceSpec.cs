@@ -1,19 +1,28 @@
-﻿using Ardalis.Specification;
+﻿using System;
+using System.Collections.Generic;
+using System.Linq;
+using Ardalis.Specification;
+using k8s.Models;
 using RealtimeCv.Core.Entities;
 
-namespace RealtimeCv.Core.Specifications
+namespace RealtimeCv.Core.Specifications;
+
+public class ActiveVisionSetSessionsBySourceSpec
+    : Specification<Session>
 {
-  public class ActiveVisionSetSessionsBySourceSpec
-      : Specification<Session>
-  {
-    public ActiveVisionSetSessionsBySourceSpec(int visionSetId, string source)
+    public ActiveVisionSetSessionsBySourceSpec(int visionSetId, string source, IList<V1Pod> pods)
     {
-        Query.Where(p => 
+        var activePodNames = new HashSet<string>(
+            pods
+                .Where(pod => pod.Status.Phase != "Unknown")
+                .Select(pod => pod.Metadata.Name)
+        );
+
+        Query.Where(p =>
                 p.Source == source
                 && p.VisionSetId == visionSetId
-                && p.IsActive
+                && activePodNames.Contains(p.Pod)
             )
-            .EnableCache(nameof(ActiveVisionSetSessionsBySourceSpec), visionSetId, source);
+            .EnableCache(nameof(ActiveVisionSetSessionsBySourceSpec), visionSetId, source, pods);
     }
-  }
 }

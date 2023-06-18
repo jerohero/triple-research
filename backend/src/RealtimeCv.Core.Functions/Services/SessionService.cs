@@ -71,8 +71,13 @@ public class SessionService : ISessionService
             return result;
         }
 
-        var spec = new SessionWithVisionSetSpec(result.Value.Id);
-        var session = await _sessionRepository.SingleOrDefaultAsync(spec, CancellationToken.None);
+        var sessionSpec = new SessionWithVisionSetSpec(result.Value.Id);
+        var session = await _sessionRepository.SingleOrDefaultAsync(sessionSpec, CancellationToken.None);
+
+        if (session is null)
+        {
+            return Result.NotFound("Session not found");
+        }
         
         await _kubernetesService.CreateSessionPod(session);
         
@@ -149,9 +154,11 @@ public class SessionService : ISessionService
         return new Result<SessionNegotiateDto>(new SessionNegotiateDto(uri.AbsoluteUri));
     }
 
-    public async Task<Result<List<Session>>> GetActiveVisionSetSessionsBySource(int visionSetId, string source)
+    public async Task<Result<List<Session>>> GetActiveVisionSetSessionsBySource(VisionSet visionSet, string source)
     {
-        ActiveVisionSetSessionsBySourceSpec spec = new(visionSetId, source);
+        var pods = await _kubernetesService.GetVisionSetPods(visionSet.Project.Name, visionSet.Name);
+
+        ActiveVisionSetSessionsBySourceSpec spec = new(visionSet.Id, source, pods.Items);
         var activeSessions = await _sessionRepository.ListAsync(spec, CancellationToken.None);
 
         return activeSessions;
