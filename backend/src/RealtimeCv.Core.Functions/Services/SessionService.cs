@@ -49,9 +49,17 @@ public class SessionService : ISessionService
     {
         var session = await _sessionRepository.GetByIdAsync(sessionId);
 
-        return session is null
-          ? Result<SessionDto>.NotFound()
-          : new Result<SessionDto>(_mapper.Map<SessionDto>(session));
+        if (session is null)
+        {
+            return Result<SessionDto>.NotFound();
+        }
+
+        var pod = await _kubernetesService.GetSessionPod(session.Pod);
+
+        var sessionDto = _mapper.Map<SessionDto>(session);
+        sessionDto.Status = pod.Status.Phase;
+
+        return new Result<SessionDto>(sessionDto);
     }
 
     public async Task<Result<List<SessionDto>>> GetSessionsByVisionSet(int visionSetId)
