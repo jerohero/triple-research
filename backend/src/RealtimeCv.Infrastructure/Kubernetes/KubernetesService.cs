@@ -128,7 +128,7 @@ public class KubernetesService : IKubernetesService
         return await _kubernetes.DeleteNamespacedPodAsync(podName, "default");
     }
 
-    public async Task<string> GetPodStatus(string podName)
+    public async Task<V1Pod> GetSessionPod(string podName)
     {
         if (_kubernetes is null)
         {
@@ -137,7 +137,7 @@ public class KubernetesService : IKubernetesService
         
         var pod = await _kubernetes.ReadNamespacedPodAsync(podName, "default");
         
-        return pod.Status.Phase;
+        return pod;
     }
     
     public async Task<V1PodList> GetVisionSetPods(string projectName, string visionSetName)
