@@ -38,6 +38,11 @@ public class SpecificationTestsBase
     {
         var fakeSessions = new List<Session>();
 
+        var fakeProject = new Project { Name = "test" };
+        
+        _context.Project.Add(fakeProject);
+        _context.SaveChanges();
+
         var fakeVisionSet = new VisionSet
         {
             Name = "test",
@@ -46,6 +51,9 @@ public class SpecificationTestsBase
             ProjectId = 1,
             TrainedModelId = 1
         };
+        
+        _context.VisionSet.Add(fakeVisionSet);
+        _context.SaveChanges();
 
         for (var i = 0; i < count; i++)
         {
@@ -54,12 +62,10 @@ public class SpecificationTestsBase
                 VisionSetId = 1,
                 Source = "rtsp://test.com",
                 Pod = $"cv-test-{i}",
-                IsActive = false,
                 CreatedAt = DateTime.UtcNow
             });
         }
 
-        _context.VisionSet.Add(fakeVisionSet);
         _context.Session.AddRange(fakeSessions);
         _context.SaveChanges();
     }
@@ -84,7 +90,6 @@ public class SpecificationTestsBase
             VisionSetId = 1,
             Source = "rtsp://test.com",
             Pod = "cv-test-1",
-            IsActive = false,
             CreatedAt = DateTime.UtcNow
         };
         
@@ -121,8 +126,7 @@ public class SpecificationTestsBase
         {
             VisionSetId = 1,
             Source = "rtsp://test.com",
-            Pod = $"cv-test-1",
-            IsActive = false,
+            Pod = "cv-test-1",
             CreatedAt = DateTime.UtcNow
         };
 

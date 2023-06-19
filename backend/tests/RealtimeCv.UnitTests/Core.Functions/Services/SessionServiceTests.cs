@@ -2,7 +2,9 @@ using System;
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.Linq;
+using System.Threading.Tasks;
 using Ardalis.Result;
+using k8s.Models;
 using Moq;
 using Newtonsoft.Json;
 using NUnit.Framework;
@@ -21,6 +23,12 @@ public class SessionServiceTests : SessionServiceTestsBase
         // Arrange
         SetupSessions(2);
         const int expected = 1;
+        var pod = new V1Pod
+        {
+            Metadata = new V1ObjectMeta { Name = "cv-test-1" },
+            Status = new V1PodStatus { Phase = "Running" }
+        };
+        _kubernetesMock.Setup(x => x.GetSessionPod("cv-test-1")).ReturnsAsync(pod);
 
         // Act
         var result = _service.GetSessionById(1);
@@ -35,6 +43,12 @@ public class SessionServiceTests : SessionServiceTestsBase
         // Arrange
         SetupSessions(2);
         const ResultStatus expected = ResultStatus.Ok;
+        var pod = new V1Pod
+        {
+            Metadata = new V1ObjectMeta { Name = "cv-test-1" },
+            Status = new V1PodStatus { Phase = "Running" }
+        };
+        _kubernetesMock.Setup(x => x.GetSessionPod("cv-test-1")).ReturnsAsync(pod);
 
         // Act
         var result = _service.GetSessionById(1);
@@ -49,6 +63,12 @@ public class SessionServiceTests : SessionServiceTestsBase
         // Arrange
         SetupSessions(2);
         var expected = typeof(SessionDto);
+        var pod = new V1Pod
+        {
+            Metadata = new V1ObjectMeta { Name = "cv-test-1" },
+            Status = new V1PodStatus { Phase = "Running" }
+        };
+        _kubernetesMock.Setup(x => x.GetSessionPod("cv-test-1")).ReturnsAsync(pod);
 
         // Act
         var result = _service.GetSessionById(1);
@@ -63,6 +83,12 @@ public class SessionServiceTests : SessionServiceTestsBase
         // Arrange
         SetupSessions(2);
         const ResultStatus expected = ResultStatus.NotFound;
+        var pod = new V1Pod
+        {
+            Metadata = new V1ObjectMeta { Name = "cv-test-1" },
+            Status = new V1PodStatus { Phase = "Running" }
+        };
+        _kubernetesMock.Setup(x => x.GetSessionPod("cv-test-1")).ReturnsAsync(pod);
 
         // Act
         var result = _service.GetSessionById(3);
@@ -78,6 +104,15 @@ public class SessionServiceTests : SessionServiceTestsBase
         SetupSessions(2);
         const int visionSetId = 1;
         const int expected = 2;
+        var pods = new V1PodList
+        {
+            Items = new List<V1Pod>
+            {
+                new() { Metadata = new V1ObjectMeta { Name = "cv-pod-1" }, Status = new V1PodStatus { Phase = "Running" } },
+                new() { Metadata = new V1ObjectMeta { Name = "cv-pod-2" }, Status = new V1PodStatus { Phase = "Running" } }
+            }
+        };
+        _kubernetesMock.Setup(x => x.GetVisionSetPods(_visionSet.Project.Name, _visionSet.Name)).ReturnsAsync(pods);
 
         // Act
         var result = _service.GetSessionsByVisionSet(visionSetId);
@@ -93,6 +128,15 @@ public class SessionServiceTests : SessionServiceTestsBase
         SetupSessions(2);
         const int visionSetId = 1;
         var expected = typeof(List<SessionDto>);
+        var pods = new V1PodList
+        {
+            Items = new List<V1Pod>
+            {
+                new() { Metadata = new V1ObjectMeta { Name = "cv-pod-1" }, Status = new V1PodStatus { Phase = "Running" } },
+                new() { Metadata = new V1ObjectMeta { Name = "cv-pod-2" }, Status = new V1PodStatus { Phase = "Running" } }
+            }
+        };
+        _kubernetesMock.Setup(x => x.GetVisionSetPods(_visionSet.Project.Name, _visionSet.Name)).ReturnsAsync(pods);
 
         // Act
         var result = _service.GetSessionsByVisionSet(visionSetId);
@@ -100,13 +144,46 @@ public class SessionServiceTests : SessionServiceTestsBase
         // Assert
         Assert.That(result.Result.ValueType == expected);
     }
-    
+
     [Test]
-    public void GetSessionsByVisionSet_WhenSessionsNotFound_ItShouldReturnNoSessions()
+    public void GetSessionsByVisionSet_WhenSessionsNotFoundAndNoPodsActive_ItShouldReturnNoSessions()
     {
         // Arrange
+        SetupSessions(0);
         const int visionSetId = 1;
         const int expected = 0;
+        var pods = new V1PodList
+        {
+            Items = new List<V1Pod>
+            {
+                Capacity = 0
+            }
+        };
+        _kubernetesMock.Setup(x => x.GetVisionSetPods(_visionSet.Project.Name, _visionSet.Name)).ReturnsAsync(pods);
+
+        // Act
+        var result = _service.GetSessionsByVisionSet(visionSetId);
+
+        // Assert
+        Assert.That(result.Result.Value.Count == expected);
+    }
+    
+    [Test]
+    public void GetSessionsByVisionSet_WhenSessionsNotFoundButPodsActive_ItShouldReturnNoSessions()
+    {
+        // Arrange
+        SetupSessions(0);
+        const int visionSetId = 1;
+        const int expected = 0;
+        var pods = new V1PodList
+        {
+            Items = new List<V1Pod>
+            {
+                new() { Metadata = new V1ObjectMeta { Name = "cv-pod-1" }, Status = new V1PodStatus { Phase = "Running" } },
+                new() { Metadata = new V1ObjectMeta { Name = "cv-pod-2" }, Status = new V1PodStatus { Phase = "Running" } }
+            }
+        };
+        _kubernetesMock.Setup(x => x.GetVisionSetPods(_visionSet.Project.Name, _visionSet.Name)).ReturnsAsync(pods);
 
         // Act
         var result = _service.GetSessionsByVisionSet(visionSetId);
@@ -119,8 +196,17 @@ public class SessionServiceTests : SessionServiceTestsBase
     public void GetSessionsByVisionSet_WhenSessionsNotFound_ItShouldReturnResultStatusOk()
     {
         // Arrange
+        SetupSessions(0);
         const int visionSetId = 1;
         const ResultStatus expected = ResultStatus.Ok;
+        var pods = new V1PodList
+        {
+            Items = new List<V1Pod>
+            {
+                Capacity = 0
+            }
+        };
+        _kubernetesMock.Setup(x => x.GetVisionSetPods(_visionSet.Project.Name, _visionSet.Name)).ReturnsAsync(pods);
 
         // Act
         var result = _service.GetSessionsByVisionSet(visionSetId);
@@ -135,17 +221,19 @@ public class SessionServiceTests : SessionServiceTestsBase
         // Arrange
         SetupSessions(2);
         const int expected = 2;
-        const int visionSetId = 1;
         const string source = "rtsp://test.com";
-        foreach (var session in _context.Session)
+        var pods = new V1PodList
         {
-            session.IsActive = true;
-            _context.Session.Update(session);
-        }
-        _context.SaveChanges();
+            Items = new List<V1Pod>
+            {
+                new() { Metadata = new V1ObjectMeta { Name = "cv-test-1" }, Status = new V1PodStatus { Phase = "Running" } },
+                new() { Metadata = new V1ObjectMeta { Name = "cv-test-2" }, Status = new V1PodStatus { Phase = "Running" } }
+            }
+        };
+        _kubernetesMock.Setup(x => x.GetVisionSetPods(_visionSet.Project.Name, _visionSet.Name)).ReturnsAsync(pods);
 
         // Act
-        var result = _service.GetActiveVisionSetSessionsBySource(visionSetId, source);
+        var result = _service.GetActiveVisionSetSessionsBySource(_visionSet, source);
 
         // Assert
         Assert.That(result.Result.Value.Count == expected);
@@ -157,11 +245,19 @@ public class SessionServiceTests : SessionServiceTestsBase
         // Arrange
         SetupSessions(2);
         var expected = typeof(List<Session>);
-        const int visionSetId = 1;
         const string source = "rtsp://test.com";
+        var pods = new V1PodList
+        {
+            Items = new List<V1Pod>
+            {
+                new() { Metadata = new V1ObjectMeta { Name = "cv-test-1" }, Status = new V1PodStatus { Phase = "Running" } },
+                new() { Metadata = new V1ObjectMeta { Name = "cv-test-2" }, Status = new V1PodStatus { Phase = "Running" } }
+            }
+        };
+        _kubernetesMock.Setup(x => x.GetVisionSetPods(_visionSet.Project.Name, _visionSet.Name)).ReturnsAsync(pods);
 
         // Act
-        var result = _service.GetActiveVisionSetSessionsBySource(visionSetId, source);
+        var result = _service.GetActiveVisionSetSessionsBySource(_visionSet, source);
 
         // Assert
         Assert.That(result.Result.ValueType == expected);
@@ -173,11 +269,19 @@ public class SessionServiceTests : SessionServiceTestsBase
         // Arrange
         SetupSessions(2);
         const int expected = 0;
-        const int visionSetId = 1;
         const string source = "rtsp://test.com";
-        
+        var pods = new V1PodList
+        {
+            Items = new List<V1Pod>
+            {
+                new() { Metadata = new V1ObjectMeta { Name = "cv-test-1" }, Status = new V1PodStatus { Phase = "Unknown" } },
+                new() { Metadata = new V1ObjectMeta { Name = "cv-test2-2" }, Status = new V1PodStatus { Phase = "Running" } }
+            }
+        };
+        _kubernetesMock.Setup(x => x.GetVisionSetPods(_visionSet.Project.Name, _visionSet.Name)).ReturnsAsync(pods);
+
         // Act
-        var result = _service.GetActiveVisionSetSessionsBySource(visionSetId, source);
+        var result = _service.GetActiveVisionSetSessionsBySource(_visionSet, source);
 
         // Assert
         Assert.That(result.Result.Value.Count == expected);
@@ -189,11 +293,19 @@ public class SessionServiceTests : SessionServiceTestsBase
         // Arrange
         SetupSessions(2);
         const int expected = 0;
-        const int visionSetId = 2;
         const string source = "rtsp://test.com";
+        var pods = new V1PodList
+        {
+            Items = new List<V1Pod>
+            {
+                new() { Metadata = new V1ObjectMeta { Name = "cv-test-1" }, Status = new V1PodStatus { Phase = "Unknown" } },
+                new() { Metadata = new V1ObjectMeta { Name = "cv-test-2" }, Status = new V1PodStatus { Phase = "Unknown" } }
+            }
+        };
+        _kubernetesMock.Setup(x => x.GetVisionSetPods(_visionSet.Project.Name, _visionSet.Name)).ReturnsAsync(pods);
 
         // Act
-        var result = _service.GetActiveVisionSetSessionsBySource(visionSetId, source);
+        var result = _service.GetActiveVisionSetSessionsBySource(_visionSet, source);
 
         // Assert
         Assert.That(result.Result.Value.Count == expected);
@@ -205,11 +317,19 @@ public class SessionServiceTests : SessionServiceTestsBase
         // Arrange
         SetupSessions(2);
         const int expected = 0;
-        const int visionSetId = 1;
         const string source = "rtsp://test2.com";
+        var pods = new V1PodList
+        {
+            Items = new List<V1Pod>
+            {
+                new() { Metadata = new V1ObjectMeta { Name = "cv-test-1" }, Status = new V1PodStatus { Phase = "Running" } },
+                new() { Metadata = new V1ObjectMeta { Name = "cv-test-2" }, Status = new V1PodStatus { Phase = "Running" } }
+            }
+        };
+        _kubernetesMock.Setup(x => x.GetVisionSetPods(_visionSet.Project.Name, _visionSet.Name)).ReturnsAsync(pods);
 
         // Act
-        var result = _service.GetActiveVisionSetSessionsBySource(visionSetId, source);
+        var result = _service.GetActiveVisionSetSessionsBySource(_visionSet, source);
 
         // Assert
         Assert.That(result.Result.Value.Count == expected);
@@ -261,7 +381,7 @@ public class SessionServiceTests : SessionServiceTestsBase
     
         // Act
         var result = _service.StartSession(createDto);
-
+    
         // Assert
         Assert.That(result.Result.ValueType == expected);
     }
@@ -282,7 +402,7 @@ public class SessionServiceTests : SessionServiceTestsBase
         // Assert
         Assert.That(result.Result.Status == expected);
     }
-
+    
     [Test]
     public void UpdateSession_WhenInputValid_ItShouldUpdate()
     {
@@ -291,14 +411,14 @@ public class SessionServiceTests : SessionServiceTestsBase
         const int visionSetId = 1;
         const string source = "https://stream.com";
         var expected = new SessionDto(1, visionSetId, source, "cv-test-1", true, DateTime.UtcNow, DateTime.MinValue, DateTime.MinValue);
-
+    
         // Act
         var result = _service.UpdateSession(expected);
-
+    
         // Assert
         Assert.That(result.Result.Value.Id == expected.Id);
     }
-
+    
     [Test]
     public void UpdateSession_WhenSessionUpdated_ItShouldReturnTypeOfSessionDto()
     {

@@ -19,7 +19,9 @@ public class SessionServiceTestsBase
 {
     protected SessionService _service;
     protected AppDbContext _context;
+    protected VisionSet _visionSet;
     protected Mock<IPubSub> _pubSubMock;
+    protected Mock<IKubernetesService> _kubernetesMock;
 
     [SetUp]
     public void Setup()
@@ -32,7 +34,7 @@ public class SessionServiceTestsBase
         _context.Database.EnsureCreated();
 
         var loggerMock = mocker.GetMock<ILoggerAdapter<SessionService>>();
-        var kubernetesMock = mocker.GetMock<IKubernetesService>();
+        _kubernetesMock = mocker.GetMock<IKubernetesService>();
         _pubSubMock = mocker.GetMock<IPubSub>();
         
         var mapperConfig = new MapperConfiguration(cfg => 
@@ -43,7 +45,7 @@ public class SessionServiceTestsBase
         _service = new SessionService(
             loggerMock.Object, mapper,
             new SessionRepository(_context), new VisionSetRepository(_context),
-            kubernetesMock.Object, _pubSubMock.Object
+            _kubernetesMock.Object, _pubSubMock.Object
         );
         
         Trace.Listeners.Add(new ConsoleTraceListener());
@@ -51,27 +53,36 @@ public class SessionServiceTestsBase
 
     protected void SetupSessions(int count)
     {
+        var fakeProject = new Project
+        {
+            Id = 1,
+            Name = "test"
+        };
+        
+        _context.Project.Add(fakeProject);
+        _context.SaveChanges();
+        
         var fakeSessions = new List<Session>();
-        var fakeVisionSet = new VisionSet
+        _visionSet = new VisionSet
         {
             Name = "test",
             ContainerImage = "test/image:latest",
             Sources = new List<string> { "rtsp://test.com" },
             ProjectId = 1,
+            Project = fakeProject,
             TrainedModelId = 1,
         };
         
-        _context.VisionSet.Add(fakeVisionSet);
+        _context.VisionSet.Add(_visionSet);
         _context.SaveChanges();
 
         for (var i = 0; i < count; i++)
         {
             fakeSessions.Add(new Session
             {
-                VisionSetId = fakeVisionSet.Id,
+                VisionSetId = _visionSet.Id,
                 Source = "rtsp://test.com",
                 Pod = "cv-test-1",
-                IsActive = false,
                 CreatedAt = DateTime.UtcNow
             });
         }

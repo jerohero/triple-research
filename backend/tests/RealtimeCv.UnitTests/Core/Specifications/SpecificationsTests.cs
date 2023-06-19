@@ -1,5 +1,6 @@
-﻿using System.Diagnostics;
+﻿using System.Collections.Generic;
 using System.Linq;
+using k8s.Models;
 using Newtonsoft.Json;
 using NUnit.Framework;
 using RealtimeCv.Core.Specifications;
@@ -9,19 +10,18 @@ namespace RealtimeCv.UnitTests.Core.Specifications;
 public class SpecificationsTests : SpecificationTestsBase
 {
     [Test]
-    public void ActiveVisionSetSessionsBySourceSpec_WhenSessionsActive_ShouldFilterSessions()
+    public void ActiveVisionSetSessionsBySourceSpec_WhenTwoSessionsActive_ShouldFilterTwoSessions()
     {
         // Arrange
-        SetupSessions(2);
+        SetupSessions(10);
         const int expected = 2;
-        foreach (var session in _context.Session)
+        var pods = new List<V1Pod>
         {
-            session.IsActive = true;
-            _context.Session.Update(session);
-        }
-        _context.SaveChanges();
-        const string source = "rtsp://test.com";
-        var spec = new ActiveVisionSetSessionsBySourceSpec(1, source);
+            new() { Metadata = new V1ObjectMeta { Name = "cv-test-1" }, Status = new V1PodStatus { Phase = "Running" } },
+            new() { Metadata = new V1ObjectMeta { Name = "cv-test-2" }, Status = new V1PodStatus { Phase = "Running" } },
+            new() { Metadata = new V1ObjectMeta { Name = "cv-test-3" }, Status = new V1PodStatus { Phase = "Unknown" } }
+        };
+        var spec = new ActiveVisionSetSessionsBySourceSpec(1, "rtsp://test.com", pods);
 
         // Act
         var result = _mockSessionRepository.ListAsync(spec);
@@ -31,13 +31,18 @@ public class SpecificationsTests : SpecificationTestsBase
     }
     
     [Test]
-    public void ActiveVisionSetSessionsBySourceSpec_WhenSessionsInactive_ShouldFilterEmpty()
+    public void ActiveVisionSetSessionsBySourceSpec_WhenNoSessionsActive_ShouldFilterNoSessions()
     {
         // Arrange
-        SetupSessions(2);
+        SetupSessions(10);
         const int expected = 0;
-        const string source = "rtsp://test.com";
-        var spec = new ActiveVisionSetSessionsBySourceSpec(1, source);
+        var pods = new List<V1Pod>
+        {
+            new() { Metadata = new V1ObjectMeta { Name = "cv-test-1" }, Status = new V1PodStatus { Phase = "Unknown" } },
+            new() { Metadata = new V1ObjectMeta { Name = "cv-test-2" }, Status = new V1PodStatus { Phase = "Unknown" } },
+            new() { Metadata = new V1ObjectMeta { Name = "cv-test-3" }, Status = new V1PodStatus { Phase = "Unknown" } }
+        };
+        var spec = new ActiveVisionSetSessionsBySourceSpec(1, "rtsp://test.com", pods);
 
         // Act
         var result = _mockSessionRepository.ListAsync(spec);
@@ -83,10 +88,10 @@ public class SpecificationsTests : SpecificationTestsBase
         SetupSessions(2);
         const int expected = 1;
         var spec = new SessionWithVisionSetSpec(1);
-
+        
         // Act
         var result = _mockSessionRepository.SingleOrDefaultAsync(spec);
-
+        
         // Assert
         Assert.That(result.Result.VisionSet.Id == expected);
     }
