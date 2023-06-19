@@ -24,10 +24,17 @@ public class SessionDto
     public DateTime StartedAt { get; set; }
     
     public DateTime StoppedAt { get; set; }
+    
+    public string Status { get; set; }
 
+    public SessionDto()
+    {
+    }
+    
     public SessionDto(
         int id, int visionSetId, string source, string pod,
-        DateTime createdAt, DateTime startedAt, DateTime stoppedAt
+        DateTime createdAt, DateTime startedAt, DateTime stoppedAt,
+        string status
     )
     {
         Id = id;
@@ -37,5 +44,6 @@ public class SessionDto
         CreatedAt = createdAt;
         StartedAt = startedAt;
         StoppedAt = stoppedAt;
+        Status = status;
     }
 }

@@ -19,7 +19,8 @@ public class AutomapperMaps : Profile
         CreateMap<VisionSetUpdateDto, VisionSet>();
         
         CreateMap<SessionDto, Session>();
-        CreateMap<Session, SessionDto>();
+        CreateMap<Session, SessionDto>()
+            .ForMember(dest => dest.Status, opt => opt.Ignore());
         CreateMap<SessionStartDto, Session>();
         
         CreateMap<TrainedModel, TrainedModelDto>();

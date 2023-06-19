@@ -56,10 +56,30 @@ public class SessionService : ISessionService
 
     public async Task<Result<List<SessionDto>>> GetSessionsByVisionSet(int visionSetId)
     {
-        var spec = new SessionsByVisionSet(visionSetId);
-        var sessions = await _sessionRepository.ListAsync(spec, CancellationToken.None);
+        var visionSetSpec = new VisionSetWithProjectSpec(visionSetId);
+        var visionSet = await _visionSetRepository.SingleOrDefaultAsync(visionSetSpec, CancellationToken.None);
+    
+        if (visionSet is null)
+        {
+            return Result<List<SessionDto>>.NotFound();
+        }
 
-        return new Result<List<SessionDto>>(_mapper.Map<List<SessionDto>>(sessions));
+        var pods = await _kubernetesService.GetVisionSetPods(visionSet.Project.Name, visionSet.Name);
+        var podToStatus = pods.Items.ToDictionary(pod => pod.Metadata.Name, pod => pod.Status.Phase);
+
+        var sessionsSpec = new SessionsByVisionSet(visionSetId);
+        var sessions = await _sessionRepository.ListAsync(sessionsSpec, CancellationToken.None);
+
+        var sessionDtos = _mapper.Map<List<SessionDto>>(sessions);
+
+        foreach (var sessionDto in sessionDtos)
+        {
+            sessionDto.Status = podToStatus.TryGetValue(sessionDto.Pod, out var status)
+                ? status
+                : "Terminated";
+        }
+
+        return new Result<List<SessionDto>>(sessionDtos);
     }
     
     public async Task<Result<SessionDto>> StartSession(SessionStartDto? createDto)
