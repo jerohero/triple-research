@@ -4,6 +4,7 @@
   import ConfirmationModal from '@/components/ConfirmationModal.vue'
   import ColumnInput from '@/components/ColumnInput.vue'
   import ColumnCombobox from '@/components/ColumnCombobox.vue'
+  import router from "@/router";
 
   const props = defineProps<{
     rowData: any
@@ -31,6 +32,10 @@
     if (JSON.stringify(props.rowData) !== JSON.stringify(editedValue)) {
       emit('update', editedValue)
     }
+  }
+
+  const onGoto = () => {
+    router.push({ path: `/projects/${ props.rowData.Id.value }` })
   }
 
   const onCancel = () => {
@@ -97,6 +102,7 @@
       <div v-else class="flex gap-3 justify-end">
         <IconButton :on-click="onEdit" is-edit class="text-2xl" />
         <IconButton :on-click="onDelete" is-delete class="text-2xl" />
+        <IconButton :on-click="onGoto" is-goto class="text-3xl" />
       </div>
     </td>
   </tr>

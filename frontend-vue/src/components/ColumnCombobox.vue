@@ -41,7 +41,7 @@ import {computed, onMounted, ref, watch} from 'vue'
 
   onMounted(async () => {
     if (settings.options?.fetchUrl) {
-      const res = await axios(true)
+      const res = await axios()
           .get(settings.options.fetchUrl)
       data.value = res.data
     } else if (settings.options?.value) {

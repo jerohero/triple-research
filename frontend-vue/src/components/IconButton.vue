@@ -4,7 +4,8 @@
     isEdit?: boolean,
     isDelete?: boolean,
     isSave?: boolean,
-    isCancel?: boolean
+    isCancel?: boolean,
+    isGoto?: boolean
   }>()
 
   let icon = '';
@@ -22,6 +23,9 @@
   } else if (props.isCancel) {
     icon = 'close-outline'
     color = 'group-hover:text-delete'
+  } else if (props.isGoto) {
+    icon = 'chevron-forward-outline'
+    color = 'group-hover:text-save'
   }
 </script>
 
