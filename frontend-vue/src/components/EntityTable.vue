@@ -45,7 +45,7 @@
       <tbody v-else class="text-textDark w-full">
       <TableRow
           v-for="row in rows"
-          v-bind:key="row.id"
+          v-bind:key="row.Id"
           :row-data="row"
           @update="updateRow"
           @delete="deleteRow"

@@ -28,7 +28,7 @@
       isFetching.value = true
 
       try {
-        const res = await axios(true)
+        const res = await axios()
             .get(props.route)
 
         isFetching.value = false
@@ -36,7 +36,7 @@
         return dataToRows(res.data)
       } catch(e: any) {
         isFetching.value = false
-        toast.error(e.response.statusText)
+        toast.error(e.message)
 
         return []
       }
@@ -52,33 +52,33 @@
     }
 
     try {
-      await axios(true)
+      await axios()
           .put(
-              `${ props.route }/${ updatedRow.id?.value }`,
+              `${ props.route }`,
               props.getUpdateObject(updatedRow)
           )
 
-      const rowIndex = rows.value.map((row) => row.id.value).indexOf(updatedRow.id.value)
+      const rowIndex = rows.value.map((row) => row.Id.value).indexOf(updatedRow.Id.value)
       for (const key in rows.value[rowIndex]) {
         rows.value[rowIndex][key].value = updatedRow[key].value
       }
 
       toast.success('Row has been updated successfully!')
     } catch(e: any) {
-      toast.error(e.response.statusText)
+      toast.error(e.message)
     }
   }
 
   const deleteRow = async (deletedRow: any) => {
     try {
-      await axios(true)
-          .delete(`${ props.route }/${ deletedRow.id.value }`)
+      await axios()
+          .delete(`${ props.route }/${ deletedRow.Id.value }`)
 
-      rows.value = rows.value.filter((row) => row.id.value !== deletedRow.id.value)
+      rows.value = rows.value.filter((row) => row.Id.value !== deletedRow.Id.value)
 
       toast.success('Row has been deleted successfully!')
     } catch(e: any) {
-      toast.error(e.response.statusText)
+      toast.error(e.message)
     }
   }
 
@@ -98,7 +98,7 @@
     }
 
     try {
-      const res = await axios(true)
+      const res = await axios()
           .post(props.route, createdRow)
 
       isCreatingRow.value = false
@@ -107,15 +107,15 @@
 
       toast.success('Row has been added successfully!')
     } catch(e: any) {
-      toast.error(e.response.statusText)
+      toast.error(e.message)
     }
   }
 
   const validateInputObject = (object: any) => {
     for (const creatableColumn in props.createSettings) {
       if (object.hasOwnProperty(creatableColumn) || !!object[creatableColumn]) {
-        if (object[creatableColumn].display && object[creatableColumn].id !== undefined) {
-          object[creatableColumn] = object[creatableColumn].id
+        if (object[creatableColumn].display && object[creatableColumn].Id !== undefined) {
+          object[creatableColumn] = object[creatableColumn].Id
         }
 
         continue

@@ -67,7 +67,7 @@ import {computed, onMounted, ref, watch} from 'vue'
     }
 
     selected.value = data.value.find((item: any) =>
-        (item?.id || item) === (props.rowItem.value.id || props.rowItem.value)
+        (item?.Id || item) === (props.rowItem.value.Id || props.rowItem.value)
     )
   }
 
@@ -75,7 +75,7 @@ import {computed, onMounted, ref, watch} from 'vue'
     if (!props.rowItem) return
 
     selected.value = data.value.filter((item: any) =>
-        props.rowItem.value.map((current: any) => current.id).includes(item?.id || item)
+        props.rowItem.value.map((current: any) => current.Id).includes(item?.Id || item)
         || props.rowItem.value.map((current: any) => current).includes(item)
     )
   }
@@ -136,7 +136,7 @@ import {computed, onMounted, ref, watch} from 'vue'
                 shadow-lg ring-1 ring-black ring-opacity-5 focus:outline-none sm:text-sm"
       >
         <ComboboxOption v-for="option in filtered"
-                        v-bind:key="settings.options?.id(option)"
+                        v-bind:key="settings.options?.Id(option)"
                         :value="option"
                         as="template"
                         v-slot="{ active, selected }"

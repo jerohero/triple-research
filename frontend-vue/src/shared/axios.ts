@@ -1,14 +1,8 @@
 import axios from 'axios'
-import { useUserStore } from '@/stores/user'
 
-export default (withAuth = false) => {
-  const userStore = useUserStore();
-
+export default () => {
   const options: any = {
-    baseURL: 'https://vrefsolutions-api.azurewebsites.net/api',
-    headers: {
-      Authorization: withAuth ? userStore.bearerToken : '',
-    },
+    baseURL: 'http://localhost:7071/api'
   };
 
   const instance = axios.create(options);

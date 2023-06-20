@@ -16,7 +16,7 @@
   const emit = defineEmits(['update', 'delete'])
 
   const getRowDataWithoutId = () => {
-    let { id, ...withoutId } = props.rowData
+    let { Id, ...withoutId } = props.rowData
 
     return withoutId
   }
@@ -60,7 +60,7 @@
 <template>
   <tr class="border-b border-b-line text-sm">
     <th scope="row" class="py-5 px-6 whitespace-nowrap">
-      {{ rowData.id.display(rowData.id.value) }}
+      {{ rowData.Id.display(rowData.Id.value) }}
     </th>
     <td v-for="rowItem in getRowDataWithoutId()" v-bind:key="rowItem" class="px-6">
       <span v-if="!isEditing || !rowItem.editable || rowItem.edit?.disabled" class="py-5">
