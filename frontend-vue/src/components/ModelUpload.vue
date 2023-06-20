@@ -12,8 +12,8 @@
 
   const emit = defineEmits(['change', 'close', 'create'])
 
-  const selectedFile = ref()
-  const uploadProgress = ref()
+  const selectedFile = ref<any>(null)
+  const uploadProgress = ref<number>(0)
 
   let newObject: any = {}
 
@@ -30,19 +30,8 @@
     emit('create', newObject)
   }
 
-  const onFileChange = (e: any) => selectedFile.value = (e.target.files ? e.target.files[0] : null)
-
-  const onFileUpload = async () => {
-    if (!selectedFile.value) return
-
-    const chunkSize = 1024 * 1024 * 5 // 5MB
-    let start = 0
-
-    while (start < selectedFile.value.size) {
-      const end = Math.min(start + chunkSize, selectedFile.value.size)
-      const chunk = await selectedFile.value.slice(start, end).arrayBuffer()
-      start = await uploadChunk(chunk, start, end)
-    }
+  const onFileChange = (e: any) => {
+    selectedFile.value = e.target.files ? e.target.files[0] : null
   }
 
   const uploadChunk: any = async (chunk: any, start: number, end: number, retries = 3) => {
@@ -54,7 +43,7 @@
         }
       })
       const nextChunkStart = start + chunk.byteLength
-      uploadProgress.value = (Math.min(Math.floor((nextChunkStart / selectedFile.value.size) * 100), 100))
+      uploadProgress.value = Math.min(Math.floor((nextChunkStart / selectedFile.value.size) * 100), 100)
       return end
     } catch (error: any) {
       if (retries > 0 && error.response.status === 500) {
@@ -64,6 +53,19 @@
       } else {
         throw error
       }
+    }
+  }
+
+  const onFileUpload = async () => {
+    if (!selectedFile.value) return
+
+    const chunkSize = 1024 * 1024 * 5 // 5MB
+    let start = 0
+
+    while (start < selectedFile.value.size) {
+      const end = Math.min(start + chunkSize, selectedFile.value.size)
+      const chunk = await selectedFile.value.slice(start, end).arrayBuffer()
+      start = await uploadChunk(chunk, start, end)
     }
   }
 </script>
@@ -112,15 +114,40 @@
               </div>
               <div>
                 <DialogTitle as="h3" class="text-lg font-medium leading-6 text-text">
-                  Add new
+                  Upload model
                 </DialogTitle>
                 <div class="space-y-5 pt-3 w-full">
                   <form class="flex flex-col justify-between" onsubmit="return false">
                     <div>
 
-                      <input type="file" onChange={onFileChange} />
-                      <button onClick={onFileUpload}>Upload!</button>
-                      <div>Upload Progress: {uploadProgress}%</div>
+                      <div>
+                        <div class="flex items-center justify-center w-full">
+                          <label
+                              v-if="!selectedFile?.value"
+                              for="dropzone-file"
+                              class="flex flex-col items-center justify-center w-full h-64 border-2 border-gray-300
+                              border-dashed rounded-lg cursor-pointer bg-gray-50 dark:hover:bg-bray-800 dark:bg-gray-700
+                                hover:bg-gray-100 dark:border-gray-600 dark:hover:border-gray-500 dark:hover:bg-gray-600"
+                          >
+                            <div class="flex flex-col items-center justify-center pt-5 pb-6">
+                              <svg aria-hidden="true" class="w-10 h-10 mb-3 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M7 16a4 4 0 01-.88-7.903A5 5 0 1115.9 6L16 6a5 5 0 011 9.9M15 13l-3-3m0 0l-3 3m3-3v12"></path>
+                              </svg>
+                              <p class="mb-2 text-sm text-gray-500 dark:text-gray-400">
+                                <span class="font-semibold">Click to upload</span> or drag and drop
+                              </p>
+<!--                              <p class="text-xs text-gray-500 dark:text-gray-400">Accepted:</p>-->
+                            </div>
+                            <input id="dropzone-file" type="file" class="hidden" @change="onFileChange" />
+                          </label>
+                          <div v-else>
+                            
+                          </div>
+                        </div>
+
+                        <button @click="onFileUpload">Upload!</button>
+                        <div>Upload Progress: {{uploadProgress}}%</div>
+                      </div>
 
                     </div>
                     <div class="mt-4 flex flex-row-reverse gap-4 mt-48">

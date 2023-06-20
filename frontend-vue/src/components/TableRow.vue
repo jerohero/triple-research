@@ -117,6 +117,7 @@
               @close="onCloseUploadModel"
               @create="onUploadModel"
               @change="onChange"
+              :project-id="props.rowData.Id.value"
           />
         </div>
       </div>
