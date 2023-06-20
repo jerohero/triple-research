@@ -4,6 +4,7 @@
   import ConfirmationModal from '@/components/ConfirmationModal.vue'
   import ColumnInput from '@/components/ColumnInput.vue'
   import ColumnCombobox from '@/components/ColumnCombobox.vue'
+  import ModelUpload from '@/components/ModelUpload.vue'
   import router from "@/router";
 
   const props = defineProps<{
@@ -13,6 +14,7 @@
   const isEditing = ref<boolean>()
   const isDeleting = ref<boolean>()
   let editedValue = JSON.parse(JSON.stringify(props.rowData))
+  const isUploadingModel = ref(false)
 
   const emit = defineEmits(['update', 'delete'])
 
@@ -60,6 +62,18 @@
   const onChange = (emitted: { key: string, value: any }) => {
     editedValue[emitted.key].value = emitted.value
   }
+
+  const onOpenUploadModel = () => {
+    isUploadingModel.value = true
+  }
+
+  const onCloseUploadModel = () => {
+    isUploadingModel.value = false
+  }
+
+  const onUploadModel = () => {
+    console.log('Upload model')
+  }
 </script>
 
 <template>
@@ -92,6 +106,19 @@
             :value="rowItem.value"
             @change="onChange"
         />
+        <div v-if="rowItem.edit?.type === 'model-upload'">
+          <button @click="onOpenUploadModel">
+            Upload
+          </button>
+          <ModelUpload
+              :col-key="rowItem.key"
+              :value="rowItem.value"
+              :open="isUploadingModel"
+              @close="onCloseUploadModel"
+              @create="onUploadModel"
+              @change="onChange"
+          />
+        </div>
       </div>
     </td>
     <td class="px-6 text-xl select-none relative">

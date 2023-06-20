@@ -6,18 +6,23 @@ import type { Column } from '@/shared/interfaces'
 interface ProjectColumns {
   Id: Column,
   Name: Column,
+  Models: Column
 }
 
 const title = 'Projects'
 
 const columns = [
-  'Name'
+  'Name',
+  'Models'
 ]
 const route = '/project'
 
 const columnInputs = {
   Name: {
     type: 'input-text'
+  },
+  Models: {
+    type: 'model-upload'
   }
 }
 
@@ -54,6 +59,14 @@ const getRowObject = (project: any): ProjectColumns => {
       editable: true,
       queryable: true,
       edit: columnInputs.Name
+    },
+    Models: {
+      key: 'Models',
+      display: () => 'name',
+      value: 'project.Name',
+      editable: true,
+      queryable: true,
+      edit: columnInputs.Models
     }
   }
 }

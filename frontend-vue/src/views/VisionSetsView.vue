@@ -35,7 +35,7 @@ const columnInputs = {
     type: 'input-text'
   },
   TrainedModel: {
-    type: 'search-single',
+    type: 'model-upload',
     options: {
       id: (model: any) => model.id,
       fetchUrl: `/project/${ router.params.id }/trained-model`,
@@ -115,7 +115,7 @@ const getRowObject = (project: any): VisionSetColumns => {
       key: 'TrainedModel',
       display: (trainedModel: any) => `${ trainedModel?.Name }`,
       value: project.TrainedModel,
-      editable: false,
+      editable: true,
       queryable: true,
     },
   }
