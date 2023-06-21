@@ -55,7 +55,6 @@ public class SessionServiceTestsBase
     {
         var fakeProject = new Project
         {
-            Id = 1,
             Name = "test"
         };
         

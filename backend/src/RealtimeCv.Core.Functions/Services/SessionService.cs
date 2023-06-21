@@ -90,9 +90,9 @@ public class SessionService : ISessionService
         return new Result<List<SessionDto>>(sessionDtos);
     }
     
-    public async Task<Result<SessionDto>> StartSession(SessionStartDto? createDto)
+    public async Task<Result<SessionDto>> StartSession(SessionStartDto? startDto)
     {
-        var result = await CreateSession(createDto);
+        var result = await CreateSession(startDto);
 
         if (result.Errors.Any())
         {
@@ -110,30 +110,6 @@ public class SessionService : ISessionService
         await _kubernetesService.CreateSessionPod(session);
         
         return result;
-    }
-
-    public async Task<Result<SessionDto>> UpdateSession(SessionDto? updateDto)
-    {
-        var validationResult = await new SessionDtoValidator().ValidateAsync(updateDto!);
-    
-        if (updateDto is null || validationResult.Errors.Any())
-        {
-            return Result<SessionDto>.Invalid(validationResult.AsErrors());
-        }
-    
-        var session = await _sessionRepository.GetByIdAsync(updateDto.Id);
-        var visionSet = await _visionSetRepository.GetByIdAsync(updateDto.VisionSetId);
-    
-        if (session is null || visionSet is null)
-        {
-            return Result<SessionDto>.NotFound();
-        }
-    
-        session.Pod = updateDto.Pod;
-    
-        await _sessionRepository.UpdateAsync(session);
-    
-        return new Result<SessionDto>(updateDto);
     }
 
     public async Task<Result> DeleteSession(int sessionId)

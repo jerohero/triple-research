@@ -378,60 +378,10 @@ public class SessionServiceTests : SessionServiceTestsBase
         const int visionSetId = 1;
         const string source = "https://stream.com";
         var createDto = new SessionStartDto(visionSetId, source);
-    
+
         // Act
         var result = _service.StartSession(createDto);
-    
-        // Assert
-        Assert.That(result.Result.ValueType == expected);
-    }
 
-    [Test]
-    public void UpdateSession_WhenInputValid_ItShouldReturnResultStatusOk()
-    {
-        // Arrange
-        SetupSessions(2);
-        const int visionSetId = 1;
-        const string source = "https://stream.com";
-        var dto = new SessionDto(1, visionSetId, source, "cv-test-1", true, DateTime.UtcNow, DateTime.MinValue, DateTime.MinValue);
-        const ResultStatus expected = ResultStatus.Ok;
-        
-        // Act
-        var result = _service.UpdateSession(dto);
-        
-        // Assert
-        Assert.That(result.Result.Status == expected);
-    }
-    
-    [Test]
-    public void UpdateSession_WhenInputValid_ItShouldUpdate()
-    {
-        // Arrange
-        SetupSessions(2);
-        const int visionSetId = 1;
-        const string source = "https://stream.com";
-        var expected = new SessionDto(1, visionSetId, source, "cv-test-1", true, DateTime.UtcNow, DateTime.MinValue, DateTime.MinValue);
-    
-        // Act
-        var result = _service.UpdateSession(expected);
-    
-        // Assert
-        Assert.That(result.Result.Value.Id == expected.Id);
-    }
-    
-    [Test]
-    public void UpdateSession_WhenSessionUpdated_ItShouldReturnTypeOfSessionDto()
-    {
-        // Arrange
-        SetupSessions(2);
-        var expected = typeof(SessionDto);
-        const int visionSetId = 1;
-        const string source = "https://stream.com";
-        var dto = new SessionDto(1, visionSetId, source, "cv-test-1", true, DateTime.UtcNow, DateTime.MinValue, DateTime.MinValue);
-        
-        // Act
-        var result = _service.UpdateSession(dto);
-        
         // Assert
         Assert.That(result.Result.ValueType == expected);
     }

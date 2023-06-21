@@ -10,8 +10,7 @@ public interface ISessionService
 {
     Task<Result<SessionDto>> GetSessionById(int sessionId);
     Task<Result<List<SessionDto>>> GetSessionsByVisionSet(int visionSetId);
-    Task<Result<SessionDto>> StartSession(SessionStartDto createDto);
-    Task<Result<SessionDto>> UpdateSession(SessionDto updateDto);
+    Task<Result<SessionDto>> StartSession(SessionStartDto startDto);
     Task<Result> DeleteSession(int sessionId);
     Task<Result> StopSession(int sessionId);
     Task<Result<SessionNegotiateDto>> NegotiateSession(int sessionId);

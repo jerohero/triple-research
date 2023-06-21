@@ -46,7 +46,7 @@ public class StreamPollServiceTests : StreamPollServiceTestsBase
             x.CheckConnection(It.IsAny<string>())).Returns(true
         );
         _mockSessionService.Setup(x => 
-            x.GetActiveVisionSetSessionsBySource(It.IsAny<int>(),It.IsAny<string>())
+            x.GetActiveVisionSetSessionsBySource(It.IsAny<VisionSet>(),It.IsAny<string>())
         ).ReturnsAsync(Result<List<Session>>.Success(new List<Session>()));
 
         // Act
