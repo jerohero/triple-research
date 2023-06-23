@@ -2,6 +2,7 @@
   import { Dialog, DialogPanel, DialogTitle, TransitionChild, TransitionRoot } from '@headlessui/vue'
   import {ref} from 'vue'
   import axios from '@/shared/axios'
+  import CustomButton from '@/components/CustomButton.vue'
 
   const props = defineProps<{
     open: boolean,
@@ -14,6 +15,7 @@
 
   const selectedFile = ref<any>(null)
   const uploadProgress = ref<number>(0)
+  const isUploading = ref<boolean>(false)
 
   let newObject: any = {}
 
@@ -32,9 +34,12 @@
 
   const onFileChange = (e: any) => {
     selectedFile.value = e.target.files ? e.target.files[0] : null
+    console.log(selectedFile.value)
   }
 
   const uploadChunk: any = async (chunk: any, start: number, end: number, retries = 3) => {
+    isUploading.value = true
+
     try {
       await axios().post(`project/${props.projectId}/trained-model`, chunk, {
         headers: {
@@ -44,6 +49,11 @@
       })
       const nextChunkStart = start + chunk.byteLength
       uploadProgress.value = Math.min(Math.floor((nextChunkStart / selectedFile.value.size) * 100), 100)
+
+      if (uploadProgress.value >= 100) {
+        isUploading.value = false;
+      }
+
       return end
     } catch (error: any) {
       if (retries > 0 && error.response.status === 500) {
@@ -51,6 +61,7 @@
         await new Promise(r => setTimeout(r, 1000))
         return uploadChunk(chunk, start, end, retries - 1)
       } else {
+        isUploading.value = false
         throw error
       }
     }
@@ -67,6 +78,22 @@
       const chunk = await selectedFile.value.slice(start, end).arrayBuffer()
       start = await uploadChunk(chunk, start, end)
     }
+  }
+
+  const onUndoFile = () => {
+    selectedFile.value = null;
+  }
+
+  const formatBytes = (bytes: number, decimals = 2) => {
+    if (!+bytes) return '0 Bytes'
+
+    const k = 1024
+    const dm = decimals < 0 ? 0 : decimals
+    const sizes = ['Bytes', 'KB', 'MB', 'GB', 'TB']
+
+    const i = Math.floor(Math.log(bytes) / Math.log(k))
+
+    return `${parseFloat((bytes / Math.pow(k, i)).toFixed(dm))} ${sizes[i]}`
   }
 </script>
 
@@ -123,7 +150,7 @@
                       <div>
                         <div class="flex items-center justify-center w-full">
                           <label
-                              v-if="!selectedFile?.value"
+                              v-if="!selectedFile && !isUploading"
                               for="dropzone-file"
                               class="flex flex-col items-center justify-center w-full h-64 border-2 border-gray-300
                               border-dashed rounded-lg cursor-pointer bg-gray-50 dark:hover:bg-bray-800 dark:bg-gray-700
@@ -140,21 +167,42 @@
                             </div>
                             <input id="dropzone-file" type="file" class="hidden" @change="onFileChange" />
                           </label>
+                          <div
+                              v-else-if="!isUploading"
+                              class="flex flex-col w-full h-64"
+                          >
+                            <div class="flex space-x-2">
+                              <span>
+                                {{ selectedFile.name }}
+                              </span>
+                              <div class="text-textGrey text-xs flex items-center">
+                                <span>
+                                ({{ formatBytes(selectedFile.size) }})
+                                </span>
+                              </div>
+                              <button
+                                  @click="onUndoFile"
+                                  type="button"
+                                  class="rounded-md text-textGrey hover:text-textDark focus:outline-none flex items-center"
+                              >
+                                <span class="sr-only">
+                                  Undo
+                                </span>
+                                <ion-icon name="close-outline" class="h-5 w-5" aria-hidden="true"/>
+                              </button>
+                            </div>
+                          </div>
                           <div v-else>
-                            
+                            <div>Upload Progress: {{uploadProgress}}%</div>
                           </div>
                         </div>
-
-                        <button @click="onFileUpload">Upload!</button>
-                        <div>Upload Progress: {{uploadProgress}}%</div>
                       </div>
 
                     </div>
                     <div class="mt-4 flex flex-row-reverse gap-4 mt-48">
                       <CustomButton
-                          @click="onSave"
-                          text="Add"
-                          :on-click="onSave"
+                          @click="onFileUpload"
+                          text="Upload"
                           is-primary
                       />
                       <CustomButton
