@@ -22,7 +22,18 @@ const columnInputs = {
     type: 'input-text'
   },
   Models: {
-    type: 'model-upload'
+    type: 'model-upload',
+    options: {
+      id: (model: any) => model.Id,
+      fetchUrl: (project: any) => `/project/${ project.Id }/trained-model`,
+      display: (models: any) => {
+        console.log(models)
+        return Array.isArray(models)
+            ? models?.map((model: any) => `${model?.Name}`).join(', ')
+            : `${models?.Name}`
+      },
+      queryable: (model: any) => `${ model?.Name }`
+    }
   }
 }
 
@@ -62,7 +73,9 @@ const getRowObject = (project: any): ProjectColumns => {
     },
     Models: {
       key: 'Models',
-      display: () => 'name',
+      display: (models: any) => Array.isArray(models)
+          ? models?.map((model: any) => `${ model?.Name }`).join(', ')
+          : `${ models?.Name }`,
       value: 'project.Name',
       editable: true,
       queryable: true,

@@ -107,6 +107,11 @@
             @change="onChange"
         />
         <div v-if="rowItem.edit?.type === 'model-upload'">
+          <ColumnCombobox
+              :row-item="rowItem"
+              multiple
+              @change="onChange"
+          />
           <button @click="onOpenUploadModel">
             Upload
           </button>

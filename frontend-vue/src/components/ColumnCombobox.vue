@@ -136,7 +136,7 @@ import {computed, onMounted, ref, watch} from 'vue'
                 shadow-lg ring-1 ring-black ring-opacity-5 focus:outline-none sm:text-sm"
       >
         <ComboboxOption v-for="option in filtered"
-                        v-bind:key="settings.options?.Id(option)"
+                        v-bind:key="settings.options?.id(option)"
                         :value="option"
                         as="template"
                         v-slot="{ active, selected }"

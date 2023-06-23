@@ -37,7 +37,7 @@ const columnInputs = {
   TrainedModel: {
     type: 'model-upload',
     options: {
-      id: (model: any) => model.id,
+      id: (model: any) => model.Id,
       fetchUrl: `/project/${ router.params.id }/trained-model`,
       display: (models: any) => models?.map((model: any) => model?.Name).join(', '),
       queryable: (model: any) => model?.Name,
