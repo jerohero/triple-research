@@ -24,6 +24,11 @@ const columns = [
 ]
 const route = `/project/${ router.params.id }/vision-set`
 const updateRoute = '/vision-set'
+const gotoPath = (rowData: VisionSetColumns) => `/vision-sets/${ rowData.Id.value }`
+
+const actions = [
+  'edit', 'delete', 'goto'
+]
 
 const columnInputs = {
   Name: {
@@ -134,10 +139,12 @@ const getRowObject = (project: any): VisionSetColumns => {
     <EntityContent
         :columns="columns"
         :route="route"
+        :goto-path="gotoPath"
         :update-route="updateRoute"
         :get-row-object="getRowObject"
         :get-update-object="getUpdateObject"
         :create-settings="createSettings"
+        :actions="actions"
     />
   </div>
 </template>

@@ -72,20 +72,40 @@ public class SessionService : ISessionService
             return Result<List<SessionDto>>.NotFound();
         }
 
-        var pods = await _kubernetesService.GetVisionSetPods(visionSet.Project.Name, visionSet.Name);
-        var podToStatus = pods.Items.ToDictionary(pod => pod.Metadata.Name, pod => pod.Status.Phase);
+        Dictionary<string, string>? podToStatus = null;
+
+        try
+        {
+            var pods = await _kubernetesService.GetVisionSetPods(visionSet.Project.Name, visionSet.Name);
+            podToStatus = pods.Items.ToDictionary(pod => pod.Metadata.Name, pod => pod.Status.Phase);
+        }
+        catch (Exception)
+        {
+            _logger.LogInformation("Kubernetes connection failed");
+        }
 
         var sessionsSpec = new SessionsByVisionSet(visionSetId);
         var sessions = await _sessionRepository.ListAsync(sessionsSpec, CancellationToken.None);
 
         var sessionDtos = _mapper.Map<List<SessionDto>>(sessions);
 
-        foreach (var sessionDto in sessionDtos)
+        if (podToStatus is not null)
         {
-            sessionDto.Status = podToStatus.TryGetValue(sessionDto.Pod, out var status)
-                ? status
-                : "Terminated";
+            foreach (var sessionDto in sessionDtos)
+            {
+                sessionDto.Status = podToStatus.TryGetValue(sessionDto.Pod, out var status)
+                    ? status
+                    : "Terminated";
+            }            
         }
+        else
+        {
+            foreach (var sessionDto in sessionDtos)
+            {
+                sessionDto.Status = "ERROR";
+            }    
+        }
+
 
         return new Result<List<SessionDto>>(sessionDtos);
     }

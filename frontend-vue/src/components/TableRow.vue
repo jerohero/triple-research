@@ -10,7 +10,9 @@
   import ColumnInputList from '@/components/ColumnInputList.vue'
 
   const props = defineProps<{
-    rowData: any
+    rowData: any,
+    gotoPath(rowData: any): any,
+    actions?: string[],
   }>()
 
   const isEditing = ref<boolean>()
@@ -39,7 +41,7 @@
   }
 
   const onGoto = () => {
-    router.push({ path: `/projects/${ props.rowData.Id.value }` })
+    router.push({ path: props.gotoPath(props.rowData) })
   }
 
   const onCancel = () => {
@@ -75,6 +77,12 @@
 
   const onUploadModel = () => {
     console.log('Upload model')
+  }
+
+  const isActionEnabled = (action: string) => {
+    const index = props.actions?.indexOf(action)
+
+    return index != undefined && index > -1
   }
 </script>
 
@@ -138,9 +146,9 @@
         <IconButton :on-click="onCancel" is-cancel class="text-3xl" />
       </div>
       <div v-else class="flex gap-3 justify-end">
-        <IconButton :on-click="onEdit" is-edit class="text-2xl" />
-        <IconButton :on-click="onDelete" is-delete class="text-2xl" />
-        <IconButton :on-click="onGoto" is-goto class="text-3xl" />
+        <IconButton v-if="isActionEnabled('edit')" :on-click="onEdit" is-edit class="text-2xl" />
+        <IconButton v-if="isActionEnabled('delete')" :on-click="onDelete" is-delete class="text-2xl" />
+        <IconButton v-if="isActionEnabled('goto')" :on-click="onGoto" is-goto class="text-3xl" />
       </div>
     </td>
   </tr>

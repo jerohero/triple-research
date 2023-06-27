@@ -11,9 +11,11 @@
     route: string,
     columns: string[],
     getRowObject(values: any): any,
-    getUpdateObject(updated: any): any,
+    gotoPath(rowData: any): any
     createSettings?: any,
-    updateRoute?: string
+    getUpdateObject?(updated: any): any,
+    updateRoute?: string,
+    actions?: string[],
   }>()
 
   const tableStore = useTableStore()
@@ -193,6 +195,8 @@
       :columns="columns"
       :rows="tableStore.query ? filteredRows : rows"
       :is-fetching="isFetching"
+      :goto-path="props.gotoPath"
+      :actions="props.actions"
       @update-row="updateRow"
       @delete-row="deleteRow"
     />

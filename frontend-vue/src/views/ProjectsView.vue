@@ -16,6 +16,11 @@ const columns = [
   'Models'
 ]
 const route = '/project'
+const gotoPath = (rowData: ProjectColumns) => `/projects/${ rowData.Id.value }`
+
+const actions = [
+  'edit', 'delete', 'goto'
+]
 
 const columnInputs = {
   Name: {
@@ -91,9 +96,11 @@ const getRowObject = (project: any): ProjectColumns => {
     <EntityContent
         :columns="columns"
         :route="route"
+        :goto-path="gotoPath"
         :get-row-object="getRowObject"
         :get-update-object="getUpdateObject"
         :create-settings="createSettings"
+        :actions="actions"
     />
   </div>
 </template>

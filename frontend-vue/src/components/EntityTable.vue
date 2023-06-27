@@ -2,10 +2,12 @@
   import TableRow from '@/components/TableRow.vue'
   import LoadSpinner from '@/components/LoadSpinner.vue'
 
-  defineProps<{
+  const props = defineProps<{
     columns: string[],
     rows: any[],
-    isFetching: boolean
+    isFetching: boolean,
+    gotoPath(rowData: any): any,
+    actions?: string[],
   }>()
 
   const emit = defineEmits(['updateRow', 'deleteRow'])
@@ -47,6 +49,8 @@
           v-for="row in rows"
           v-bind:key="row.Id"
           :row-data="row"
+          :goto-path="props.gotoPath"
+          :actions="props.actions"
           @update="updateRow"
           @delete="deleteRow"
       />
