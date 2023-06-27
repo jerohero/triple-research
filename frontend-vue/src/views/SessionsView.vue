@@ -28,7 +28,7 @@ const columns = [
   'Stopped at',
 ]
 const route = `/vision-set/${ router.params.id }/session`
-const gotoPath = (rowData: SessionColumns) => `/projects/${ rowData.Id.value }`
+const gotoPath = (rowData: SessionColumns) => `/sessions/${ rowData.Id.value }`
 
 const actions = [
   'goto'
