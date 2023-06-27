@@ -12,7 +12,8 @@
     columns: string[],
     getRowObject(values: any): any,
     getUpdateObject(updated: any): any,
-    createSettings?: any
+    createSettings?: any,
+    updateRoute?: string
   }>()
 
   const tableStore = useTableStore()
@@ -54,7 +55,7 @@
     try {
       await axios()
           .put(
-              `${ props.route }`,
+              `${ props.updateRoute || props.route }`,
               props.getUpdateObject(updatedRow)
           )
 

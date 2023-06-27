@@ -23,6 +23,7 @@ const columns = [
   'Model'
 ]
 const route = `/project/${ router.params.id }/vision-set`
+const updateRoute = '/vision-set'
 
 const columnInputs = {
   Name: {
@@ -35,13 +36,12 @@ const columnInputs = {
     type: 'input-text'
   },
   TrainedModel: {
-    type: 'model-upload',
+    type: 'search-single',
     options: {
       id: (model: any) => model.Id,
       fetchUrl: `/project/${ router.params.id }/trained-model`,
-      display: (models: any) => models?.map((model: any) => model?.Name).join(', '),
-      queryable: (model: any) => model?.Name,
-      // displaySub: (model: any) => model.email
+      display: (model: any) => model.Name,
+      queryable: (model: any) => model?.Name
     }
   },
 }
@@ -70,11 +70,14 @@ const createSettings = {
 }
 
 const getUpdateObject = (updated: any) => {
-  const { Id, Name } = updated
+  const { Id, Name, Sources, ContainerImage, TrainedModel } = updated
 
   return {
     id: Id.value,
-    name: Name.value
+    name: Name.value,
+    sources: Sources.value,
+    containerImage: ContainerImage.value,
+    trainedModelId: TrainedModel.value.Id
   }
 }
 
@@ -117,6 +120,7 @@ const getRowObject = (project: any): VisionSetColumns => {
       value: project.TrainedModel,
       editable: true,
       queryable: true,
+      edit: columnInputs.TrainedModel
     },
   }
 }
@@ -130,6 +134,7 @@ const getRowObject = (project: any): VisionSetColumns => {
     <EntityContent
         :columns="columns"
         :route="route"
+        :update-route="updateRoute"
         :get-row-object="getRowObject"
         :get-update-object="getUpdateObject"
         :create-settings="createSettings"
