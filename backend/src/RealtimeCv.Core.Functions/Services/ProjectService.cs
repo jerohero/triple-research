@@ -6,6 +6,7 @@ using System.Threading.Tasks;
 using Ardalis.Result;
 using Ardalis.Result.FluentValidation;
 using AutoMapper;
+using Newtonsoft.Json;
 using RealtimeCv.Core.Entities;
 using RealtimeCv.Core.Functions.Validators;
 using RealtimeCv.Core.Interfaces;
@@ -45,7 +46,7 @@ public class ProjectService : IProjectService
         var spec = new ProjectSpec(projectId);
         
         var project = await _projectRepository.SingleOrDefaultAsync(spec, CancellationToken.None);
-        
+
         return project is null
           ? Result<ProjectDto>.NotFound()
           : new Result<ProjectDto>(_mapper.Map<ProjectDto>(project));
@@ -53,7 +54,9 @@ public class ProjectService : IProjectService
 
     public async Task<Result<List<ProjectsDto>>> GetProjects()
     {
-        var projects = await _projectRepository.ListAsync();
+        var spec = new ProjectsSpec();
+        
+        var projects = await _projectRepository.ListAsync(spec, CancellationToken.None);
 
         return new Result<List<ProjectsDto>>(_mapper.Map<List<ProjectsDto>>(projects));
     }

@@ -5,7 +5,8 @@
   import ColumnInput from '@/components/ColumnInput.vue'
   import ColumnCombobox from '@/components/ColumnCombobox.vue'
   import ModelUpload from '@/components/ModelUpload.vue'
-  import router from "@/router";
+  import router from '@/router'
+  import ColumnModelList from '@/components/ColumnModelList.vue'
 
   const props = defineProps<{
     rowData: any
@@ -107,14 +108,11 @@
             @change="onChange"
         />
         <div v-if="rowItem.edit?.type === 'model-upload'">
-          <ColumnCombobox
+          <ColumnModelList
               :row-item="rowItem"
-              multiple
               @change="onChange"
+              @open-upload="onOpenUploadModel"
           />
-          <button @click="onOpenUploadModel">
-            Upload
-          </button>
           <ModelUpload
               :col-key="rowItem.key"
               :value="rowItem.value"

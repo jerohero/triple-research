@@ -14,10 +14,14 @@ public class ProjectDto
     [JsonRequired]
     public ICollection<VisionSetDto> VisionSets { get; set; }
 
-    public ProjectDto(int id, string name, ICollection<VisionSetDto> visionSets)
+    [JsonRequired]
+    public ICollection<TrainedModelDto> TrainedModels { get; set; }
+
+    public ProjectDto(int id, string name, ICollection<VisionSetDto> visionSets, ICollection<TrainedModelDto> trainedModels)
     {
         Id = id;
         Name = name;
         VisionSets = visionSets;
+        TrainedModels = trainedModels;
     }
 }

@@ -26,12 +26,10 @@ const columnInputs = {
     options: {
       id: (model: any) => model.Id,
       fetchUrl: (project: any) => `/project/${ project.Id }/trained-model`,
-      display: (models: any) => {
-        console.log(models)
-        return Array.isArray(models)
+      display: (models: any) =>
+          Array.isArray(models)
             ? models?.map((model: any) => `${model?.Name}`).join(', ')
-            : `${models?.Name}`
-      },
+            : `${models?.Name}`,
       queryable: (model: any) => `${ model?.Name }`
     }
   }
@@ -74,9 +72,9 @@ const getRowObject = (project: any): ProjectColumns => {
     Models: {
       key: 'Models',
       display: (models: any) => Array.isArray(models)
-          ? models?.map((model: any) => `${ model?.Name }`).join(', ')
-          : `${ models?.Name }`,
-      value: 'project.Name',
+        ? models?.map((model: any) => `${model?.Name}`).join(', ')
+        : `${models?.Name}`,
+      value: project.TrainedModels,
       editable: true,
       queryable: true,
       edit: columnInputs.Models

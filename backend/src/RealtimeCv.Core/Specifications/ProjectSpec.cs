@@ -10,6 +10,7 @@ namespace RealtimeCv.Core.Specifications
     {
         Query.Where(p => p.Id == id)
             .Include(p => p.VisionSets)
+            .Include(p => p.TrainedModels)
             .OrderBy(p => p.Id)
             .Take(1)
             .EnableCache(nameof(ProjectSpec), id);
