@@ -1,5 +1,5 @@
 <script setup lang="ts">
-  import {onMounted, ref, watch} from 'vue'
+  import {onMounted, ref} from 'vue'
   import { useToast } from 'vue-toastification'
   import axios from '../shared/axios'
   import ConfirmationModal from '@/components/ConfirmationModal.vue'
@@ -19,7 +19,6 @@
 
   const modelIdToDelete = ref<number>()
   const data = ref()
-  const selected = ref()
 
   onMounted(async () => {
     if (settings.options?.fetchUrl) {
@@ -30,21 +29,6 @@
       data.value = settings.options?.value
     }
   })
-
-  const initSelectedValue = () => {
-    if (!props.rowItem) {
-      selected.value = data.value[0]
-      emit('change', {
-        key: props.rowItem?.key || props.createSettings?.key,
-        value: data.value[0]
-      })
-      return
-    }
-
-    selected.value = data.value.find((item: any) =>
-        (item?.Id || item) === (props.rowItem.value.Id || props.rowItem.value)
-    )
-  }
 
   const getDisplayValue = (input: any) => {
     if (!input)

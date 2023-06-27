@@ -7,6 +7,7 @@
   import ModelUpload from '@/components/ModelUpload.vue'
   import router from '@/router'
   import ColumnModelList from '@/components/ColumnModelList.vue'
+  import ColumnInputList from '@/components/ColumnInputList.vue'
 
   const props = defineProps<{
     rowData: any
@@ -103,6 +104,12 @@
         />
         <ColumnInput
             v-if="rowItem.edit?.type === 'input-text'"
+            :col-key="rowItem.key"
+            :value="rowItem.value"
+            @change="onChange"
+        />
+        <ColumnInputList
+            v-if="rowItem.edit?.type === 'input-text-list'"
             :col-key="rowItem.key"
             :value="rowItem.value"
             @change="onChange"

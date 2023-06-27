@@ -30,7 +30,7 @@ const columnInputs = {
     type: 'input-text'
   },
   Sources: {
-    type: 'input-text'
+    type: 'input-text-list'
   },
   ContainerImage: {
     type: 'input-text'
@@ -100,7 +100,7 @@ const getRowObject = (project: any): VisionSetColumns => {
     },
     Sources: {
       key: 'Sources',
-      display: (sources: string) => sources,
+      display: (sources: string) => `${ sources.length.toString() } source${ sources.length !== 1 ? 's' : '' }`,
       value: project.Sources,
       editable: true,
       queryable: true,
