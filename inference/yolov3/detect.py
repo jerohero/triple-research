@@ -34,7 +34,7 @@ def get_colors(LABELS):
 
 def get_weights(weights_path):
     # derive the paths to the YOLO weights and model configuration
-    weightsPath = os.path.sep.join([path, weights_path])
+    weightsPath = os.path.sep.join([weights_path])
     return weightsPath
 
 
@@ -232,24 +232,30 @@ def predict(image, net, LABELS, COLORS):
     return json.dumps(result)
 
 
-def start(model_uri):
+def start(model_name):
     # load our input image and grab its spatial dimensions
     global nets, labels, colors
 
+    print(model_name)
+
     labels_path = "yolo_v3/coco.names"
     cfgpath = "yolo_v3/yolov3.cfg"
-    wpath = "yolo_v3/model.file"
+    # wpath = "yolo_v3/model.file"
+    # wpath = f"{storage_path}/{model_uri}"
+    pv_path = "/mnt/models"
 
-    response = requests.get(model_uri, stream=True)
+    weights_path = f"{pv_path}/{model_name}"
 
-    with open(wpath, "wb") as f:
-        for chunk in response.iter_content(chunk_size=8192):
-            f.write(chunk)
+    # response = requests.get(model_uri, stream=True)
+    #
+    # with open(wpath, "wb") as f:
+    #     for chunk in response.iter_content(chunk_size=8192):
+    #         f.write(chunk)
 
     labels = get_labels(labels_path)
     cfg = get_config(cfgpath)
-    weights = get_weights(wpath)
-    nets = load_model(cfg, weights)
+    # weights = get_weights(weights_path)
+    nets = load_model(cfg, weights_path)
     colors = get_colors(labels)
     # image=cv2.cvtColor(image,cv2.COLOR_BGR2RGB)
     # show the output image

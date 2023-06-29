@@ -1,11 +1,12 @@
 ﻿using System;
 using System.Net.Http;
 using System.Net.Http.Json;
-using System.Text.Json;
 using System.Threading;
 using Ardalis.GuardClauses;
+using Newtonsoft.Json;
 using RealtimeCv.Core.Interfaces;
 using RealtimeCv.Infrastructure.Data.Config;
+using JsonException = System.Text.Json.JsonException;
 
 namespace RealtimeCv.Infrastructure.Streaming;
 
@@ -36,7 +37,7 @@ public class StreamSender : IStreamSender, IDisposable
         _httpService = httpService;
     }
 
-    public void PrepareTarget(string prepareUrl, string datasetUri, int secondsBeforeTimeout = 180)
+    public void PrepareTarget(string prepareUrl, string modelName, int secondsBeforeTimeout = 180)
     {
         Guard.Against.NullOrEmpty(prepareUrl);
         
@@ -49,7 +50,7 @@ public class StreamSender : IStreamSender, IDisposable
             return;
         }
         
-        _prepareThread = new Thread(() => AttemptPrepareTarget(datasetUri))
+        _prepareThread = new Thread(() => AttemptPrepareTarget(modelName))
         {
             IsBackground = true
         };
@@ -118,7 +119,7 @@ public class StreamSender : IStreamSender, IDisposable
         }
     }
 
-    private async void AttemptPrepareTarget(string datasetUri)
+    private async void AttemptPrepareTarget(string modelName)
     {
         var didPrepare = false;
         
@@ -129,7 +130,7 @@ public class StreamSender : IStreamSender, IDisposable
         {
             try
             {
-                var content = _httpService.StringToHttpContent(datasetUri);
+                var content = _httpService.StringToHttpContent(modelName);
                 var res = await _httpService.Post(_prepareUrl, content);
                 
                 _logger.LogInformation("Prepared target.");

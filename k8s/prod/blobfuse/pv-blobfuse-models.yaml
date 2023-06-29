@@ -1,0 +1,26 @@
+apiVersion: v1
+kind: PersistentVolume
+metadata:
+  name: pv-blobfuse-models
+spec:
+  capacity:
+    storage: 10Gi
+  accessModes:
+    - ReadWriteMany
+  persistentVolumeReclaimPolicy: Retain
+  storageClassName: azureblob-fuse-premium
+  mountOptions:
+    - -o allow_other
+    - --file-cache-timeout-in-seconds=120
+  csi:
+    driver: blob.csi.azure.com
+    readOnly: false
+    volumeHandle: rcvstorage-trained-model
+    volumeAttributes:
+      resourceGroup: realtimecv
+      storageAccount: rcvstorage
+      containerName: trained-model
+      AzureStorageAuthType: key
+    nodeStageSecretRef:
+      name: blobfuse-creds
+      namespace: default

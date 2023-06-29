@@ -46,6 +46,17 @@ public class KubernetesService : IKubernetesService
             },
             Spec = new V1PodSpec
             {
+                Volumes = new List<V1Volume>
+                {
+                    new()
+                    {
+                        Name = "models-volume",
+                        PersistentVolumeClaim = new V1PersistentVolumeClaimVolumeSource
+                        {
+                            ClaimName = "pvc-blobnfs-models"
+                        }
+                    }
+                },
                 Containers = new List<V1Container>
                 {
                     new()
@@ -58,7 +69,26 @@ public class KubernetesService : IKubernetesService
                                 ContainerPort = 5000
                             }
                         },
-                        ImagePullPolicy = "Always"
+                        ImagePullPolicy = "Always",
+                        VolumeMounts = new List<V1VolumeMount>
+                        {
+                            new ()
+                            {
+                                Name = "models-volume",
+                                MountPath = "/mnt/models"
+                            }
+                        },
+                        Resources = new V1ResourceRequirements
+                        {
+                            Requests = new Dictionary<string, ResourceQuantity>
+                            {
+                                { "memory", new ResourceQuantity("1Gi") }
+                            },
+                            Limits = new Dictionary<string, ResourceQuantity>
+                            {
+                                { "memory", new ResourceQuantity("2Gi") }
+                            }
+                        }
                     },
                     new()
                     {
@@ -72,6 +102,17 @@ public class KubernetesService : IKubernetesService
                             }
                         },
                         ImagePullPolicy = "Always",
+                        Resources = new V1ResourceRequirements
+                        {
+                            Requests = new Dictionary<string, ResourceQuantity>
+                            {
+                                { "memory", new ResourceQuantity("1Gi") }
+                            },
+                            Limits = new Dictionary<string, ResourceQuantity>
+                            {
+                                { "memory", new ResourceQuantity("2Gi") }
+                            }
+                        },
                         Env = new List<V1EnvVar>
                         {
                             new()
@@ -93,6 +134,11 @@ public class KubernetesService : IKubernetesService
                             {
                                 Name = "AzureWebJobsStorage",
                                 Value = Environment.GetEnvironmentVariable("AzureWebJobsStorage")
+                            },
+                            new()
+                            {
+                                Name = "BlobConnectionString",
+                                Value = Environment.GetEnvironmentVariable("BlobConnectionString")
                             },
                             new()
                             {
@@ -177,5 +223,7 @@ public class KubernetesService : IKubernetesService
 
         var kubeConfig = KubernetesClientConfiguration.BuildConfigFromConfigObject(kubeConfigObject);
 
+        // _kubernetes = new k8s.Kubernetes(new KubernetesClientConfiguration { Host = "http://localhost:8080/" }); // For local testing
+        _kubernetes = new k8s.Kubernetes(kubeConfig);
     }
 }

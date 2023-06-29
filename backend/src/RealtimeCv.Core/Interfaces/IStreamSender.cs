@@ -11,7 +11,7 @@ public interface IStreamSender
     
     void SendStreamToEndpoint(IStreamReceiver streamReceiver, string targetUrl);
     
-    void PrepareTarget(string prepareUrl, string datasetUri, int secondsBeforeTimeout = 180);
+    void PrepareTarget(string prepareUrl, string modelName, int secondsBeforeTimeout = 180);
     
     void Dispose();
 
