@@ -24,12 +24,12 @@ public class StreamService : IStreamService, IDisposable
         _pubSub = pubSub;
     }
 
-    public void HandleStream(Session session, string modelUri, string targetUrl)
+    public void HandleStream(Session session, string modelName, string targetUrl)
     {
         Guard.Against.NullOrWhiteSpace(session.Source, nameof(session.Source));
         Guard.Against.NullOrEmpty(targetUrl);
 
-        _streamSender.PrepareTarget($"{targetUrl}/start", modelUri);
+        _streamSender.PrepareTarget($"{targetUrl}/start", modelName);
         _streamReceiver.ConnectStreamBySource(session.Source);
 
         _streamReceiver.OnConnectionEstablished += () =>

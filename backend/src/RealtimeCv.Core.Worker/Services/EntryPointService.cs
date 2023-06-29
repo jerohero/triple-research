@@ -38,11 +38,9 @@ public class EntryPointService : IEntryPointService
         var targetUrl = "http://127.0.0.1:5000";
 
         var session = await _sessionHandlerService.SetSessionActive(sessionId);
-
         var model = await _sessionHandlerService.GetSessionTrainedModel(sessionId);
-        var modelUri = _blob.GetBlobUri(model.Name, "trained-model");
 
-        _streamService.HandleStream(session, modelUri, targetUrl);
+        _streamService.HandleStream(session, model.Name, targetUrl);
         
         _streamService.OnStreamEnded += () =>
         {
