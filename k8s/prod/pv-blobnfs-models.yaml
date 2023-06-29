@@ -7,13 +7,11 @@ spec:
     storage: 10Gi
   accessModes:
     - ReadWriteMany
-  persistentVolumeReclaimPolicy: Retain  # If set as "Delete" container would be removed after pvc deletion
+  persistentVolumeReclaimPolicy: Retain
   storageClassName: azureblob-nfs-premium
   csi:
     driver: blob.csi.azure.com
     readOnly: false
-    # make sure this volumeid is unique in the cluster
-    # `#` is not allowed in self defined volumeHandle
     volumeHandle: realtimecv#rcvstorageaccount#trained-model
     volumeAttributes:
       resourceGroup: realtimecv

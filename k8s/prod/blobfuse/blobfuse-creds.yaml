@@ -1,8 +1,0 @@
-﻿apiVersion: v1
-kind: Secret
-metadata:
-  name: blobfuse-creds
-type: Opaque
-data:
-  accountname: cmN2c3RvcmFnZQ==
-  accountkey: SzVyWStLK2FNRU14b1FFcysrKzZERm1pdCs3WWsrNDY4RVYxblRzVmZJYnhXdCt2QVcvOTJQV2pGWnlnV1pyRVJxRHE3bXphZ0QrQVN0T3Q3MG13PT0=
