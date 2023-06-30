@@ -3,16 +3,26 @@
   import type { AxiosResponse } from 'axios'
   import { onMounted, ref } from 'vue'
   import LoadSpinner from '@/components/LoadSpinner.vue'
+  import dayjs from 'dayjs'
+  import VueJsonPretty from 'vue-json-pretty'
+  import 'vue-json-pretty/lib/styles.css'
 
   interface Negotiate {
     Url: string
+  }
+
+  interface Result {
+    Index: number,
+    Status: string,
+    CreatedAt: string,
+    Result: any
   }
 
   const props = defineProps<{
     id: string
   }>()
 
-  const events = ref<any[]>()
+  const results = ref<Result[]>([])
   const isConnecting = ref<boolean>()
 
   onMounted(async () => {
@@ -29,25 +39,33 @@
         }
 
         ws.onmessage = (event: MessageEvent) => {
-          const data = JSON.parse(event.data)
-          events.value = [data, ...data.value]
+          const data: Result = JSON.parse(event.data)
+
+          results.value.push(data)
         }
       })
 
     const example = [
       {
-        predictions: [
-          {
-            class: 'car',
-            confidence: 0.5,
-            x1: 92,
-            x2: 241,
-            y1: 123,
-            y2: 491,
-            width: 200,
-            height: 502
-          }
-        ]
+        Index: 1249,
+        Status: "succeeded",
+        CreatedAt: "2023-06-30T09:01:35.7198207Z",
+        Result: {
+          predictions: [
+            {
+              label: 'car',
+              confidence: 0.531231,
+              boundingBox: {
+                x1: 92,
+                x2: 241,
+                y1: 123,
+                y2: 491,
+                width: 200,
+                height: 502
+              }
+            }
+          ]
+        }
       }
     ]
 
@@ -61,7 +79,7 @@
       return buildArray;
     }
 
-    events.value = duplicate(example, 500)
+    // results.value = duplicate(example, 500)
   })
 </script>
 
@@ -73,41 +91,23 @@
       <LoadSpinner />
     </div>
     <div>
-<!--      <div v-for="event in events" v-bind:key="Date.now() + event">-->
-<!--        <div>-->
-<!--          <p> {{ JSON.stringify(event) }} </p>-->
-<!--        </div>-->
-<!--      </div>-->
       <div>
-        <ul>
-          <li v-for="(value, key) in events" :key="key">
-            <strong>{{ key }}:</strong>
-            <span v-if="typeof value === 'object' && !Array.isArray(value)">
-            <div>
-            <ul>
-              <li v-for="(value, key) in value" :key="key">
-                <strong>{{ key }}:</strong> {{ value }}
-              </li>
-            </ul>
-          </div>
-        </span>
-            <span v-else-if="Array.isArray(value)">
-          <ul>
-            <li v-for="(item, index) in value" :key="index">
-              <span v-if="typeof item === 'object'">
-                  <div>
-                <ul>
-                  <li v-for="(value, key) in item" :key="key">
-                    <strong>{{ key }}:</strong> {{ value }}
-                  </li>
-                </ul>
-              </div>
-              </span>
-              <span v-else>{{ item }}</span>
-            </li>
-          </ul>
-        </span>
-            <span v-else>{{ value }}</span>
+        <ul class="flex flex-col space-y-2 mt-5">
+          <li
+              v-for="(value, key) in results.reverse()" :key="key"
+              class="bg-backgroundDark p-5 rounded-[3px] "
+          >
+            <div class="flex justify-between">
+              <strong>
+                #{{ value.Index }}
+              </strong>
+              <p class="text-textGrey">
+                {{ dayjs(value.CreatedAt).format('DD-MM-YYYY HH:mm:ss.SSS') }}
+              </p>
+            </div>
+            <div class="bg-background p-2 rounded-[3px] text-textGrey text-sm mt-2">
+              <VueJsonPretty :data="value.Result" :show-double-quotes="false" :show-line="false" />
+            </div>
           </li>
         </ul>
       </div>

@@ -1,6 +1,7 @@
 ﻿using Ardalis.GuardClauses;
 using RealtimeCv.Core.Entities;
 using RealtimeCv.Core.Interfaces;
+using RealtimeCv.Core.Models.Dto;
 
 namespace RealtimeCv.Core.Worker.Services;
 
@@ -13,6 +14,7 @@ public class StreamService : IStreamService, IDisposable
     private readonly IStreamReceiver _streamReceiver;
     private readonly IStreamSender _streamSender;
     private readonly IPubSub _pubSub;
+    private int _resultCount;
 
     public StreamService(
         IStreamReceiver streamReceiver,
@@ -46,9 +48,17 @@ public class StreamService : IStreamService, IDisposable
 
         _streamSender.OnPredictionResult += async result =>
         {
-            await _pubSub.Send(result, session.Pod, "predictions");
+            _resultCount++;
             
-            // Store in db
+            var message = new PredictionDto
+            {
+                Index = _resultCount,
+                Status = "succeeded",
+                CreatedAt = DateTime.UtcNow,
+                Result = result
+            };
+            
+            await _pubSub.Send(message, session.Pod, "predictions");
         };
 
         _streamSender.OnConnectionTimeout += () =>
