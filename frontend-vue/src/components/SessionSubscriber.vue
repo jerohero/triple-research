@@ -1,86 +1,58 @@
-<script setup lang="ts">
+<script lang="js">
   import axios from '@/shared/axios'
-  import type { AxiosResponse } from 'axios'
-  import { onMounted, ref } from 'vue'
+  import { computed, onMounted, reactive, ref, toRef, unref } from 'vue'
   import LoadSpinner from '@/components/LoadSpinner.vue'
   import dayjs from 'dayjs'
   import VueJsonPretty from 'vue-json-pretty'
   import 'vue-json-pretty/lib/styles.css'
+  import { DynamicScroller, DynamicScrollerItem } from 'vue-virtual-scroller'
+  import 'vue-virtual-scroller/dist/vue-virtual-scroller.css'
 
-  interface Negotiate {
-    Url: string
-  }
+  // This component is JS as opposed to TS sin
 
-  interface Result {
-    Index: number,
-    Status: string,
-    CreatedAt: string,
-    Result: any
-  }
+  export default {
+    components: { LoadSpinner, DynamicScroller, DynamicScrollerItem, VueJsonPretty },
+    methods: { dayjs },
+    props: {
+      id: String
+    },
+    setup(props) {
+      const results = ref([])
+      const isConnecting = ref(true)
 
-  const props = defineProps<{
-    id: string
-  }>()
+      const reversedResults = computed(() => {
+        return unref(results).slice().reverse();
+      });
 
-  const results = ref<Result[]>([])
-  const isConnecting = ref<boolean>()
-
-  onMounted(async () => {
-    isConnecting.value = true
-
-    axios().post(`session/${ props.id }/negotiate`)
-      .then((res: AxiosResponse<Negotiate>) => {
-        console.log(res.data.Url)
-        const ws = new WebSocket(res.data.Url)
+      onMounted(async () => {
+        const response = await axios().post(`session/${props.id}/negotiate`);
+        const ws = new WebSocket(response.data.Url);
 
         ws.onopen = () => {
-          console.log('Connected!')
-          isConnecting.value = false
-        }
+          console.log('Connected!');
+          isConnecting.value = false;
+        };
 
-        ws.onmessage = (event: MessageEvent) => {
-          const data: Result = JSON.parse(event.data)
+        ws.onmessage = (event) => {
+          const data = JSON.parse(event.data);
 
-          results.value.push(data)
-        }
-      })
+          const rawResults = unref(results);
+          if (rawResults.length >= 50) {
+            rawResults.shift();
+          }
 
-    const example = [
-      {
-        Index: 1249,
-        Status: "succeeded",
-        CreatedAt: "2023-06-30T09:01:35.7198207Z",
-        Result: {
-          predictions: [
-            {
-              label: 'car',
-              confidence: 0.531231,
-              boundingBox: {
-                x1: 92,
-                x2: 241,
-                y1: 123,
-                y2: 491,
-                width: 200,
-                height: 502
-              }
-            }
-          ]
-        }
+          rawResults.push(data);
+
+          results.value = [...rawResults];
+        };
+      });
+
+      return {
+        isConnecting,
+        results: reversedResults
       }
-    ]
-
-    function duplicate(array: any[], duplicator: number){
-      const buildArray = [];
-      for(let i=0; i<array.length; i++){
-        for(let j=0; j<duplicator; j++){
-          buildArray.push(array[i]);
-        }
-      }
-      return buildArray;
     }
-
-    // results.value = duplicate(example, 500)
-  })
+  }
 </script>
 
 <template>
@@ -90,27 +62,36 @@
     >
       <LoadSpinner />
     </div>
-    <div>
-      <div>
-        <ul class="flex flex-col space-y-2 mt-5">
-          <li
-              v-for="(value, key) in results.reverse()" :key="key"
-              class="bg-backgroundDark p-5 rounded-[3px] "
-          >
+    <DynamicScroller
+        v-if="results.length"
+        :items="results"
+        key-field="Index"
+        min-item-size="5"
+        class="mt-5"
+    >
+      <template v-slot="{ item, index, active }">
+        <DynamicScrollerItem
+          :item="item"
+          :active="active"
+          :size-dependencies="[item.Result]"
+          :data-index="index"
+          class="mb-5"
+        >
+          <div class="bg-backgroundDark p-5 rounded-[3px]">
             <div class="flex justify-between">
               <strong>
-                #{{ value.Index }}
+                #{{ item.Index }}
               </strong>
               <p class="text-textGrey">
-                {{ dayjs(value.CreatedAt).format('DD-MM-YYYY HH:mm:ss.SSS') }}
+                {{ dayjs(item.CreatedAt).format('DD-MM-YYYY HH:mm:ss.SSS') }}
               </p>
             </div>
             <div class="bg-background p-2 rounded-[3px] text-textGrey text-sm mt-2">
-              <VueJsonPretty :data="value.Result" :show-double-quotes="false" :show-line="false" />
+              <VueJsonPretty :data="item.Result" :show-double-quotes="false" :show-line="false" />
             </div>
-          </li>
-        </ul>
-      </div>
-    </div>
+          </div>
+        </DynamicScrollerItem>
+      </template>
+    </DynamicScroller>
   </div>
 </template>
