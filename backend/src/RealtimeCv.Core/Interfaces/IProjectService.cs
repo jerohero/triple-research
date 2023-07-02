@@ -15,4 +15,5 @@ public interface IProjectService
     Task<Result> DeleteProject(int projectId);
     Task<Result> UploadTrainedModelChunk(Stream chunk, string fileName, int? size, int projectId);
     Task<Result<List<TrainedModelDto>>> GetTrainedModels(int projectId);
+    Task<Result> DeleteTrainedModel(int trainedModelId);
 }

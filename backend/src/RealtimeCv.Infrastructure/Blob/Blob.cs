@@ -14,7 +14,7 @@ namespace RealtimeCv.Infrastructure.Blob;
 
 public class Blob : IBlob
 {
-    private const string ConnStringName = "AzureWebJobsStorage";
+    private const string ConnStringName = "BlobConnectionString";
     private readonly ILoggerAdapter<Blob> _logger;
     
     public Blob(
@@ -52,7 +52,7 @@ public class Blob : IBlob
 
     public BlockBlobClient GetBlockBlobClient(string blobName, string containerName)
     {
-        var connString = Environment.GetEnvironmentVariable("AzureWebJobsStorage");
+        var connString = Environment.GetEnvironmentVariable(ConnStringName);
         var blobServiceClient = new BlobServiceClient(connString);
         var blobContainerClient = blobServiceClient.GetBlobContainerClient(containerName);
         
@@ -70,6 +70,17 @@ public class Blob : IBlob
 
         await blockBlobClient.CommitBlockListAsync(blockIds);
     }
+
+    public async Task DeleteBlob(string blobName, string containerName)
+    {
+        var connString = Environment.GetEnvironmentVariable(ConnStringName);
+        
+        var blobServiceClient = new BlobServiceClient(connString);
+        var blobContainerClient = blobServiceClient.GetBlobContainerClient(containerName);
+        var blockBlobClient = blobContainerClient.GetBlockBlobClient(blobName);
+        
+        await blockBlobClient.DeleteIfExistsAsync();
+    }
     
     public async Task<bool> IsBlockBlobUploadFinished(BlockBlobClient blockBlobClient, int expectedSize)
     {
@@ -77,6 +88,4 @@ public class Blob : IBlob
         
         return length >= expectedSize;
     }
-    
-    
 }

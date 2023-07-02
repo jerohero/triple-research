@@ -213,4 +213,20 @@ public class ProjectService : IProjectService
 
         return new Result<TrainedModel>(trainedModel);
     }
+    
+    public async Task<Result> DeleteTrainedModel(int trainedModelId)
+    {
+        var trainedModel = await _trainedModelRepository.GetByIdAsync(trainedModelId);
+
+        if (trainedModel is null)
+        {
+            return Result.NotFound();
+        }
+
+        await _blob.DeleteBlob(trainedModel.Name, "trained-model");
+
+        await _trainedModelRepository.DeleteAsync(trainedModel);
+
+        return Result.Success();
+    }
 }

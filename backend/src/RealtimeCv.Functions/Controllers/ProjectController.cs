@@ -85,6 +85,15 @@ public class ProjectController : BaseController
         return await ResultToResponse(result, req);
     }
     
+    [Function("deleteTrainedModel")]
+    public async Task<HttpResponseData> DeleteTrainedModel(
+        [HttpTrigger(AuthorizationLevel.Anonymous, "delete", Route = "trained-model/{trainedModelId}")] HttpRequestData req, int trainedModelId)
+    {
+        var result = await _projectService.DeleteTrainedModel(trainedModelId);
+        
+        return await ResultToResponse(result, req);
+    }
+    
     [Function("getTrainedModels")]
     public async Task<HttpResponseData> GetTrainedModels(
         [HttpTrigger(AuthorizationLevel.Anonymous, "get", Route = "project/{projectId}/trained-model")] HttpRequestData req, int projectId)

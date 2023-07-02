@@ -10,4 +10,5 @@ public interface IBlob
     BlockBlobClient GetBlockBlobClient(string blobName, string containerName);
     Task UploadBlockBlob(BlockBlobClient blockBlobClient, Stream chunk);
     Task<bool> IsBlockBlobUploadFinished(BlockBlobClient blockBlobClient, int expectedSize);
+    Task DeleteBlob(string blobName, string containerName);
 }
