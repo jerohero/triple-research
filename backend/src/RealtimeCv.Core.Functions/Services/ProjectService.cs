@@ -24,6 +24,7 @@ public class ProjectService : IProjectService
     private readonly ILoggerAdapter<ProjectService> _logger;
     private readonly IProjectRepository _projectRepository;
     private readonly ITrainedModelRepository _trainedModelRepository;
+    private readonly IVisionSetRepository _visionSetRepository;
     private readonly IBlob _blob;
 
     public ProjectService(
@@ -31,6 +32,7 @@ public class ProjectService : IProjectService
       IMapper mapper,
       IProjectRepository projectRepository,
       ITrainedModelRepository trainedModelRepository,
+        IVisionSetRepository visionSetRepository,
       IBlob blob
     )
     {
@@ -38,6 +40,7 @@ public class ProjectService : IProjectService
         _logger = logger;
         _projectRepository = projectRepository;
         _trainedModelRepository = trainedModelRepository;
+        _visionSetRepository = visionSetRepository;
         _blob = blob;
     }
 
@@ -221,6 +224,14 @@ public class ProjectService : IProjectService
         if (trainedModel is null)
         {
             return Result.NotFound();
+        }
+        
+        var visionSetsSpec = new VisionSetsByTrainedModel(trainedModelId);
+        var visionSetsUsingTrainedModel = await _visionSetRepository.ListAsync(visionSetsSpec, CancellationToken.None);
+
+        if (visionSetsUsingTrainedModel.Count > 0)
+        {
+            return Result.Conflict("This model is being used by one or more vision sets and can not be deleted.");
         }
 
         await _blob.DeleteBlob(trainedModel.Name, "trained-model");

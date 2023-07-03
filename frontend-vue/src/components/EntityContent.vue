@@ -71,8 +71,7 @@
 
   const deleteRow = async (deletedRow: any) => {
     try {
-      await axios()
-          .delete(`${ props.route }/${ deletedRow.Id.value }`)
+      await axios().delete(`${ props.updateRoute || props.route }/${ deletedRow.Id.value }`)
 
       rows.value = rows.value.filter((row) => row.Id.value !== deletedRow.Id.value)
 
@@ -98,12 +97,13 @@
     }
 
     try {
-      const res = await axios().post(props.updateRoute || props.route, props.getCreateObject?.(createdRow))
+      const res = await axios().post(
+        props.updateRoute || props.route,
+        props.getCreateObject?.(createdRow) || createdRow
+      )
 
       isCreatingRow.value = false
-
       rows.value.push(props.getRowObject(res.data))
-
       toast.success('Row has been added successfully!')
     } catch(e: any) {
       toast.error(e.message)

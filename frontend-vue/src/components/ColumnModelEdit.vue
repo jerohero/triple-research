@@ -3,6 +3,7 @@
   import ModelUpload from '@/components/ModelUpload.vue'
   import ColumnModelList from '@/components/ColumnModelList.vue'
   import axios from '@/shared/axios'
+  import { useToast } from 'vue-toastification'
 
   const props = defineProps<{
     projectId: number,
@@ -12,6 +13,7 @@
   const isUploadingModel = ref(false)
   const models = ref<any[]>([])
 
+  const toast = useToast()
   const emit = defineEmits(['update', 'delete'])
 
   onMounted(async () => {
@@ -22,8 +24,7 @@
     const fetchUrl = props.rowItem.edit.options.fetchUrl(props.projectId)
 
     if (fetchUrl) {
-      const res = await axios()
-          .get(fetchUrl)
+      const res = await axios().get(fetchUrl)
       models.value = res.data
 
       return
@@ -33,11 +34,18 @@
   }
 
   const onDelete = async (modelId: number) => {
-    const res = await axios().delete(`trained-model/${ modelId }`)
+    try {
+      const res = await axios().delete(`trained-model/${ modelId }`)
 
-    if (res.status === 200) {
-      const index = models.value.indexOf((model: any) => model.id == modelId)
-      models.value.splice(index, 1)
+      if (res.status === 200) {
+        const index = models.value.indexOf((model: any) => model.id == modelId)
+        models.value.splice(index, 1)
+      }
+
+      toast.success("Trained model has been deleted successfully!")
+    } catch (e: any) {
+      console.log(e)
+      toast.error(e.response.data[0])
     }
   }
 

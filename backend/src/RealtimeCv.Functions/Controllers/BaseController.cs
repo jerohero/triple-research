@@ -22,6 +22,7 @@ public abstract class BaseController
     { ResultStatus.Invalid, HttpStatusCode.BadRequest },
     { ResultStatus.NotFound, HttpStatusCode.NotFound },
     { ResultStatus.Error, HttpStatusCode.InternalServerError },
+    { ResultStatus.Conflict, HttpStatusCode.Conflict },
     { ResultStatus.Unauthorized, HttpStatusCode.Unauthorized }
   };
 
