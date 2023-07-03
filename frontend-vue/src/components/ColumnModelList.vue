@@ -1,40 +1,25 @@
 <script setup lang="ts">
-  import {onMounted, ref} from 'vue'
+  import { ref } from 'vue'
   import { useToast } from 'vue-toastification'
-  import axios from '../shared/axios'
   import ConfirmationModal from '@/components/ConfirmationModal.vue'
 
   const props = defineProps<{
+    models: any,
     rowItem?: any, // Use for editing
-    createSettings?: any, // Use for creating
-    multiple?: boolean,
-    maxItems?: number,
-    minItems?: number
+    deleteModel?(model: any): any,
   }>()
 
-  const settings = props.rowItem?.edit || props.createSettings
-
   const toast = useToast()
-  const emit = defineEmits(['change', 'openUpload', 'delete'])
+  const emit = defineEmits(['delete', 'openUpload'])
 
   const modelIdToDelete = ref<number>()
   const data = ref()
-
-  onMounted(async () => {
-    if (settings.options?.fetchUrl) {
-      const res = await axios()
-          .get(settings.options.fetchUrl)
-      data.value = res.data
-    } else if (settings.options?.value) {
-      data.value = settings.options?.value
-    }
-  })
 
   const getDisplayValue = (input: any) => {
     if (!input)
       return ''
 
-    return settings.options?.display(input)
+    return props.rowItem?.edit?.options?.display(input)
   }
 
   const deleteModel = (model: any) => {
@@ -45,10 +30,9 @@
     modelIdToDelete.value = 0
   }
 
-  const onDeleteConfirm = () => {
+  const onDeleteConfirm = async () => {
+    emit('delete', modelIdToDelete.value)
     modelIdToDelete.value = 0
-
-    emit('delete', modelIdToDelete)
   }
 
   const onOpenUploadModel = () => {
@@ -60,7 +44,7 @@
   <div>
     <div class="flex-wrap">
       <div
-          v-for="model in rowItem.value"
+          v-for="model in models"
           :key="model.Id"
           class="bg-secondary rounded-2xl py-2 px-3 text-xs w-fit inline-block mr-2 my-1"
       >

@@ -8,6 +8,8 @@
   import router from '@/router'
   import ColumnModelList from '@/components/ColumnModelList.vue'
   import ColumnInputList from '@/components/ColumnInputList.vue'
+  import axios from "@/shared/axios";
+  import ColumnModelEdit from "@/components/ColumnModelEdit.vue";
 
   const props = defineProps<{
     rowData: any,
@@ -75,7 +77,7 @@
     isUploadingModel.value = false
   }
 
-  const onUploadModel = () => {
+  const onUploadModel = async () => {
     console.log('Upload model')
   }
 
@@ -123,20 +125,7 @@
             @change="onChange"
         />
         <div v-if="rowItem.edit?.type === 'model-upload'">
-          <ColumnModelList
-              :row-item="rowItem"
-              @change="onChange"
-              @open-upload="onOpenUploadModel"
-          />
-          <ModelUpload
-              :col-key="rowItem.key"
-              :value="rowItem.value"
-              :open="isUploadingModel"
-              @close="onCloseUploadModel"
-              @create="onUploadModel"
-              @change="onChange"
-              :project-id="props.rowData.Id.value"
-          />
+          <ColumnModelEdit :row-item="rowItem" :project-id="rowData.Id.value" />
         </div>
       </div>
     </td>

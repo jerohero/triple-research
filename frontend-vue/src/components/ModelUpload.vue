@@ -11,7 +11,7 @@
     value?: any,
   }>()
 
-  const emit = defineEmits(['change', 'close', 'create'])
+  const emit = defineEmits(['create', 'close'])
 
   const selectedFile = ref<any>(null)
   const uploadProgress = ref<number>(0)
@@ -26,10 +26,6 @@
 
   const onChange = (emitted: { key: string, value: any }) => {
     newObject[emitted.key] = emitted.value
-  }
-
-  const onSave = () => {
-    emit('create', newObject)
   }
 
   const onFileChange = (e: any) => {
@@ -78,6 +74,8 @@
       const chunk = await selectedFile.value.slice(start, end).arrayBuffer()
       start = await uploadChunk(chunk, start, end)
     }
+
+    emit('create')
   }
 
   const onUndoFile = () => {

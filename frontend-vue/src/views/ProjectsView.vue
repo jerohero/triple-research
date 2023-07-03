@@ -30,7 +30,7 @@ const columnInputs = {
     type: 'model-upload',
     options: {
       id: (model: any) => model.Id,
-      fetchUrl: (project: any) => `/project/${ project.Id }/trained-model`,
+      fetchUrl: (projectId: number) => `/project/${ projectId }/trained-model`,
       display: (models: any) =>
           Array.isArray(models)
             ? models?.map((model: any) => `${model?.Name}`).join(', ')
