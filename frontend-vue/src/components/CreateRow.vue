@@ -3,6 +3,7 @@
   import ColumnCombobox from '@/components/ColumnCombobox.vue'
   import CustomButton from '@/components/CustomButton.vue'
   import ColumnInput from '@/components/ColumnInput.vue'
+  import ColumnInputList from '@/components/ColumnInputList.vue'
 
   defineProps<{
     open: boolean,
@@ -94,6 +95,11 @@
                             <ColumnCombobox
                                 v-if="createSettings[field].type === 'search-single'"
                                 :create-settings="createSettings[field]"
+                                @change="onChange"
+                            />
+                            <ColumnInputList
+                                v-if="createSettings[field].type === 'input-text-list'"
+                                :col-key="createSettings[field].key"
                                 @change="onChange"
                             />
                           </div>

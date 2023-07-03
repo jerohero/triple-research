@@ -86,6 +86,16 @@ const getUpdateObject = (updated: any) => {
   }
 }
 
+const getCreateObject = (created: any) => {
+  return {
+    projectId: router.params.id,
+    name: created.Name,
+    sources: created.Sources,
+    containerImage: created.ContainerImage,
+    trainedModelId: created.TrainedModel.Id
+  }
+}
+
 const getRowObject = (project: any): VisionSetColumns => {
   return {
     Id: {
@@ -143,6 +153,7 @@ const getRowObject = (project: any): VisionSetColumns => {
         :update-route="updateRoute"
         :get-row-object="getRowObject"
         :get-update-object="getUpdateObject"
+        :get-create-object="getCreateObject"
         :create-settings="createSettings"
         :actions="actions"
     />

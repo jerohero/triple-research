@@ -14,6 +14,7 @@
     gotoPath(rowData: any): any
     createSettings?: any,
     getUpdateObject?(updated: any): any,
+    getCreateObject?(created: any): any,
     updateRoute?: string,
     actions?: string[],
   }>()
@@ -55,11 +56,7 @@
     }
 
     try {
-      await axios()
-          .put(
-              `${ props.updateRoute || props.route }`,
-              props.getUpdateObject(updatedRow)
-          )
+      await axios().put(props.updateRoute || props.route, props.getUpdateObject?.(updatedRow))
 
       const rowIndex = rows.value.map((row) => row.Id.value).indexOf(updatedRow.Id.value)
       for (const key in rows.value[rowIndex]) {
@@ -101,8 +98,7 @@
     }
 
     try {
-      const res = await axios()
-          .post(props.route, createdRow)
+      const res = await axios().post(props.updateRoute || props.route, props.getCreateObject?.(createdRow))
 
       isCreatingRow.value = false
 

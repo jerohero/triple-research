@@ -4,12 +4,9 @@
   import ConfirmationModal from '@/components/ConfirmationModal.vue'
   import ColumnInput from '@/components/ColumnInput.vue'
   import ColumnCombobox from '@/components/ColumnCombobox.vue'
-  import ModelUpload from '@/components/ModelUpload.vue'
   import router from '@/router'
-  import ColumnModelList from '@/components/ColumnModelList.vue'
   import ColumnInputList from '@/components/ColumnInputList.vue'
-  import axios from "@/shared/axios";
-  import ColumnModelEdit from "@/components/ColumnModelEdit.vue";
+  import ColumnModelEdit from '@/components/ColumnModelEdit.vue'
 
   const props = defineProps<{
     rowData: any,
@@ -20,7 +17,6 @@
   const isEditing = ref<boolean>()
   const isDeleting = ref<boolean>()
   let editedValue = JSON.parse(JSON.stringify(props.rowData))
-  const isUploadingModel = ref(false)
 
   const emit = defineEmits(['update', 'delete'])
 
@@ -67,18 +63,6 @@
 
   const onChange = (emitted: { key: string, value: any }) => {
     editedValue[emitted.key].value = emitted.value
-  }
-
-  const onOpenUploadModel = () => {
-    isUploadingModel.value = true
-  }
-
-  const onCloseUploadModel = () => {
-    isUploadingModel.value = false
-  }
-
-  const onUploadModel = async () => {
-    console.log('Upload model')
   }
 
   const isActionEnabled = (action: string) => {

@@ -1,5 +1,5 @@
 <script setup lang="ts">
-  import { ref } from 'vue'
+  import { ref, onMounted } from 'vue'
 
   const props = defineProps<{
     colKey: string, // "Key" is a reserved prop
@@ -7,12 +7,17 @@
   }>()
 
   const emit = defineEmits(['change'])
-  const newSources = ref<string[]>(JSON.parse(JSON.stringify(props.value)))
-  const inputValue = ref<string>()
+  const newSources = ref<string[]>([])
+  const inputValue = ref<string>('')
+
+  onMounted(async () => {
+    if (props.value) {
+      newSources.value = JSON.parse(JSON.stringify(props.value))
+    }
+  })
 
   const removeSource = (sourceToRemove: string) => {
-    newSources.value = newSources.value
-        .filter(source => source !== sourceToRemove)
+    newSources.value = newSources.value?.filter(source => source !== sourceToRemove)
 
     emit('change', {
       key: props.colKey,
@@ -27,7 +32,7 @@
       return
     }
 
-    newSources.value.push(inputValue.value)
+    newSources.value!.push(inputValue.value)
     inputValue.value = ''
 
     emit('change', {
