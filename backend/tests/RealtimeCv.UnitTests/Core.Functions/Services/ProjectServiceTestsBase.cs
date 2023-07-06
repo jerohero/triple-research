@@ -38,7 +38,8 @@ public class ProjectServiceTestsBase
 
         _service = new ProjectService(
             loggerMock.Object, mapper, new ProjectRepository(_context),
-            new TrainedModelRepository(_context), blobMock.Object
+            new TrainedModelRepository(_context), new VisionSetRepository(_context),
+            blobMock.Object
         );
         
         Trace.Listeners.Add(new ConsoleTraceListener());

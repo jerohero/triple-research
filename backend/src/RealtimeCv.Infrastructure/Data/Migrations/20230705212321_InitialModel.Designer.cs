@@ -12,7 +12,7 @@ using RealtimeCv.Infrastructure.Data;
 namespace RealtimeCv.Infrastructure.Data.Migrations
 {
     [DbContext(typeof(AppDbContext))]
-    [Migration("20230619104749_InitialModel")]
+    [Migration("20230705212321_InitialModel")]
     partial class InitialModel
     {
         /// <inheritdoc />
