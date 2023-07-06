@@ -32,7 +32,7 @@ public class ProjectService : IProjectService
       IMapper mapper,
       IProjectRepository projectRepository,
       ITrainedModelRepository trainedModelRepository,
-        IVisionSetRepository visionSetRepository,
+      IVisionSetRepository visionSetRepository,
       IBlob blob
     )
     {

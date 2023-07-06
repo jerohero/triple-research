@@ -1,0 +1,17 @@
+{
+  "IsEncrypted": false,
+  "Values": {
+    "AzureWebJobsStorage": "",
+    "SqlConnectionString": "",
+    "BlobConnectionString": "",
+    "AzureWebPubSub": "",
+    "ApiUrl": "",
+    "StorageAccountName": "",
+    "StorageAccountKey": "",
+    "FUNCTIONS_WORKER_RUNTIME": "dotnet-isolated"
+  },
+  "Host": {
+    "LocalHttpPort": 7071,
+    "CORS": "*"
+  }
+}
