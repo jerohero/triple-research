@@ -41,17 +41,25 @@ public class StreamPollService : IStreamPollService, IDisposable
     {
         var visionSets = await _visionSetRepository.ListAsync();
 
-        foreach (var message in from visionSet in visionSets
-                 let chunks = visionSet.Sources.Chunk(SourceChunkSize)
-                 from chunk in chunks
-                 select new StreamPollChunkMessage
-                 {
-                     VisionSetId = visionSet.Id,
-                     Sources = chunk.ToList()
-                 })
+        foreach (var visionSet in visionSets)
         {
-            await _queue.SendMessage("stream-poll-chunk", message);
+            if (visionSet.Sources == null || !visionSet.Sources.Any())
+            {
+                continue;
+            }
+
+            var chunks = visionSet.Sources.Chunk(SourceChunkSize);
+            foreach (var chunk in chunks)
+            {
+                var message = new StreamPollChunkMessage
+                {
+                    VisionSetId = visionSet.Id,
+                    Sources = chunk.ToList()
+                };
+                await _queue.SendMessage("stream-poll-chunk", message);
+            }
         }
+
     }
     
     public async Task<List<string>> StartSessionsForActiveStreams(StreamPollChunkMessage message)
