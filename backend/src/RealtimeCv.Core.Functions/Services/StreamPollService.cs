@@ -83,6 +83,7 @@ public class StreamPollService : IStreamPollService, IDisposable
 
             if (activeSessions.Value.Count > 0)
             {
+                _logger.LogInformation(">>> Skipping " + stream + " because it already has " + activeSessions.Value.Count + " active sessions.");
                 continue;
             }
             

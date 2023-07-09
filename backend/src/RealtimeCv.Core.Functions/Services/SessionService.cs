@@ -114,7 +114,7 @@ public class SessionService : ISessionService
     {
         var result = await CreateSession(startDto);
 
-        if (result.Errors.Any())
+        if (result.Status != ResultStatus.Ok)
         {
             return result;
         }

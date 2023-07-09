@@ -131,7 +131,7 @@ public class StreamReceiver : IStreamReceiver, IDisposable
                 break;
             }
 
-            Thread.Sleep((int)TimeSpan.FromSeconds(1 / _fps ?? DefaultFps).TotalMilliseconds); // wait time
+            Thread.Sleep((_fps ?? DefaultFps) / 10); // wait time
         }
 
         _logger.LogInformation("Connection broken");

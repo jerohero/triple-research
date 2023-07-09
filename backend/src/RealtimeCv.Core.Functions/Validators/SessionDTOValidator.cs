@@ -12,7 +12,7 @@ public class SessionDtoValidator : AbstractValidator<SessionDto>
 
         RuleFor(x => x.Pod).MinimumLength(1).MaximumLength(100);
         
-        RuleFor(x => x.Source).MinimumLength(1).MaximumLength(100);
+        RuleFor(x => x.Source).MinimumLength(1).MaximumLength(300);
         
         RuleFor(x => x.VisionSetId).GreaterThan(0);
     }

@@ -145,6 +145,7 @@ const getRowObject = (project: any): VisionSetColumns => {
   <div class="mx-10 my-7 min-h-full">
     <EntityTitle
         :title="title"
+        :sub="router.path"
     />
     <EntityContent
         :columns="columns"
