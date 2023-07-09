@@ -73,7 +73,7 @@
       </button>
     </div>
     <ConfirmationModal
-        v-if="modelIdToDelete > 0"
+        v-if="modelIdToDelete && modelIdToDelete > 0"
         :onCancel="onDeleteCancel"
         :onConfirm="onDeleteConfirm"
         title="Delete model"

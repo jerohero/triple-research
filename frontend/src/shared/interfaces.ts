@@ -10,7 +10,7 @@ export interface Column {
     options?: {
       id: (value: any) => string,
       value?: any[], // Defines pre-defined options
-      fetchUrl?: string, // Defines the URL options can be fetched from
+      fetchUrl?: any, // Defines the URL options can be fetched from
       display: (value: any) => string,
       displaySub?: (value: any) => string, // Defines how the option's secondary display value is created
       queryable: (value: any) => string, // Defines how the option's queryable value is created

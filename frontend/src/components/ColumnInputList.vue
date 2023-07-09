@@ -40,6 +40,10 @@
       value: newSources.value
     })
   }
+
+  const onInput = (e: Event) => {
+    inputValue.value = (e.target as HTMLInputElement).value
+  }
 </script>
 
 <template>
@@ -63,7 +67,7 @@
     <form class="flex w-full space-x-2" :onsubmit="addSource">
       <input
           type="text"
-          v-on:input="inputValue = $event.target.value"
+          @input="onInput"
           :name="props.colKey"
           :id="props.colKey"
           :value="inputValue"
