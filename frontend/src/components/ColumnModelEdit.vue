@@ -43,6 +43,8 @@
       }
 
       toast.success("Trained model has been deleted successfully!")
+
+      location.reload()
     } catch (e: any) {
       console.log(e)
       toast.error(e.response.data[0])
@@ -58,7 +60,7 @@
   }
 
   const onUploadModel = async () => {
-    await fetch()
+    location.reload()
   }
 </script>
 
