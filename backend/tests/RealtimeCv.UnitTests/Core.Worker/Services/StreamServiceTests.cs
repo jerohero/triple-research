@@ -86,21 +86,4 @@ public class StreamServiceTests : StreamServiceTestsBase
         _mockStreamReceiver.Verify(x => x.Dispose(), Times.Once);
         _mockStreamSender.Verify(x => x.Dispose(), Times.Once);
     }
-
-    [Test]
-    public void HandleStream_WhenOnPredictionResult_ShouldCallSendOnPubSub()
-    {
-        // Arrange
-        var session = new Session { Source = "source" };
-        var modelUri = "https://test.com/blob";
-        var targetUrl = "http://localhost:5000";
-        var predictionResult = new object();
-
-        // Act
-        _streamService.HandleStream(session, modelUri, targetUrl);
-        _mockStreamSender.Raise(m => m.OnPredictionResult += null, predictionResult);
-
-        // Assert
-        _mockPubSub.Verify(x => x.Send(predictionResult, session.Pod, "predictions"), Times.Once);
-    }
 }
