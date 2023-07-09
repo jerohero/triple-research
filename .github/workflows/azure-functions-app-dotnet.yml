@@ -45,22 +45,6 @@ jobs:
       with:
         dotnet-version: ${{ env.DOTNET_VERSION }}
 
-#     - name: 'Build Functions'
-#       shell: bash
-#       run: |
-#         pushd './${{ env.AZURE_FUNCTIONAPP_PACKAGE_PATH }}'
-#         dotnet publish --configuration Release --output ./publish
-#         popd
-
-#     - name: Install Azure CLI
-#       run: |
-#         curl -sL https://aka.ms/InstallAzureCLIDeb | sudo bash
-
-#     - name: 'Login via Azure CLI'
-#       uses: azure/login@v1
-#       with:
-#         creds: ${{ secrets.AZURE_CREDENTIALS }}
-
     - name: 'Login via Azure CLI'
       uses: azure/login@v1
       with:
@@ -98,22 +82,3 @@ jobs:
 #         pushd './${{ env.AZURE_FUNCTIONAPP_PACKAGE_PATH }}'
 #         dotnet test --no-build
 #         popd
-
-#     - name: 'Deploy Functions'
-#       uses: azure/webapps-deploy@v2
-#       with:
-#         app-name: ${{ env.AZURE_FUNCTIONAPP_NAME }}
-#         publish-profile: ${{ secrets.AZURE_FUNCTIONAPP_PUBLISH_PROFILE }}
-#         package: '${{ env.AZURE_FUNCTIONAPP_PACKAGE_PATH }}/publish'
-
-#     - name: 'Deploy Functions'
-#       run: |
-#         az functionapp config container set \
-#           --name ${{ env.AZURE_FUNCTIONAPP_NAME }} \
-#           --resource-group ${{ env.AZURE_RESOURCE_GROUP }} \
-#           --image ${{ env.DOCKER_REGISTRY }}/${{ env.AZURE_FUNCTIONAPP_NAME }}:${{ github.sha }} \
-#           --registry-server https://${{ env.DOCKER_REGISTRY }}
-#           --registry-username rcvacr
-#           --registry-password At/n/+KBT2z5fWq779aI4pvoyPuYXrRWSm/KqfibzO+ACRBE0CJd
-      
-
