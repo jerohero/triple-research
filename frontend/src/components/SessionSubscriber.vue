@@ -1,6 +1,6 @@
 <script lang="js">
   import axios from '@/shared/axios'
-  import { computed, onMounted, reactive, ref, toRef, unref } from 'vue'
+  import { computed, onMounted, ref, unref } from 'vue'
   import LoadSpinner from '@/components/LoadSpinner.vue'
   import dayjs from 'dayjs'
   import VueJsonPretty from 'vue-json-pretty'
@@ -8,7 +8,7 @@
   import { DynamicScroller, DynamicScrollerItem } from 'vue-virtual-scroller'
   import 'vue-virtual-scroller/dist/vue-virtual-scroller.css'
 
-  // This component is JS as opposed to TS sin
+  // This component is JS as opposed to TS since TS does not have any updated virtual scroller/sensor packages
 
   export default {
     components: { LoadSpinner, DynamicScroller, DynamicScrollerItem, VueJsonPretty },
@@ -40,6 +40,8 @@
           if (rawResults.length >= 50) {
             rawResults.shift();
           }
+
+          console.log(data)
 
           rawResults.push(data);
 

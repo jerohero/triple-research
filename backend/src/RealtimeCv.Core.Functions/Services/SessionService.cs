@@ -57,7 +57,7 @@ public class SessionService : ISessionService
         var pod = await _kubernetesService.GetSessionPod(session.Pod);
 
         var sessionDto = _mapper.Map<SessionDto>(session);
-        sessionDto.Status = pod.Status.Phase;
+        sessionDto.Status = pod?.Status?.Phase ?? "Terminated";
 
         return new Result<SessionDto>(sessionDto);
     }

@@ -174,14 +174,23 @@ public class KubernetesService : IKubernetesService
         return await _kubernetes.DeleteNamespacedPodAsync(podName, "default");
     }
 
-    public async Task<V1Pod> GetSessionPod(string podName)
+    public async Task<V1Pod?> GetSessionPod(string podName)
     {
         if (_kubernetes is null)
         {
             await InitKubernetes();
         }
-        
-        var pod = await _kubernetes.ReadNamespacedPodAsync(podName, "default");
+
+        V1Pod? pod;
+
+        try
+        {
+            pod = await _kubernetes.ReadNamespacedPodAsync(podName, "default");
+        }
+        catch
+        {
+            pod = null;
+        }
         
         return pod;
     }
@@ -194,7 +203,7 @@ public class KubernetesService : IKubernetesService
         }
 
         var pods = await _kubernetes.ListNamespacedPodAsync(
-            "default", // TODO replace with projectName
+            "default",
             labelSelector: $"app={visionSetName}"
         );
 

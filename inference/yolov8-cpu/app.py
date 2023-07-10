@@ -49,12 +49,6 @@ def start():
     pv_path = "/mnt/models"
     model_path = f"{pv_path}/{model_name}"
 
-    response = requests.get(model_name, stream=True)
-
-    with open(model_path, "wb") as f:
-        for chunk in response.iter_content(chunk_size=8192):
-            f.write(chunk)
-
     model = YOLO(model_path)
 
     return Response(response=str('Model loaded'), status=200)

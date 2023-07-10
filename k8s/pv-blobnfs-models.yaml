@@ -12,9 +12,9 @@ spec:
   csi:
     driver: blob.csi.azure.com
     readOnly: false
-    volumeHandle: realtimecv#rcvstorageaccount#trained-model
+    volumeHandle: realtimecv#rcvblobs#trained-model
     volumeAttributes:
       resourceGroup: realtimecv
-      storageAccount: rcvstorageaccount
+      storageAccount: rcvblobs
       containerName: trained-model
       protocol: nfs
