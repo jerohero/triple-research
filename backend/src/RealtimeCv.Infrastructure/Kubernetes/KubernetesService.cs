@@ -82,7 +82,7 @@ public class KubernetesService : IKubernetesService
                         {
                             Requests = new Dictionary<string, ResourceQuantity>
                             {
-                                { "memory", new ResourceQuantity("2Gi") },
+                                { "memory", new ResourceQuantity("1Gi") },
                             },
                             Limits = new Dictionary<string, ResourceQuantity>
                             {
@@ -110,7 +110,7 @@ public class KubernetesService : IKubernetesService
                             },
                             Limits = new Dictionary<string, ResourceQuantity>
                             {
-                                { "memory", new ResourceQuantity("1Gi") }
+                                { "memory", new ResourceQuantity("2Gi") }
                             }
                         },
                         Env = new List<V1EnvVar>
