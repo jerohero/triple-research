@@ -82,11 +82,11 @@ public class KubernetesService : IKubernetesService
                         {
                             Requests = new Dictionary<string, ResourceQuantity>
                             {
-                                { "memory", new ResourceQuantity("4Gi") },
+                                { "memory", new ResourceQuantity("2Gi") },
                             },
                             Limits = new Dictionary<string, ResourceQuantity>
                             {
-                                { "memory", new ResourceQuantity("5Gi") }
+                                { "memory", new ResourceQuantity("3Gi") }
                             },
                         }
                     },
